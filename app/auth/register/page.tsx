@@ -11,17 +11,17 @@ const RegisterPage = () => {
                     <CardTitle className="justify-center flex">
                         🔐Rejestracja
                     </CardTitle>
-                    <CardContent>
-                        <RegisterForm/>
-                    </CardContent>
-                    <CardFooter className="flex justify-center">
-                        <Link href="/auth/login" passHref>
-                            <Button variant={`link`}>
-                            Masz już konto?
-                            </Button>
-                        </Link>
-                    </CardFooter>
                 </CardHeader>
+                <CardContent>
+                    <RegisterForm/>
+                </CardContent>
+                <CardFooter className="flex justify-center">
+                    <Link href="/auth/login" passHref>
+                        <Button variant={`link`}>
+                            Masz już konto?
+                        </Button>
+                    </Link>
+                </CardFooter>
             </Card>
         </div>
     );

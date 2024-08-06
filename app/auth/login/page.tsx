@@ -9,7 +9,7 @@ const LoginPage = () => {
             <Card className="py-[1vh] px-[1vw] max-w-[600px] space-y-[1vh]">
                 <CardHeader>
                     <CardTitle className="justify-center flex">
-                        🔐Rejestracja
+                        🔐Logowanie
                     </CardTitle>
                 </CardHeader>
                 <CardContent>

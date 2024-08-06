@@ -1,9 +1,20 @@
-import Image from "next/image";
+import { auth, signOut } from '@/auth';
+import { Button } from '@/components/ui/button';
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth()
   return (
     <main>
-      123
+      {JSON.stringify(session)}
+      <form action={async () => {
+        "use server";
+
+        await signOut();
+      }}>
+        <Button type="submit">
+            Sign Out!
+        </Button>
+      </form>
     </main>
   );
 }

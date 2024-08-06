@@ -20,3 +20,8 @@ export const RegisterSchema = z.object({
     email: emailTemplate,
     password: newPasswordTemplate
 })
+
+export const LoginSchema = z.object({
+    email: nameTemplate,
+    password: passwordTemplate
+})

@@ -1,56 +1,62 @@
 "use client"
-import { ResetSchema } from "@/schemas/user";
+import { NewPasswordSchema } from "@/schemas/user";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import * as z from 'zod'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useTransition, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import RenderResultMessage from "../render-result-message";
-import { reset } from "@/actions/auth/reset";
+import { useSearchParams } from "next/navigation";
+import { newPassword } from "@/actions/auth/new-password";
 
-const ResetForm = () => {
+
+const NewPasswordForm = () => {
+    const searchParams = useSearchParams()
+    const token = searchParams.get("token")
+
     const [result, setResult] = useState<{ success: boolean, message: string} | null>(null)
     const [isPending, startTransition] = useTransition()
-
-    const form = useForm<z.infer<typeof ResetSchema>>({
-        resolver: zodResolver(ResetSchema)
+    
+    const form = useForm<z.infer<typeof NewPasswordSchema>>({
+        resolver: zodResolver(NewPasswordSchema)
     })
 
-    const onSubmit = (values: z.infer<typeof ResetSchema>) => {
+    const onSubmit = (values: z.infer<typeof NewPasswordSchema>) => {
         setResult(null)
-        startTransition(()=>{
-            reset(values)
+        startTransition(()=> {
+            newPassword(values, token)
                 .then((data) => {
                     setResult({ success: data.success, message: data.message })
                 })
-        })    }
+        })
+    }
     
     return ( 
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-[1vh] py-[1vh]">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-[1vh]">
                 <FormField
                     control={form.control}
-                    name="email"
+                    name="password"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel>Nowe hasło</FormLabel>
                             <FormControl>
                                 <Input
                                     {...field}
                                     disabled={isPending}
-                                    placeholder="john.doe@example.com"
-                                    type="email"
+                                    placeholder="********"
+                                    type="password"
                                 />
                             </FormControl>
                             <FormMessage/>
                         </FormItem>
                     )}
                 />
-                <div className="flex justify-center space-y-[1vh[">
-                    <Button disabled={isPending} type="submit">
-                        Zresetuj Hasło
+                <div className="flex justify-center space-y-[1vh]">
+                    <Button type="submit" disabled={isPending}>
+                        Zmień hasło
                     </Button>
                 </div>
                 {RenderResultMessage(result)}
@@ -59,4 +65,4 @@ const ResetForm = () => {
     );
 }
  
-export default ResetForm;
+export default NewPasswordForm;

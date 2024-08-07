@@ -36,7 +36,7 @@ const RegisterForm = () => {
                     name="name"
                     render={({field}) => (
                         <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel>Imię i Nazwisko</FormLabel>
                             <FormControl>
                                 <Input
                                     disabled={isPending}
@@ -53,7 +53,7 @@ const RegisterForm = () => {
                     name="email"
                     render={({field}) => (
                         <FormItem>
-                            <FormLabel>Hasło</FormLabel>
+                            <FormLabel>Email</FormLabel>
                             <FormControl>
                                 <Input
                                     disabled={isPending}
@@ -71,7 +71,7 @@ const RegisterForm = () => {
                     name="password"
                     render={({field}) => (
                         <FormItem>
-                            <FormLabel>Imię i Nazwisko</FormLabel>
+                            <FormLabel>Hasło</FormLabel>
                             <FormControl>
                                 <Input
                                     disabled={isPending}

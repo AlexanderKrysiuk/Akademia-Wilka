@@ -29,3 +29,7 @@ export const LoginSchema = z.object({
 export const ResetSchema = z.object({
     email: emailTemplate
 })
+
+export const NewPasswordSchema = z.object({
+    password: newPasswordTemplate
+})

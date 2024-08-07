@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Header from "@/components/header/header";
 import { auth } from "@/auth";
 import { SessionProvider } from "next-auth/react";
+import { ThemeProvider } from "@/components/theme-providet";
 
 
 
@@ -26,8 +27,15 @@ export default async function RootLayout({
     <SessionProvider session={session}>
       <html lang="en">
         <body className={inter.className}>
+          <ThemeProvider
+              attribute="class"
+              defaultTheme="dark"
+              enableSystem
+              disableTransitionOnChange
+              >
           <Header/>
           {children}
+          </ThemeProvider>
         </body>
       </html>
     </SessionProvider>

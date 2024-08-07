@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import UserButton from '@/components/header/user-button';
+import { ModeButton } from '../ModeButton';
 
 const Header = () => {
     return ( 
@@ -18,7 +19,8 @@ const Header = () => {
                     Akademia Wilka
                 </h1>
             </Link>
-            <div className='max-h-[8vh]'>
+            <div className='max-h-[8vh] flex items-center space-x-[1vw]'>
+                <ModeButton/>
                 <UserButton/>
             </div>
       </div>

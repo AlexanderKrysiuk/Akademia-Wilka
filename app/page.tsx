@@ -6,15 +6,6 @@ export default async function Home() {
   return (
     <main>
       {JSON.stringify(session)}
-      <form action={async () => {
-        "use server";
-
-        await signOut();
-      }}>
-        <Button type="submit">
-            Sign Out!
-        </Button>
-      </form>
     </main>
   );
 }

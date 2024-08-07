@@ -1,10 +1,10 @@
 import Image from 'next/image';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import UserButton from '@/components/header/user-button';
 
 const Header = () => {
     return ( 
-        <div className="h-[10vh] w-full border-4 border-red-500 items-center flex px-[1vw] py-[1vh] justify-between">
+        <div className="h-[10vh] w-full items-center flex px-[1vw] py-[1vh] justify-between">
             <Link href="/" passHref className='flex items-center space-x-[1vh]'>    
                 <div className="relative flex w-[8vh] h-[8vh]">
                     <Image
@@ -18,10 +18,8 @@ const Header = () => {
                     Akademia Wilka
                 </h1>
             </Link>
-            <div>
-                <Button className='max-h-[8vh]'>
-                    Zacznij Tutaj
-                </Button>
+            <div className='max-h-[8vh]'>
+                <UserButton/>
             </div>
       </div>
     );

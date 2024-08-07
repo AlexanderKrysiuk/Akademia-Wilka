@@ -22,3 +22,14 @@ export const sendVerificationEmail = async (email: string, token: string) => {
         html: `<p>Kliknij <a href="${confirmLink}">tutaj</a> by zweryfikować email.</p>`
     })
 }
+
+export const sendPasswordResetEmail = async (email: string, token: string) => {
+    const resetLink = `${domain}/auth/new-password?token=${token}`
+
+    await transporter.sendMail({
+        from: "info@akademiawilka.pl",
+        to: email,
+        subject: "Zresetuj swoje hasło",
+        html: `<p>Kliknij <a href="${resetLink}">tutaj</a> by zresetować hasło.</p>`
+    })
+}

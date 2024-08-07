@@ -22,6 +22,10 @@ export const RegisterSchema = z.object({
 })
 
 export const LoginSchema = z.object({
-    email: nameTemplate,
+    email: emailTemplate,
     password: passwordTemplate
+})
+
+export const ResetSchema = z.object({
+    email: emailTemplate
 })

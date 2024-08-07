@@ -65,11 +65,11 @@ const LoginForm = () => {
                                     type="password"
                                 />
                             </FormControl>
-                            <Link href="/auth/reset" passHref>
-                                <Button variant={`link`}>
+                            <Button variant={`link`} asChild>
+                                <Link href="/auth/reset" passHref>
                                     Nie pamiętasz hasła?
-                                </Button>
-                            </Link>
+                                </Link>
+                            </Button>
                             <FormMessage/>
                         </FormItem>
                     )}

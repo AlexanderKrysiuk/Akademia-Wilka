@@ -1,3 +1,5 @@
+import SideBar from "@/components/dashboard/sidebar";
+
 const DashboardPage = () => {
     return ( 
         <div>

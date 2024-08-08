@@ -14,6 +14,7 @@ model User {
   emailVerified DateTime?
   password      String
   image         String?
+  roles         UserRoles[]
   accounts      Account[]
   sessions      Session[]
  
@@ -40,6 +41,15 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
  
   @@id([provider, providerAccountId])
+}
+
+model UserRoles {
+  userId    String  @unique
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  student   Boolean @default(true)
+  teacher   Boolean @default(false)
+
+  @@id([userId]) // Ustawienie userId jako klucz główny
 }
  
 model Session {

@@ -30,7 +30,12 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
         data: {
             name: name,
             email: email,
-            password: hashedPassword
+            password: hashedPassword,
+            role: {
+                create: {
+
+                }
+            }
         }
     })
 

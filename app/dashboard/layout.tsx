@@ -11,11 +11,9 @@ const DashboardLayout = ({
                 <div className="hidden md:block w-[20vw] max-w-full">
                     <SideBar/>
                 </div>
-                <div className="">
+                <div>
                     {children}
                 </div>
-            </div>
-            <div>
             </div>
         </main>
     )

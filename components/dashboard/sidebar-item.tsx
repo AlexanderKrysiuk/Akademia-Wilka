@@ -27,7 +27,7 @@ const SidebarItem = ({
         <button
             onClick={onClick}
             type="button"
-            className={cn("flex items-center gap-x-[1vw] text-sm font-[500] px-[2vw] transition-all hover:bg-foreground/20",isActive && "text-primary bg-foreground/20 hover:bg-foreground/20 border-r-4 border-primary")}
+            className={cn("flex items-center gap-x-[1vw] text-sm font-[500] px-[2vw] transition-all duration-500 hover:bg-foreground/20",isActive && "text-primary bg-foreground/20 hover:bg-foreground/20 border-r-4 border-primary")}
         >
             <div className="flex items-center gap-x-2 py-4">
                 <Icon

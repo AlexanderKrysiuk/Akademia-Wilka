@@ -11,3 +11,17 @@ export const getUserByEmail = async (email: string) => {
         throw error;
     }
 }
+
+export const getUserById = async (id: string) => {
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id },
+            include: {
+                roles: true
+            }
+        })
+        return user
+    } catch {
+        return null
+    }
+}

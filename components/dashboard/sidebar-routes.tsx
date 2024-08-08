@@ -3,7 +3,6 @@
 import { Compass, Layout } from 'lucide-react'
 import SidebarItem from '@/components/dashboard/sidebar-item';
 import { cn } from '@/lib/utils';
-import Logo from '@/components/logo';
 import Image from 'next/image';
 
 const geustRoutes = [

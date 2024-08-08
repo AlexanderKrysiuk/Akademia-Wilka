@@ -5,7 +5,6 @@ import { ModeButton } from '../ModeButton';
 import { Menu } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import SideBar from '@/components/dashboard/sidebar';
-import Logo from '@/components/logo';
 
 const Header = () => {
     return ( 

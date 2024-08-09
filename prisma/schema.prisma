@@ -14,12 +14,19 @@ model User {
   emailVerified DateTime?
   password      String
   image         String?
-  roles         UserRoles[]
+  role          UserRole?
   accounts      Account[]
   sessions      Session[]
  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model UserRole {
+  userId  String @unique
+  teacher  Boolean @default(false) // Rola nauczyciela
+
+  user    User?   @relation(fields: [userId], references: [id])
 }
  
 model Account {
@@ -43,14 +50,7 @@ model Account {
   @@id([provider, providerAccountId])
 }
 
-model UserRoles {
-  userId    String  @unique
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  student   Boolean @default(true)
-  teacher   Boolean @default(false)
 
-  @@id([userId]) // Ustawienie userId jako klucz główny
-}
  
 model Session {
   sessionToken String   @unique
@@ -78,4 +78,48 @@ model PasswordResetToken {
   expires DateTime
 
   @@unique([email, token])
+}
+
+model Course {
+  id String @id @default(uuid())
+  ownerId String
+  title String @db.Text
+  description String? @db.Text
+  imageUrl String? @db.Text
+  price Float?
+  isPublished Boolean @default(false)
+  
+  categoryId String?
+  category Category? @relation(fields: [categoryId], references: [id])
+
+  levelId String?
+  level Level? @relation(fields: [levelId], references: [id])
+
+  attachments Attachment[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id String @id @default(uuid())
+  name String @unique
+  courses Course[]
+}
+
+model Level {
+  id String @id @default(uuid())
+  name String @unique
+  courses Course[]
+}
+
+model Attachment {
+  id String @id @default(uuid())
+  name String
+  url String @db.Text
+
+  courseId String
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

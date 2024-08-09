@@ -4,8 +4,7 @@ import "next-auth";
 declare module "next-auth" {
   interface User {
     id: string;
-    roles: {
-      student: boolean;
+    role: {
       teacher: boolean;
     };
   }

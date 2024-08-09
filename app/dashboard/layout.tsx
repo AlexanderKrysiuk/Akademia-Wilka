@@ -8,7 +8,7 @@ const DashboardLayout = ({
     return (
         <main>
             <div className="flex flex-row">
-                <div className="hidden md:block w-[20vw] max-w-full">
+                <div className="hidden md:block">
                     <SideBar/>
                 </div>
                 <div>

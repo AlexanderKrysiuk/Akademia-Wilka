@@ -3,7 +3,10 @@ import prisma from "@/lib/prisma";
 export const getUserByEmail = async (email: string) => {
     try {
         const user = await prisma.user.findUnique({
-            where: {email}
+            where: {email},
+            include: {
+                role: true
+            }
         })
         return user
     } catch(error) {
@@ -17,7 +20,7 @@ export const getUserById = async (id: string) => {
         const user = await prisma.user.findUnique({
             where: { id },
             include: {
-                roles: true
+                role: true
             }
         })
         return user

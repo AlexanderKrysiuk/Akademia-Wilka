@@ -1,5 +1,4 @@
 "use client"
-import SideBar from "@/components/dashboard/sidebar";
 import { useCurrentUser } from "@/hooks/user";
 
 const DashboardPage = () => {

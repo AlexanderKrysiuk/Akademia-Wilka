@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { PrismaClient, UserRoles } from "@prisma/client";
+import { PrismaClient, UserRole } from "@prisma/client";
 import authConfig from "@/auth.config";
 import { getUserById } from "./data/user";
 
@@ -12,9 +12,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if ( token.sub && session.user) {
         session.user.id = token.sub
       }
-      if ( token.roles && session.user) {
-        session.user.roles = token.roles as UserRoles
+      if ( token.role && session.user) {
+        session.user.role = token.role as UserRole
       }
+      //console.log ("SESSION: ", session )
       return session
     },
 
@@ -25,10 +26,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       if (!existingUser) return token;
 
-      token.roles = {
-        student: existingUser.roles.some(role => role.student) || false,
-        teacher: existingUser.roles.some(role => role.teacher) || false,
-        };
+      if (existingUser.role) {
+        token.role = { teacher: existingUser.role.teacher };
+      }
+      //console.log("TOKEN: ", token)
       return token
     },
   },

@@ -46,7 +46,7 @@ const CreateCourseForm = () => {
                             <FormControl>
                                 <Input
                                     disabled={isPending}
-                                    placeholder="rocket sience"
+                                    placeholder="Rocket Science"
                                     {...field}
                                 />
                             </FormControl>

@@ -113,7 +113,10 @@ const CourseIdPage = ({
                             <TitleForm 
                                 initialData={course} 
                                 userID={user?.id as string} 
-                                onUpdate={fetchCourse} // Przekaż fetchCourse jako onUpdate
+                                onUpdate={() => {
+                                    fetchCourse(),
+                                    setEditTitle(false); // Ustawia edycję na false po aktualizacji
+                                }}               
                             />  // Formularz pojawia się tylko w trybie edycji
                         ) : (
                             <h3>{course.title}</h3>  // Wyświetlanie tytułu, gdy edycja jest wyłączona
@@ -141,7 +144,10 @@ const CourseIdPage = ({
                             <DescriptionForm 
                                 initialData={course} 
                                 userID={user?.id as string} 
-                                onUpdate={fetchCourse} // Przekaż fetchCourse jako onUpdate
+                                onUpdate={() => {
+                                    fetchCourse(),
+                                    setEditDescription(false); // Ustawia edycję na false po aktualizacji
+                                }} // Przekaż fetchCourse jako onUpdate
                             />  // Formularz pojawia się tylko w trybie edycji
                         ) : (
                             <h3 className={course.description ? "" : "italic text-gray-500"}>

@@ -48,7 +48,10 @@ const DescriptionForm = ({
     }
 
     const form = useForm<z.infer<typeof EditCourseDescriptionSchema>>({
-        resolver: zodResolver(EditCourseDescriptionSchema)
+        resolver: zodResolver(EditCourseDescriptionSchema),
+        defaultValues: {
+            description: initialData.description || "", // Użyj opisu jako domyślnej wartości
+        }
     })
 
     return (

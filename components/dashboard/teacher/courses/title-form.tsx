@@ -48,7 +48,10 @@ const TitleForm = ({
     }
 
     const form = useForm<z.infer<typeof EditCourseTitleSchema>>({
-        resolver: zodResolver(EditCourseTitleSchema)
+        resolver: zodResolver(EditCourseTitleSchema),
+        defaultValues: {
+            title: initialData.title || "",
+        }
     })
 
     return (

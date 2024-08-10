@@ -1,7 +1,7 @@
 "use server"
 
 import { getUserById } from "@/data/user";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { CreateCourseSchema } from "@/schemas/course"
 import { v4 as uuidv4 } from "uuid";
 import * as z from 'zod'

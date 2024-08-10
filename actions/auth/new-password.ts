@@ -5,7 +5,7 @@ import { NewPasswordSchema } from "@/schemas/user"
 import * as z from 'zod'
 import bcrypt from 'bcryptjs'
 import { getUserByEmail } from "@/data/user"
-import prisma from "@/lib/prisma"
+import { prisma } from "@/lib/prisma"
 
 export const newPassword = async (
     values: z.infer<typeof NewPasswordSchema>,

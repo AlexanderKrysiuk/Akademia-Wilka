@@ -9,11 +9,14 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useCurrentUser } from "@/hooks/user";
+import { create } from "@/actions/course/create";
+import { useRouter } from "next/navigation";
 
 const CreateCourseForm = () => {
     const [isPending, startTransition] = useTransition()
     const [result, setResult] = useState<{ success: boolean, message: string} | null>(null)
     const user = useCurrentUser()
+    const router = useRouter()
 
     const form = useForm<z.infer<typeof CreateCourseSchema>>({
         resolver: zodResolver(CreateCourseSchema)
@@ -21,18 +24,19 @@ const CreateCourseForm = () => {
 
     const onSubmit = (values: z.infer<typeof CreateCourseSchema>) => {
             console.log(values)
-        //     setResult(null)
-    //     startTransition(()=>{
-    //         create(values, user?.id as string)
-    //             .then((data) => {
-    //                 //setResult({ success: data.success, message: data.message })
-    //             })
-    //     })
+            setResult(null)
+            startTransition(()=>{
+                create(values, user?.id as string)
+                    .then((data) => {
+                        setResult({ success: data.success, message: data.message })
+                        router.push(`/dashboard/teacher/my-courses/${data.course?.id}`)
+                    })
+        })
     }
 
     return ( 
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-[1vh]">
                 <FormField
                     control={form.control}
                     name="title"
@@ -50,9 +54,9 @@ const CreateCourseForm = () => {
                         </FormItem>
                     )}     
                 />
-                <div className="flex justify-center space-y-[1vh]">
+                <div className="flex justify-start space-y-[1vh]">
                     <Button type="submit" disabled={isPending}>
-                        Załóż Konto
+                        Utwórz kurs
                     </Button>
                 </div>
             </form>

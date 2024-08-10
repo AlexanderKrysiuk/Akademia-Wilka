@@ -33,11 +33,11 @@ export const Login = async (values: z.infer<typeof LoginSchema>, callBackUrl?: s
         return { success: true, message: "Wysłano e-mail weryfikacyjny!"}
     }
 
-        await signIn("credentials", {
-            email,
-            password,
-            redirect: true,
-            redirectTo: DEFAULT_LOGIN_REDIRECT,
-        })
-        return { success: true, message: "Logowanie udane!"}
+    await signIn("credentials", {
+        email,
+        password,
+        redirect: true,
+        redirectTo: DEFAULT_LOGIN_REDIRECT,
+    })
+    return { success: true, message: "Logowanie udane!"}
 }

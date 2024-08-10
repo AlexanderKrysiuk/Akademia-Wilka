@@ -13,12 +13,7 @@ const geustRoutes = [
     {
         icon: Layout,
         label: "Dashboard",
-        href: "/dashboard"
-    },
-    {
-        icon: Compass,
-        label: "Browse",
-        href: "/dashboard/search"
+        href: "/kokpit"
     }
 ]
 
@@ -26,13 +21,9 @@ const teacherRoutes = [
     {
         icon: Rocket,
         label: "Moje kursy",
-        href: "/dashboard/teacher/my-courses"
+        href: "/teacher/my-courses"
     },
-    {
-        icon: Compass,
-        label: "Teacher Resources",
-        href: "/dashboard/resources"
-    }
+
 ];
 
 

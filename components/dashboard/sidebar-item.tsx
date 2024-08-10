@@ -18,7 +18,7 @@ const SidebarItem = ({
     const pathname = usePathname()
     const router = useRouter()
 
-    const isActive = (pathname === "/dashboard" && href === "/dashboard") || pathname === href || pathname?.startsWith(`${href}/dashboard`)
+    const isActive = (pathname === "/" && href === "/") || pathname === href || pathname?.startsWith(`${href}/`)
     //const isActive = pathname === href || pathname.startsWith(`${href}/`);
 
 

@@ -23,13 +23,12 @@ const CreateCourseForm = () => {
     })
 
     const onSubmit = (values: z.infer<typeof CreateCourseSchema>) => {
-            console.log(values)
             setResult(null)
             startTransition(()=>{
                 create(values, user?.id as string)
                     .then((data) => {
                         setResult({ success: data.success, message: data.message })
-                        router.push(`/dashboard/teacher/my-courses/${data.course?.id}`)
+                        router.push(`/teacher/my-courses/${data.course?.id}`)
                     })
         })
     }

@@ -10,7 +10,7 @@ export const create = async (values: z.infer<typeof CreateCourseSchema>, userID:
     const validatedFields = CreateCourseSchema.safeParse(values);
 
     if (!validatedFields.success){
-        return { success: false, message: "Podane pola są nieprawidłowe" }
+        return { success: false, message: "Podane pola są nieprawidłowe!" }
     }
 
     if (!userID) {

@@ -10,7 +10,7 @@ const MyCourses = () => {
 
     return ( 
         <div className='px-[1vw] py-[1vh]'>
-            <Button className='flex gap-x-[1vw]' onClick={() => router.push("/dashboard/teacher/my-courses/create")}>
+            <Button className='flex gap-x-[1vw]' onClick={() => router.push("/teacher/my-courses/create")}>
                 <SquarePlus/>
                 Stwórz nowy kurs
             </Button>

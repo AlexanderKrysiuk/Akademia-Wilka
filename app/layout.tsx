@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Image from 'next/image';
 import Header from "@/components/header/header";
 import { auth } from "@/auth";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "@/components/theme-providet";
+import { Toaster } from "@/components/ui/toaster"
 
 
 
@@ -35,6 +35,7 @@ export default async function RootLayout({
               >
           <Header/>
           {children}
+          <Toaster/>
           </ThemeProvider>
         </body>
       </html>

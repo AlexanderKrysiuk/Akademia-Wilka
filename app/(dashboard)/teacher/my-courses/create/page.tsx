@@ -7,8 +7,7 @@ const CreateCoursePage = () => {
     checkIfTeacherRedirect
 
     return ( 
-        <div className="my-[10vh] mx-[10vw] justify-center w-full">
-            <Card className="py-[1vh] px-[1vw] space-y-[1vh]">
+            <Card className="mx-[1vw] my-[1vh] py-[1vh] px-[1vw] space-y-[1vh]">
                 <CardHeader>
                     <CardTitle className="justify-center flex">
                         📗Utwórz nowy kurs
@@ -18,7 +17,6 @@ const CreateCoursePage = () => {
                     <CreateCourseForm/>
                 </CardContent>
             </Card>
-        </div>
     );
 }
  

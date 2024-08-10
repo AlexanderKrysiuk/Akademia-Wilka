@@ -19,6 +19,7 @@ const CourseIdPage = ({
         const fetchCourse = async () => {
             const course = await getCourseById(params.courseId)
             if(!course){
+                router.push("/")
                 return
             }
             setCourse(course)

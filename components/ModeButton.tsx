@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { LuMoonStar, LuSun } from "react-icons/lu";
+import { Sun, Moon } from 'lucide-react';
 import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
 
@@ -21,11 +21,11 @@ export function ModeButton() {
   }
 
   return (
-    <Button variant="ghost" size="icon" onClick={toggleTheme}>
+    <Button variant="link" size="icon" onClick={toggleTheme}>
       {theme === "light" ? (
-        <LuMoonStar/>
+        <Moon/>
       ) : (
-        <LuSun/>
+        <Sun/>
       )}
       <span className="sr-only">Toggle theme</span>
     </Button>

@@ -10,7 +10,6 @@ import * as z from 'zod'
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast"
 import { updateCourseDescription } from "@/actions/course/description-update";
-import { Textarea } from "@/components/ui/textarea";
 import ReactQuill from 'react-quill';
 
 interface DescriptionFormProps {

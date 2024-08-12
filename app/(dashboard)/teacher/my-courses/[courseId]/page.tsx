@@ -10,6 +10,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Button } from "@/components/ui/button";
 import DescriptionForm from "@/components/dashboard/teacher/courses/description-form";
 import ImageCropper from "@/components/image-cropper";
+import CategoryForm from "@/components/dashboard/teacher/courses/category-form";
 
 const CourseIdPage = ({
     params
@@ -22,6 +23,7 @@ const CourseIdPage = ({
     const [editTitle, setEditTitle] = useState(false);
     const [editDescription, setEditDescription] = useState(false);
     const [editImage, setEditImage] = useState(false);
+    const [editCategory, setEditCategory] = useState(false)
     const [selectedImage, setSelectedImage] = useState<File | null>(null); // Stan do przechowywania wybranego pliku
     const fileInputRef = useRef<HTMLInputElement | null>(null); // Ref do input file
 
@@ -119,7 +121,7 @@ const CourseIdPage = ({
                                 }}
                             >
                                 {!editTitle && <SquarePen />}
-                                {editTitle ? "Anuluj" : "Edytuj"}
+                                {editTitle ? "Anuluj" : "Edytuj tytuł"}
                             </Button>
                         </h2>
                     </CardHeader>
@@ -127,7 +129,7 @@ const CourseIdPage = ({
                         {editTitle ? (
                             <TitleForm
                                 initialData={course}
-                                userID={user?.id as string}
+                                userID={user.id}
                                 onUpdate={() => {
                                     fetchCourse();
                                     setEditTitle(false);
@@ -150,7 +152,7 @@ const CourseIdPage = ({
                                 }}
                             >
                                 {!editDescription && <SquarePen />}
-                                {editDescription ? "Anuluj" : "Edytuj"}
+                                {editDescription ? "Anuluj" : "Edytuj opis"}
                             </Button>
                         </h2>
                     </CardHeader>
@@ -158,7 +160,7 @@ const CourseIdPage = ({
                         {editDescription ? (
                             <DescriptionForm
                                 initialData={course}
-                                userID={user?.id as string}
+                                userID={user.id}
                                 onUpdate={() => {
                                     fetchCourse();
                                     setEditDescription(false);
@@ -192,11 +194,45 @@ const CourseIdPage = ({
                     </CardHeader>
                     <CardContent>
                         {course.imageUrl ? (
-                            <img src={course.imageUrl} alt="Course Image" />
+                            <img src={course.imageUrl} alt="Course Image" className="rounded-md" />
                         ) : (
                             <div className="h-[20vh] flex items-center justify-center bg-primary/10 rounded-md">
                                 <ImageIcon className="h-[5vh] w-[5vh]" />
                             </div>
+                        )}
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <h2 className="justify-between w-full flex items-center">
+                            Kategoria kursu
+                            <Button
+                                variant={`link`}
+                                className="gap-x-[1vw]"
+                                onClick={() => {
+                                    setEditCategory(prev => !prev);
+                                }}
+                            >
+                                {!editCategory && <SquarePen />}
+                                {editCategory ? "Anuluj" : "Edytuj kategorię"}
+                            </Button>
+                        </h2>
+                    </CardHeader>
+                    <CardContent>
+                        {editCategory ? (
+                            <CategoryForm
+                                initialData={course}
+                                userID={user.id}
+                                onUpdate={() => {
+                                    fetchCourse()
+                                    setEditCategory(false)
+                                }}
+                            />
+                        ) : (
+                            <div>
+                            
+                            </div>
+                        
                         )}
                     </CardContent>
                 </Card>

@@ -1,5 +1,6 @@
 import { useCurrentUser } from "@/hooks/user";
-import { FaUserCircle } from "react-icons/fa";
+import { CircleUser } from 'lucide-react';
+
 import Image from 'next/image';
 
 const Avatar = () => {
@@ -17,7 +18,7 @@ const Avatar = () => {
                     alt="Opis obrazka"
                     />
                 ) : (
-                    <FaUserCircle className='w-full h-full' />
+                    <CircleUser className='w-full h-full' />
                 )}
                 </div>
             </div>

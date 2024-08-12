@@ -1,4 +1,4 @@
-import { LuCheckCircle, LuAlertTriangle } from 'react-icons/lu';
+import { CircleCheckBig, TriangleAlert } from 'lucide-react';
 
 type Result = {
     success: boolean;
@@ -11,7 +11,7 @@ const RenderResultMessage = (result: Result) => {
     return (
         <div className={`flex mx-auto justify-center ${result.success ? 'text-emerald-500' : 'text-red-500'}`}>
             <p className="flex items-center gap-x-[1vw]">
-                {result.success ? <LuCheckCircle /> : <LuAlertTriangle />}
+                {result.success ? <CircleCheckBig /> : <TriangleAlert />}
                 {result.message}
             </p>
         </div>

@@ -2,7 +2,7 @@ import SidebarRoutes from "./sidebar-routes";
 
 const SideBar = () => {
     return ( 
-            <div className="h-full md:h-[90vh] border-r shadow-sm">
+            <div className="shadow-sm w-full h-full min-h-[90vh]">
                 <SidebarRoutes/> 
             </div>
      );

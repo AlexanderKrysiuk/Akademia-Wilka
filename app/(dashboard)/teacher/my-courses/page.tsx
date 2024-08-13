@@ -6,8 +6,6 @@ import { useRouter } from 'next/navigation';
 
 const MyCourses = () => {
     const router = useRouter();
-    checkIfTeacherRedirect();
-
     return ( 
         <div className='px-[1vw] py-[1vh]'>
             <Button className='flex gap-x-[1vw]' onClick={() => router.push("/teacher/my-courses/create")}>
@@ -15,6 +13,7 @@ const MyCourses = () => {
                 Stwórz nowy kurs
             </Button>
         </div>
+
     );
 }
  

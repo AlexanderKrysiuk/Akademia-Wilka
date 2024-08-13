@@ -7,11 +7,11 @@ const DashboardLayout = ({
 }) => {
     return (
         <main>
-            <div className="flex flex-row">
-                <div className="hidden md:block">
+            <div className="flex flex-flow-col h-full">
+                <div className="hidden md:block border-r w-[20%]">
                     <SideBar/>
                 </div>
-                <div className="w-full">
+                <div className="w-[80%]">
                     {children}
                 </div>
             </div>

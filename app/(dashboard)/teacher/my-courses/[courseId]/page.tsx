@@ -1,7 +1,7 @@
 "use client"
 import { getCourseById } from "@/actions/course/get";
 import { useCurrentUser } from "@/hooks/user";
-import { Category, Course } from "@prisma/client";
+import { Category, Course, Level } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { ImageIcon, Settings, SquarePen, SquarePlus } from 'lucide-react';
@@ -12,6 +12,8 @@ import DescriptionForm from "@/components/dashboard/teacher/courses/description-
 import ImageCropper from "@/components/image-cropper";
 import CategoryForm from "@/components/dashboard/teacher/courses/category-form";
 import { getCategoryByID } from "@/actions/course/category"; // Dodaj tę funkcję, aby pobrać kategorię
+import { getLevelByID } from "@/actions/course/level";
+import LevelForm from "@/components/dashboard/teacher/courses/level-form";
 
 
 const CourseIdPage = ({
@@ -26,8 +28,10 @@ const CourseIdPage = ({
     const [editDescription, setEditDescription] = useState(false);
     const [editImage, setEditImage] = useState(false);
     const [editCategory, setEditCategory] = useState(false)
+    const [editLevel, setEditLevel] = useState(false)
     const [selectedImage, setSelectedImage] = useState<File | null>(null); // Stan do przechowywania wybranego pliku
     const [category, setCategory] = useState<Category | null>(null); // Stan do przechowywania kategorii
+    const [level, setLevel] = useState<Level | null>(null); // Stan do przechowywania poziomu
     const fileInputRef = useRef<HTMLInputElement | null>(null); // Ref do input file
 
     if (!user) {
@@ -58,6 +62,13 @@ const CourseIdPage = ({
             setCategory(fetchedCategory || null)
         } else {
             setCategory(null)
+        }
+
+        if (course.levelId) {
+            const fetchedLevel = await getLevelByID(course.levelId)
+            setLevel(fetchedLevel || null)
+        } else {
+            setLevel(null)
         }
     };
 
@@ -107,7 +118,7 @@ const CourseIdPage = ({
     };
 
     return (
-        <div className="w-full px-[1vw] py-[1vh] space-y-[1vh]">
+        <div className="w-full px-[1vw] py-[1vh] space-y-[1vh] mb-[10vh]">
             <Card className="py-[1vh] px-[1vw] w-full">
                 <CardHeader>
                     <CardTitle>
@@ -135,7 +146,7 @@ const CourseIdPage = ({
                             </Button>
                         </h2>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="w-full">
                         {editTitle ? (
                             <TitleForm
                                 initialData={course}
@@ -166,7 +177,7 @@ const CourseIdPage = ({
                             </Button>
                         </h2>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="w-full">
                         {editDescription ? (
                             <DescriptionForm
                                 initialData={course}
@@ -202,7 +213,7 @@ const CourseIdPage = ({
                             </Button>
                         </h2>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="w-full">
                         {course.imageUrl ? (
                             <img src={course.imageUrl} alt="Course Image" className="rounded-md" />
                         ) : (
@@ -212,7 +223,7 @@ const CourseIdPage = ({
                         )}
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="h-auto w-full">
                     <CardHeader>
                         <h2 className="justify-between w-full flex items-center">
                             Kategoria kursu
@@ -228,7 +239,7 @@ const CourseIdPage = ({
                             </Button>
                         </h2>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="w-full">
                         {editCategory ? (
                             <CategoryForm
                                 initialData={course}
@@ -243,6 +254,39 @@ const CourseIdPage = ({
                                 {category ? category.name : "Brak kategorii"}
                             </div>
                         
+                        )}
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <h2 className="justify-between w-full flex items-center">
+                            Poziom kursu
+                            <Button
+                                variant={`link`}
+                                className="gap-x-[1vw]"
+                                onClick={() => {
+                                    setEditLevel(prev => !prev);
+                                }}
+                            >
+                                {!editLevel && <SquarePen />}
+                                {editLevel ? "Anuluj" : "Edytuj poziom"}
+                            </Button>
+                        </h2>
+                    </CardHeader>
+                    <CardContent className="w-full">
+                        {editLevel ? (
+                            <LevelForm
+                                initialData={course}
+                                userID={user.id}
+                                onUpdate={() => {
+                                    fetchCourse()
+                                    setEditLevel(false)
+                                }}
+                            />
+                        ) : (
+                            <div>
+                                {level ? level.name : "Brak poziomu"}
+                            </div>
                         )}
                     </CardContent>
                 </Card>

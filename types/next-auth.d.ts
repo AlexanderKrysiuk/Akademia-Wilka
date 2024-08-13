@@ -1,16 +1,24 @@
-// @types/next-auth.d.ts
-import "next-auth";
+// types/next-auth.d.ts
+import { User as PrismaUser, UserRole } from "@prisma/client";
 
 declare module "next-auth" {
-  interface User {
-    id: string;
-    role: {
-      teacher: boolean;
+  interface User extends PrismaUser {}
+
+  interface Session {
+    user: {
+      id: string;
+      email: string;
+      name?: string | null;
+      role?: UserRole | null; // Zależy od struktury Twojego UserRole
+      image?: string | null;
+      // Dodaj tutaj dodatkowe pola, które chcesz mieć w sesji
     };
   }
 
-  interface Session {
-    user: User;
+  interface JWT {
+    id: string;
+    email: string;
+    role?: UserRole | null;
+    // Dodaj tutaj dodatkowe pola, które chcesz mieć w JWT
   }
-
 }

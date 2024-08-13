@@ -1,7 +1,7 @@
 "use client"
 import { getCourseById } from "@/actions/course/get";
 import { useCurrentUser } from "@/hooks/user";
-import { Course } from "@prisma/client";
+import { Category, Course } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { ImageIcon, Settings, SquarePen, SquarePlus } from 'lucide-react';
@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import DescriptionForm from "@/components/dashboard/teacher/courses/description-form";
 import ImageCropper from "@/components/image-cropper";
 import CategoryForm from "@/components/dashboard/teacher/courses/category-form";
+import { getCategoryByID } from "@/actions/course/category"; // Dodaj tę funkcję, aby pobrać kategorię
+
 
 const CourseIdPage = ({
     params
@@ -25,6 +27,7 @@ const CourseIdPage = ({
     const [editImage, setEditImage] = useState(false);
     const [editCategory, setEditCategory] = useState(false)
     const [selectedImage, setSelectedImage] = useState<File | null>(null); // Stan do przechowywania wybranego pliku
+    const [category, setCategory] = useState<Category | null>(null); // Stan do przechowywania kategorii
     const fileInputRef = useRef<HTMLInputElement | null>(null); // Ref do input file
 
     if (!user) {
@@ -37,7 +40,7 @@ const CourseIdPage = ({
         return;
     }
 
-    if (!user?.role.teacher) {
+    if (!user?.role?.teacher) {
         router.push("/");
         return;
     }
@@ -49,6 +52,13 @@ const CourseIdPage = ({
             return;
         }
         setCourse(course);
+
+        if (course.categoryId) {
+            const fetchedCategory = await getCategoryByID(course.categoryId)
+            setCategory(fetchedCategory || null)
+        } else {
+            setCategory(null)
+        }
     };
 
     useEffect(() => {
@@ -230,7 +240,7 @@ const CourseIdPage = ({
                             />
                         ) : (
                             <div>
-                            
+                                {category ? category.name : "Brak kategorii"}
                             </div>
                         
                         )}

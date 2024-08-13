@@ -8,7 +8,6 @@ const descriptionTemplate = z.string()
 
 const categoryIdTemplate = z.string().uuid({ message: "Nieprawidłowy format kategorii!" });
 
-
 export const CreateCourseSchema = z.object({
     title: titleTemplate
 })

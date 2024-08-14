@@ -8,10 +8,10 @@ const DashboardLayout = ({
     return (
         <main>
             <div className="flex flex-flow-col h-full">
-                <div className="hidden md:block border-r w-[20%]">
+                <div className="hidden md:block border-r w-[20vw]">
                     <SideBar/>
                 </div>
-                <div className="w-[80%]">
+                <div className="w-full">
                     {children}
                 </div>
             </div>

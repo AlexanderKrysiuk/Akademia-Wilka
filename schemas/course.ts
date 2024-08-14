@@ -10,6 +10,10 @@ const categoryIdTemplate = z.string().uuid({ message: "Nieprawidłowy format kat
 
 const levelIdTemplate = z.string().uuid({ message: "Nieprawidłowy format poziomu!" })
 
+const priceTemplate = z.coerce.number()
+    .min(0, { message: "Cena nie może być mniejsza niż 0" })
+    .nullable()
+
 export const CreateCourseSchema = z.object({
     title: titleTemplate
 })
@@ -28,4 +32,8 @@ export const EditCourseCategorySchema = z.object({
 
 export const EditCourseLevelSchema = z.object({
     levelId: levelIdTemplate
+})
+
+export const EditCoursePriceSchema = z.object({
+    price: priceTemplate
 })

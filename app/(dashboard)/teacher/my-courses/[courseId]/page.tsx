@@ -14,6 +14,8 @@ import CategoryForm from "@/components/dashboard/teacher/courses/category-form";
 import { getCategoryByID } from "@/actions/course/category"; // Dodaj tę funkcję, aby pobrać kategorię
 import { getLevelByID } from "@/actions/course/level";
 import LevelForm from "@/components/dashboard/teacher/courses/level-form";
+import PriceForm from "@/components/dashboard/teacher/courses/price-form";
+import { formatPrice } from "@/lib/format";
 
 
 const CourseIdPage = ({
@@ -29,10 +31,12 @@ const CourseIdPage = ({
     const [editImage, setEditImage] = useState(false);
     const [editCategory, setEditCategory] = useState(false)
     const [editLevel, setEditLevel] = useState(false)
+    const [editPrice, setEditPrice] = useState(false)
     const [selectedImage, setSelectedImage] = useState<File | null>(null); // Stan do przechowywania wybranego pliku
     const [category, setCategory] = useState<Category | null>(null); // Stan do przechowywania kategorii
     const [level, setLevel] = useState<Level | null>(null); // Stan do przechowywania poziomu
     const fileInputRef = useRef<HTMLInputElement | null>(null); // Ref do input file
+
 
     if (!user) {
         router.push("/");
@@ -286,6 +290,39 @@ const CourseIdPage = ({
                         ) : (
                             <div>
                                 {level ? level.name : "Brak poziomu"}
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+                <Card>
+                <CardHeader>
+                        <h2 className="justify-between w-full flex items-center">
+                            Cena kursu
+                            <Button
+                                variant={`link`}
+                                className="gap-x-[1vw]"
+                                onClick={() => {
+                                    setEditPrice(prev => !prev);
+                                }}
+                            >
+                                {!editPrice && <SquarePen />}
+                                {editPrice ? "Anuluj" : "Edytuj cenę"}
+                            </Button>
+                        </h2>
+                    </CardHeader>
+                    <CardContent className="w-full">
+                        {editPrice ? (
+                            <PriceForm
+                                initialData={course}
+                                userID={user.id}
+                                onUpdate={() => {
+                                    fetchCourse()
+                                    setEditPrice(false)
+                                }}
+                            />
+                        ) : (
+                            <div>
+                                {course.price ? formatPrice(course.price) : "Kurs bezpłatny"}
                             </div>
                         )}
                     </CardContent>

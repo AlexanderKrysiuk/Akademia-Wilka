@@ -1,10 +1,10 @@
 "use client"
 import { getCourseById } from "@/actions/course/get";
 import { useCurrentUser } from "@/hooks/user";
-import { Category, Course, Level } from "@prisma/client";
+import { Category, Course, Level, Attachment } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
-import { ImageIcon, Settings, SquarePen, SquarePlus } from 'lucide-react';
+import { useEffect, useState, useRef, startTransition } from "react";
+import { ImageIcon, Settings, SquarePen, SquarePlus, File, FilePlus, Loader } from 'lucide-react';
 import TitleForm from "@/components/dashboard/teacher/courses/title-form";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,10 @@ import { getLevelByID } from "@/actions/course/level";
 import LevelForm from "@/components/dashboard/teacher/courses/level-form";
 import PriceForm from "@/components/dashboard/teacher/courses/price-form";
 import { formatPrice } from "@/lib/format";
+import { getAttachmentsByCourseId } from "@/actions/course/attachments";
+import AddAttachmentToCourseForm from "@/components/dashboard/teacher/courses/add-attachment-to-course-form";
+import { toast } from "@/components/ui/use-toast";
+import { uploadAttachmentToCourse } from "@/actions/file/upload-attachment-to-course";
 
 
 const CourseIdPage = ({
@@ -32,10 +36,14 @@ const CourseIdPage = ({
     const [editCategory, setEditCategory] = useState(false)
     const [editLevel, setEditLevel] = useState(false)
     const [editPrice, setEditPrice] = useState(false)
+    const [editAttachment, setEditAttachment] = useState(false)
+    const [attachmentUploading, setAttachmentUploading] = useState(false); // Stan do monitorowania przesyłania pliku
     const [selectedImage, setSelectedImage] = useState<File | null>(null); // Stan do przechowywania wybranego pliku
     const [category, setCategory] = useState<Category | null>(null); // Stan do przechowywania kategorii
     const [level, setLevel] = useState<Level | null>(null); // Stan do przechowywania poziomu
+    const [attachments, setAttachments] = useState<Attachment[]>([]);
     const fileInputRef = useRef<HTMLInputElement | null>(null); // Ref do input file
+    const attachmentInputRef = useRef<HTMLInputElement | null>(null); // Ref do input file
 
 
     if (!user) {
@@ -74,6 +82,9 @@ const CourseIdPage = ({
         } else {
             setLevel(null)
         }
+
+        const attachments = await getAttachmentsByCourseId(course.id);
+        setAttachments(attachments || []);
     };
 
     useEffect(() => {
@@ -118,6 +129,53 @@ const CourseIdPage = ({
             const file = e.target.files[0];
             setSelectedImage(file); // Ustaw wybrany plik
             setEditImage(true); // Otwórz edycję obrazka
+        }
+    };
+    
+    const handleAddAttachmentClick = () => {
+        if (attachmentInputRef.current) {
+            attachmentInputRef.current.click(); // Kliknij ukryty input
+        }
+    };
+
+    const handleAttachmentChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const file = e.target.files[0];
+            setAttachmentUploading(true);
+    
+            const formData = new FormData();
+            formData.append('file', file); // Dodanie pliku
+            formData.append('courseId', course.id); // Dodanie ID kursu
+            formData.append('userId', user.id); // Dodanie ID użytkownika
+    
+            try {
+                startTransition(()=> {
+                    //await uploadCourseImage(formData); // Zaktualizuj tę funkcję w zależności od tego, jak wysyłasz obrazek
+                    uploadAttachmentToCourse(formData)
+                        .then(() => {
+                            toast({
+                                title: "✅ Sukces!",
+                                description: "Zdjęcie zostało przesłane!",
+                                variant: "success",
+                            });
+                            setAttachmentUploading(false)
+                            fetchCourse()// Wywołanie onUpdate po pomyślnym przesłaniu
+                        })
+                        .catch((error) => {
+                            toast({
+                                title: "❌ Błąd!",
+                                description: "Wystąpił błąd podczas przesyłania zdjęcia.",
+                                variant: "failed",
+                            });
+                        });
+                })
+            } catch (error) {
+                toast({
+                    title: "❌ Błąd!",
+                    description: "Wystąpił błąd podczas przesyłania zdjęcia.",
+                    variant: "failed",
+                });
+            }
         }
     };
 
@@ -325,6 +383,51 @@ const CourseIdPage = ({
                                 {course.price ? formatPrice(course.price) : "Kurs bezpłatny"}
                             </div>
                         )}
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                    <h2 className="justify-between w-full flex items-center">
+                            Załączniki kursu
+                            <Button
+                                variant={`link`}
+                                className="gap-x-[1vw]"
+                                onClick={handleAddAttachmentClick}
+                                disabled={attachmentUploading} // Wyłącz przycisk podczas przesyłania
+                            >
+                            <FilePlus /> Dodaj załącznik
+                        </Button>
+                        </h2>
+                    </CardHeader>
+                    <CardContent className="w-full">
+                        {attachments.length > 0 ? (
+                            attachments.map((attachment) => (
+                                <div key={attachment.id} className="flex items-center gap-x-[1vw]">
+                                    <File/>
+                                    <a href={attachment.url} download className="text-primary truncate hover:underline">
+                                        {attachment.name}
+                                    </a>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="flex items-center bg-primary/10 rounded-md px-[1vw] py-[1vh]">
+                                Brak załączników
+                            </div>
+                        )}
+                        {attachmentUploading && (
+                            <div className="flex items-center justify-center mt-2">
+                                <Loader className="animate-spin" />
+                                <span> Dodawanie załącznika...</span>
+                            </div>
+                        )}
+                        {/* Dodaj input do wyboru pliku */}
+                        <input
+                            type="file"
+                            accept="*/*" // Akceptuj wszystkie typy plików
+                            ref={attachmentInputRef} // Użyj referencji
+                            style={{ display: 'none' }} // Ukrywamy input
+                            onChange={handleAttachmentChange} // Obsłuż zmianę pliku
+                        />
                     </CardContent>
                 </Card>
             </div>

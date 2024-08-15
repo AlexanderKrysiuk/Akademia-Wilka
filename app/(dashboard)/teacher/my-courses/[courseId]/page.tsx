@@ -4,7 +4,7 @@ import { useCurrentUser } from "@/hooks/user";
 import { Category, Course, Level, Attachment } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef, startTransition } from "react";
-import { ImageIcon, Settings, SquarePen, SquarePlus, File, FilePlus, Loader } from 'lucide-react';
+import { ImageIcon, Settings, SquarePen, SquarePlus, File, FilePlus, Loader, X } from 'lucide-react';
 import TitleForm from "@/components/dashboard/teacher/courses/title-form";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,10 +16,12 @@ import { getLevelByID } from "@/actions/course/level";
 import LevelForm from "@/components/dashboard/teacher/courses/level-form";
 import PriceForm from "@/components/dashboard/teacher/courses/price-form";
 import { formatPrice } from "@/lib/format";
-import { getAttachmentsByCourseId } from "@/actions/course/attachments";
+import { deleteAttachmentByID, getAttachmentsByCourseId } from "@/actions/course/attachments";
 import AddAttachmentToCourseForm from "@/components/dashboard/teacher/courses/add-attachment-to-course-form";
 import { toast } from "@/components/ui/use-toast";
 import { uploadAttachmentToCourse } from "@/actions/file/upload-attachment-to-course";
+import { uploadAttachment } from "@/utils/attachment";
+import DeleteAttachmentModal from "@/components/dashboard/teacher/courses/delete-attachment-modal";
 
 
 const CourseIdPage = ({
@@ -36,12 +38,13 @@ const CourseIdPage = ({
     const [editCategory, setEditCategory] = useState(false)
     const [editLevel, setEditLevel] = useState(false)
     const [editPrice, setEditPrice] = useState(false)
-    const [editAttachment, setEditAttachment] = useState(false)
+    const [deleteAttachmentModal, setDeleteAttachmentModal] = useState(false)
     const [attachmentUploading, setAttachmentUploading] = useState(false); // Stan do monitorowania przesyłania pliku
     const [selectedImage, setSelectedImage] = useState<File | null>(null); // Stan do przechowywania wybranego pliku
     const [category, setCategory] = useState<Category | null>(null); // Stan do przechowywania kategorii
     const [level, setLevel] = useState<Level | null>(null); // Stan do przechowywania poziomu
     const [attachments, setAttachments] = useState<Attachment[]>([]);
+    const [attachment, setAttachment] = useState<Attachment>()
     const fileInputRef = useRef<HTMLInputElement | null>(null); // Ref do input file
     const attachmentInputRef = useRef<HTMLInputElement | null>(null); // Ref do input file
 
@@ -107,7 +110,6 @@ const CourseIdPage = ({
         course.title,
         course.description,
         course.imageUrl,
-        course.price,
         course.categoryId,
         course.levelId
     ];
@@ -141,42 +143,13 @@ const CourseIdPage = ({
     const handleAttachmentChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             const file = e.target.files[0];
-            setAttachmentUploading(true);
-    
-            const formData = new FormData();
-            formData.append('file', file); // Dodanie pliku
-            formData.append('courseId', course.id); // Dodanie ID kursu
-            formData.append('userId', user.id); // Dodanie ID użytkownika
-    
-            try {
-                startTransition(()=> {
-                    //await uploadCourseImage(formData); // Zaktualizuj tę funkcję w zależności od tego, jak wysyłasz obrazek
-                    uploadAttachmentToCourse(formData)
-                        .then(() => {
-                            toast({
-                                title: "✅ Sukces!",
-                                description: "Zdjęcie zostało przesłane!",
-                                variant: "success",
-                            });
-                            setAttachmentUploading(false)
-                            fetchCourse()// Wywołanie onUpdate po pomyślnym przesłaniu
-                        })
-                        .catch((error) => {
-                            toast({
-                                title: "❌ Błąd!",
-                                description: "Wystąpił błąd podczas przesyłania zdjęcia.",
-                                variant: "failed",
-                            });
-                        });
-                })
-            } catch (error) {
-                toast({
-                    title: "❌ Błąd!",
-                    description: "Wystąpił błąd podczas przesyłania zdjęcia.",
-                    variant: "failed",
-                });
-            }
+            await uploadAttachment(file, course.id, user.id, fetchCourse, setAttachmentUploading);
         }
+    };
+
+    const deleteAttachment = (attachment: Attachment) => {
+        setAttachment(attachment);
+        setDeleteAttachmentModal(true);
     };
 
     return (
@@ -407,6 +380,13 @@ const CourseIdPage = ({
                                     <a href={attachment.url} download className="text-primary truncate hover:underline">
                                         {attachment.name}
                                     </a>
+                                    <Button
+                                    variant="link"
+                                    className="text-red-500"
+                                    onClick={() => deleteAttachment(attachment)} // Otwórz modal po kliknięciu
+                                >
+                                    <X className="h-4 w-4" />
+                                </Button>
                                 </div>
                             ))
                         ) : (
@@ -452,6 +432,18 @@ const CourseIdPage = ({
                         fetchCourse();
                         setEditImage(false);
                     }}
+                />
+            )}
+            {/* Modal potwierdzenia usunięcia */}
+            {deleteAttachmentModal && (
+                <DeleteAttachmentModal
+                    isOpen={deleteAttachmentModal}
+                    onClose={() => setDeleteAttachmentModal(false)}
+                    onUpdate={()=>{
+                        fetchCourse()
+                        setDeleteAttachmentModal(false)
+                    }} // Przekazujemy funkcję do aktualizacji
+                    initialData={attachment}
                 />
             )}
         </div>

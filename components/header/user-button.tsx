@@ -20,7 +20,7 @@ const UserButton = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                     <DropdownMenuItem>
-                        <Link href="/dashboard" passHref>
+                        <Link href="/kokpit" passHref>
                             <TfiDashboard className='h-4 w-4 mr-2 flex'/>
                             Panel Sterowania    
                         </Link>    

@@ -23,6 +23,10 @@ export const deleteAttachmentByID = async (id: string) => {
         return { success: false, message: "Nie znaleziono załącznika!"}
     }
 
+    if (!attachment.courseId) {
+        return { success: false, message: "Załącznik musi mieć id kursu!"} 
+    }
+
     const fileServer = process.env.FILE_SERVER_URL
 
     if (!fileServer) {

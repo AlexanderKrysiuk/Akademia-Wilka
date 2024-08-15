@@ -28,6 +28,23 @@ model UserRole {
 
   user    User?   @relation(fields: [userId], references: [id])
 }
+
+model UserProgress {
+  id        String   @id @default(uuid())
+  userId    String
+
+  lessonId  String
+  lesson    Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  completed Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([lessonId])
+  @@unique([userId, lessonId])
+}
+
  
 model Account {
   userId            String
@@ -96,6 +113,9 @@ model Course {
   level Level? @relation(fields: [levelId], references: [id])
 
   attachments Attachment[]
+  chapters Chapter[]
+  purchases Purchase[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -117,8 +137,72 @@ model Attachment {
   name String
   url String @db.Text
 
+  courseId String?
+  course Course? @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  lessonId String?
+  lesson Lesson? @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Chapter{
+  id String @id @default(uuid())
+  title String
   courseId String
   course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  lessons Lesson[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Lesson{
+  id String @id @default(uuid())
+  title String
+  type LessonType
+  content String?
+  videoUrl String?
+  audioUrl String?
+  free Boolean @default(false)
+
+  chapterId String
+  chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  attachments Attachment[]
+
+  userProgress UserProgress[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum LessonType {
+  Text
+  Video
+  Audio
+  Subchapter
+}
+
+model Purchase {
+  id String @id @default(uuid())
+  userId String
+
+  courseId String
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([courseId])
+}
+
+model StripeCustomer {
+  id String @id @default(uuid())
+  userId String @unique
+  stripeCustomerId String @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -33,12 +33,10 @@ const CourseIdPage = ({
     const user = useCurrentUser();
     const router = useRouter();
     const [course, setCourse] = useState<Course>();
-    const [editCategory, setEditCategory] = useState(false)
     const [editLevel, setEditLevel] = useState(false)
     const [editPrice, setEditPrice] = useState(false)
     const [deleteAttachmentModal, setDeleteAttachmentModal] = useState(false)
     const [attachmentUploading, setAttachmentUploading] = useState(false); // Stan do monitorowania przesyłania pliku
-    const [category, setCategory] = useState<Category | null>(null); // Stan do przechowywania kategorii
     const [level, setLevel] = useState<Level | null>(null); // Stan do przechowywania poziomu
     const [attachments, setAttachments] = useState<Attachment[]>([]);
     const [attachment, setAttachment] = useState<Attachment>()
@@ -72,13 +70,6 @@ const CourseIdPage = ({
             return;
         }
         setCourse(course);
-
-        if (course.categoryId) {
-            const fetchedCategory = await getCategoryByID(course.categoryId)
-            setCategory(fetchedCategory || null)
-        } else {
-            setCategory(null)
-        }
 
         if (course.levelId) {
             const fetchedLevel = await getLevelByID(course.levelId)
@@ -189,41 +180,14 @@ const CourseIdPage = ({
                             fetchCourse()
                         }}
                     />            
+                    <CategoryForm
+                        course={course}
+                        userID={user.id}
+                        onUpdate={() => {
+                            fetchCourse()
+                        }}
+                    />   
                 </div>
-                <Card className="h-auto w-full">
-                    <CardHeader>
-                        <h2 className="justify-between w-full flex items-center">
-                            Kategoria kursu
-                            <Button
-                                variant={`link`}
-                                className="gap-x-[1vw]"
-                                onClick={() => {
-                                    setEditCategory(prev => !prev);
-                                }}
-                            >
-                                {!editCategory && <SquarePen />}
-                                {editCategory ? "Anuluj" : "Edytuj kategorię"}
-                            </Button>
-                        </h2>
-                    </CardHeader>
-                    <CardContent className="w-full">
-                        {editCategory ? (
-                            <CategoryForm
-                                initialData={course}
-                                userID={user.id}
-                                onUpdate={() => {
-                                    fetchCourse()
-                                    setEditCategory(false)
-                                }}
-                            />
-                        ) : (
-                            <div>
-                                {category ? category.name : "Brak kategorii"}
-                            </div>
-                        
-                        )}
-                    </CardContent>
-                </Card>
                 <Card>
                     <CardHeader>
                         <h2 className="justify-between w-full flex items-center">

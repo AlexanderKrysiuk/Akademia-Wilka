@@ -171,6 +171,10 @@ const CourseIdPage = ({
         setEditChapterModal(true);
     }
 
+    const showLessons = (chapter: Chapter) => {
+        setChapter(chapter);
+    }
+
     return (
         <div className="w-full px-[1vw] py-[1vh] space-y-[1vh] mb-[10vh]">
             <Card className="py-[1vh] px-[1vw] w-full">
@@ -184,37 +188,13 @@ const CourseIdPage = ({
                 </CardContent>
             </Card>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-[1vw] gap-y-[1vh]">
-                <Card className="py-[1vh] px-[1vw] w-full">
-                    <CardHeader>
-                        <h2 className="justify-between w-full flex items-center">
-                            Tytuł kursu
-                            <Button
-                                variant={`link`}
-                                className="gap-x-[1vw]"
-                                onClick={() => {
-                                    setEditTitle(prev => !prev);
-                                }}
-                            >
-                                {!editTitle && <SquarePen />}
-                                {editTitle ? "Anuluj" : "Edytuj tytuł"}
-                            </Button>
-                        </h2>
-                    </CardHeader>
-                    <CardContent className="w-full">
-                        {editTitle ? (
-                            <TitleForm
-                                initialData={course}
-                                userID={user.id}
-                                onUpdate={() => {
-                                    fetchCourse();
-                                    setEditTitle(false);
-                                }}
-                            />
-                        ) : (
-                            <h3>{course.title}</h3>
-                        )}
-                    </CardContent>
-                </Card>
+                <TitleForm
+                    course={course}
+                    userID={user.id}
+                    onUpdate={() => {
+                        fetchCourse();
+                    }}
+                />
                 <Card className="py-[1vh] px-[1vw] w-full">
                     <CardHeader>
                         <h2 className="justify-between w-full flex items-center">
@@ -490,7 +470,9 @@ const CourseIdPage = ({
                                                         >
                                                             <X/>
                                                         </Button>
-                                                        <Button variant={`link`}>
+                                                        <Button 
+                                                            variant={`link`}
+                                                            onClick={() => showLessons(chapter)}>
                                                             <ChevronDown/>
                                                         </Button>
                                                     </div>

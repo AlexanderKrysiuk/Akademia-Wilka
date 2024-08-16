@@ -1,12 +1,12 @@
 "use client"
 import { getCourseById } from "@/actions/course/get";
 import { useCurrentUser } from "@/hooks/user";
-import { Category, Course, Level, Attachment } from "@prisma/client";
+import { Category, Course, Level, Attachment, Chapter } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useRef, startTransition } from "react";
-import { ImageIcon, Settings, SquarePen, SquarePlus, File, FilePlus, Loader, X } from 'lucide-react';
+import { useEffect, useState, useRef } from "react";
+import { ImageIcon, Settings, SquarePen, SquarePlus, File, FilePlus, Loader, X, Scroll, ChevronDown } from 'lucide-react';
 import TitleForm from "@/components/dashboard/teacher/courses/title-form";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import DescriptionForm from "@/components/dashboard/teacher/courses/description-form";
 import ImageCropper from "@/components/image-cropper";
@@ -16,12 +16,11 @@ import { getLevelByID } from "@/actions/course/level";
 import LevelForm from "@/components/dashboard/teacher/courses/level-form";
 import PriceForm from "@/components/dashboard/teacher/courses/price-form";
 import { formatPrice } from "@/lib/format";
-import { deleteAttachmentByID, getAttachmentsByCourseId } from "@/actions/course/attachments";
-import AddAttachmentToCourseForm from "@/components/dashboard/teacher/courses/add-attachment-to-course-form";
-import { toast } from "@/components/ui/use-toast";
-import { uploadAttachmentToCourse } from "@/actions/file/upload-attachment-to-course";
+import { getAttachmentsByCourseId } from "@/actions/course/attachments";
 import { uploadAttachment } from "@/utils/attachment";
 import DeleteAttachmentModal from "@/components/dashboard/teacher/courses/delete-attachment-modal";
+import ChapterForm from "@/components/dashboard/teacher/courses/chapter-form";
+import { getChaptersByCourseID } from "@/actions/course/chapter";
 
 
 const CourseIdPage = ({
@@ -38,6 +37,7 @@ const CourseIdPage = ({
     const [editCategory, setEditCategory] = useState(false)
     const [editLevel, setEditLevel] = useState(false)
     const [editPrice, setEditPrice] = useState(false)
+    const [editChapter, setEditChapter] = useState(false)
     const [deleteAttachmentModal, setDeleteAttachmentModal] = useState(false)
     const [attachmentUploading, setAttachmentUploading] = useState(false); // Stan do monitorowania przesyłania pliku
     const [selectedImage, setSelectedImage] = useState<File | null>(null); // Stan do przechowywania wybranego pliku
@@ -45,6 +45,7 @@ const CourseIdPage = ({
     const [level, setLevel] = useState<Level | null>(null); // Stan do przechowywania poziomu
     const [attachments, setAttachments] = useState<Attachment[]>([]);
     const [attachment, setAttachment] = useState<Attachment>()
+    const [chapters, setChapters] = useState<Chapter[]>([])
     const fileInputRef = useRef<HTMLInputElement | null>(null); // Ref do input file
     const attachmentInputRef = useRef<HTMLInputElement | null>(null); // Ref do input file
 
@@ -88,6 +89,9 @@ const CourseIdPage = ({
 
         const attachments = await getAttachmentsByCourseId(course.id);
         setAttachments(attachments || []);
+
+        const chapters = await getChaptersByCourseID(course.id)
+        setChapters(chapters)
     };
 
     useEffect(() => {
@@ -408,6 +412,77 @@ const CourseIdPage = ({
                             style={{ display: 'none' }} // Ukrywamy input
                             onChange={handleAttachmentChange} // Obsłuż zmianę pliku
                         />
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <h2 className="w-full flex items-center justify-between">
+                            Rozdziały kursu
+                            <Button
+                                variant={'link'}
+                                className="gap-x-[1vw]"
+                                onClick={()=>{
+                                    setEditChapter(prev => !prev);
+                                }}
+                            >
+                                <SquarePlus/> Dodaj rozdział
+                                {/*}
+                                {!editChapter && <SquarePen />}
+                                {editChapter ? "Anuluj" : "Edytuj rozdziały"}
+                            */}
+                            </Button>
+                        </h2>
+                    </CardHeader>
+                    <CardContent className="w-full">
+                        {editChapter && (
+                            <ChapterForm
+                                initialData={course}
+                                userID={user.id}
+                                onUpdate={() => {
+                                    fetchCourse()
+                                    setEditChapter(false)
+                                }}
+                                onClose={() => {
+                                    setEditChapter(false)
+                                }}
+                            />
+                        )}
+                        <div className="space-y-[1vh]">
+                            {chapters.length > 0 ? (
+                                chapters.map((chapter) => (
+                                    <div key={chapter.id}>
+                                        <Card className="w-full">
+                                            <CardHeader>
+                                                <div className="flex flex-col space-y-[1vh] md:space-y-[0vh] md:flex-row items-center justify-between">
+                                                    <div className="flex items-center gap-x-[1vw] overflow-hidden">
+                                                        <Scroll/>
+                                                        <div className="w-full truncate">
+                                                            {chapter.title}
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center">
+                                                        <Button variant={`link`} className="hover:bg-primary-foreground hover:rounded-full">
+                                                            <SquarePen/>
+                                                        </Button>
+                                                        <Button variant={`link`} className="text-red-500 hover:bg-red-500/30 hover:rounded-full">
+                                                            <X/>
+                                                        </Button>
+                                                        <Button variant={`link`}>
+                                                            <ChevronDown/>
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            </CardHeader>
+                                        </Card>
+                                    </div>
+                                ))
+                            ) : (
+                                <div>
+                                    Brak rozdziałów
+                                </div>
+                            )}
+                        </div>
+                        
                     </CardContent>
                 </Card>
             </div>

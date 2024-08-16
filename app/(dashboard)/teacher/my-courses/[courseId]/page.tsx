@@ -4,12 +4,11 @@ import { useCurrentUser } from "@/hooks/user";
 import { Category, Course, Level, Attachment, Chapter } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
-import { ImageIcon, Settings, SquarePen, SquarePlus, File, FilePlus, Loader, X, Scroll, ChevronDown } from 'lucide-react';
+import { Settings, SquarePen, SquarePlus, File, FilePlus, Loader, X, Scroll, ChevronDown } from 'lucide-react';
 import TitleForm from "@/components/dashboard/teacher/courses/title-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import DescriptionForm from "@/components/dashboard/teacher/courses/description-form";
-import ImageCropper from "@/components/image-cropper";
 import CategoryForm from "@/components/dashboard/teacher/courses/category-form";
 import { getCategoryByID } from "@/actions/course/category"; // Dodaj tę funkcję, aby pobrać kategorię
 import { getLevelByID } from "@/actions/course/level";
@@ -20,6 +19,7 @@ import { getAttachmentsByCourseId } from "@/actions/course/attachments";
 import { uploadAttachment } from "@/utils/attachment";
 import DeleteAttachmentModal from "@/components/dashboard/teacher/courses/delete-attachment-modal";
 import ChapterForm from "@/components/dashboard/teacher/courses/chapter-form";
+import ImageForm from "@/components/dashboard/teacher/courses/image-form"
 import { getChaptersByCourseID } from "@/actions/course/chapter";
 import DeleteChapterForm from "@/components/dashboard/teacher/courses/delete-chapter-form";
 import EditChapterForm from "@/components/dashboard/teacher/courses/edit-chapter-form";
@@ -33,13 +33,11 @@ const CourseIdPage = ({
     const user = useCurrentUser();
     const router = useRouter();
     const [course, setCourse] = useState<Course>();
-    const [editImage, setEditImage] = useState(false);
     const [editCategory, setEditCategory] = useState(false)
     const [editLevel, setEditLevel] = useState(false)
     const [editPrice, setEditPrice] = useState(false)
     const [deleteAttachmentModal, setDeleteAttachmentModal] = useState(false)
     const [attachmentUploading, setAttachmentUploading] = useState(false); // Stan do monitorowania przesyłania pliku
-    const [selectedImage, setSelectedImage] = useState<File | null>(null); // Stan do przechowywania wybranego pliku
     const [category, setCategory] = useState<Category | null>(null); // Stan do przechowywania kategorii
     const [level, setLevel] = useState<Level | null>(null); // Stan do przechowywania poziomu
     const [attachments, setAttachments] = useState<Attachment[]>([]);
@@ -49,7 +47,6 @@ const CourseIdPage = ({
     const [addChapter, setAddChapter] = useState(false)
     const [deleteChapterModal, setDeleteChapterModal] = useState(false)
     const [editChapterModal, setEditChapterModal] = useState(false)
-    const fileInputRef = useRef<HTMLInputElement | null>(null); // Ref do input file
     const attachmentInputRef = useRef<HTMLInputElement | null>(null); // Ref do input file
 
 
@@ -125,22 +122,6 @@ const CourseIdPage = ({
     const completedFields = requiredFields.filter(Boolean).length;
     const completionText = `(${completedFields}/${totalFields})`;
 
-    // Funkcja do otwierania okna wyboru pliku
-    const handleEditImageClick = () => {
-        if (fileInputRef.current) {
-            fileInputRef.current.click();
-        }
-    };
-
-    // Funkcja obsługująca zmianę pliku
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files.length > 0) {
-            const file = e.target.files[0];
-            setSelectedImage(file); // Ustaw wybrany plik
-            setEditImage(true); // Otwórz edycję obrazka
-        }
-    };
-    
     const handleAddAttachmentClick = () => {
         if (attachmentInputRef.current) {
             attachmentInputRef.current.click(); // Kliknij ukryty input
@@ -186,7 +167,7 @@ const CourseIdPage = ({
                 </CardContent>
             </Card>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-[1vw] gap-y-[1vh]">
-                <div>
+                <div className="space-y-[1vh]">
                     <TitleForm
                         course={course}
                         userID={user.id}
@@ -200,39 +181,15 @@ const CourseIdPage = ({
                         onUpdate={() => {
                             fetchCourse();
                         }}
-                        />            
+                    />
+                    <ImageForm
+                        course={course}
+                        userID={user.id}
+                        onUpdate={()=>{
+                            fetchCourse()
+                        }}
+                    />            
                 </div>
-                <Card>
-                    <CardHeader>
-                        <h2 className="justify-between w-full flex items-center">
-                            Obrazek kursu
-                            <Button
-                                variant={`link`}
-                                className="gap-x-[1vw]"
-                                onClick={handleEditImageClick} // Otwórz okno wyboru pliku
-                            >
-                                {course.imageUrl ? (
-                                    <div className="flex items-center gap-x-[1vw]">
-                                        <SquarePen/> Zmień Obraz
-                                    </div>
-                                ) : (
-                                    <div className="flex items-center gap-x-[1vw]">
-                                        <SquarePlus /> Dodaj obraz
-                                    </div>
-                                )}
-                            </Button>
-                        </h2>
-                    </CardHeader>
-                    <CardContent className="w-full">
-                        {course.imageUrl ? (
-                            <img src={course.imageUrl} alt="Course Image" className="rounded-md" />
-                        ) : (
-                            <div className="h-[20vh] flex items-center justify-center bg-primary/10 rounded-md">
-                                <ImageIcon className="h-[5vh] w-[5vh]" />
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
                 <Card className="h-auto w-full">
                     <CardHeader>
                         <h2 className="justify-between w-full flex items-center">
@@ -467,29 +424,6 @@ const CourseIdPage = ({
                     </CardContent>
                 </Card>
             </div>
-            {/* Ukryty input do wyboru pliku */}
-            <input
-                type="file"
-                accept="image/*"
-                ref={fileInputRef}
-                style={{ display: 'none' }} // Ukryj input
-                onChange={handleFileChange} // Obsłuż zmianę pliku
-            />
-            {editImage && selectedImage && ( // Przekaż wybrany obraz do ImageCropper
-                <ImageCropper
-                    onCancel={() => {
-                        setEditImage(false);
-                        setSelectedImage(null); // Resetuj wybrany plik
-                    }}
-                    courseId={params.courseId} // Dodaj id kursu
-                    userId={user.id} // Dodaj id użytkownika
-                    imageFile={selectedImage} // Przekaż wybrany plik do croppera
-                    onUpdate={() => {
-                        fetchCourse();
-                        setEditImage(false);
-                    }}
-                />
-            )}
             {/* Modal potwierdzenia usunięcia */}
             {deleteAttachmentModal && (
                 <DeleteAttachmentModal

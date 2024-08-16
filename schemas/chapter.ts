@@ -6,3 +6,7 @@ const titleTemplate = z.string()
 export const CreateChapterSchema = z.object({
     title: titleTemplate
 })
+
+export const EditChapterSchema = z.object({
+    title: titleTemplate
+})

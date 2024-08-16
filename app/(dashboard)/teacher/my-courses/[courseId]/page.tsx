@@ -21,6 +21,8 @@ import { uploadAttachment } from "@/utils/attachment";
 import DeleteAttachmentModal from "@/components/dashboard/teacher/courses/delete-attachment-modal";
 import ChapterForm from "@/components/dashboard/teacher/courses/chapter-form";
 import { getChaptersByCourseID } from "@/actions/course/chapter";
+import DeleteChapterForm from "@/components/dashboard/teacher/courses/delete-chapter-form";
+import EditChapterForm from "@/components/dashboard/teacher/courses/edit-chapter-form";
 
 
 const CourseIdPage = ({
@@ -37,7 +39,6 @@ const CourseIdPage = ({
     const [editCategory, setEditCategory] = useState(false)
     const [editLevel, setEditLevel] = useState(false)
     const [editPrice, setEditPrice] = useState(false)
-    const [editChapter, setEditChapter] = useState(false)
     const [deleteAttachmentModal, setDeleteAttachmentModal] = useState(false)
     const [attachmentUploading, setAttachmentUploading] = useState(false); // Stan do monitorowania przesyłania pliku
     const [selectedImage, setSelectedImage] = useState<File | null>(null); // Stan do przechowywania wybranego pliku
@@ -46,6 +47,10 @@ const CourseIdPage = ({
     const [attachments, setAttachments] = useState<Attachment[]>([]);
     const [attachment, setAttachment] = useState<Attachment>()
     const [chapters, setChapters] = useState<Chapter[]>([])
+    const [chapter, setChapter] = useState<Chapter>()
+    const [addChapter, setAddChapter] = useState(false)
+    const [deleteChapterModal, setDeleteChapterModal] = useState(false)
+    const [editChapterModal, setEditChapterModal] = useState(false)
     const fileInputRef = useRef<HTMLInputElement | null>(null); // Ref do input file
     const attachmentInputRef = useRef<HTMLInputElement | null>(null); // Ref do input file
 
@@ -155,6 +160,16 @@ const CourseIdPage = ({
         setAttachment(attachment);
         setDeleteAttachmentModal(true);
     };
+
+    const deleteChapter = (chapter: Chapter) => {
+        setChapter(chapter);
+        setDeleteChapterModal(true);
+    };
+
+    const editChapter = (chapter: Chapter) => {
+        setChapter(chapter);
+        setEditChapterModal(true);
+    }
 
     return (
         <div className="w-full px-[1vw] py-[1vh] space-y-[1vh] mb-[10vh]">
@@ -422,7 +437,7 @@ const CourseIdPage = ({
                                 variant={'link'}
                                 className="gap-x-[1vw]"
                                 onClick={()=>{
-                                    setEditChapter(prev => !prev);
+                                    setAddChapter(prev => !prev);
                                 }}
                             >
                                 <SquarePlus/> Dodaj rozdział
@@ -434,16 +449,16 @@ const CourseIdPage = ({
                         </h2>
                     </CardHeader>
                     <CardContent className="w-full">
-                        {editChapter && (
+                        {addChapter && (
                             <ChapterForm
                                 initialData={course}
                                 userID={user.id}
                                 onUpdate={() => {
                                     fetchCourse()
-                                    setEditChapter(false)
+                                    setAddChapter(false)
                                 }}
                                 onClose={() => {
-                                    setEditChapter(false)
+                                    setAddChapter(false)
                                 }}
                             />
                         )}
@@ -461,10 +476,18 @@ const CourseIdPage = ({
                                                         </div>
                                                     </div>
                                                     <div className="flex items-center">
-                                                        <Button variant={`link`} className="hover:bg-primary-foreground hover:rounded-full">
+                                                        <Button 
+                                                            variant={`link`} 
+                                                            className="hover:bg-primary-foreground hover:rounded-full"
+                                                            onClick={() => editChapter(chapter)}
+                                                        >
                                                             <SquarePen/>
                                                         </Button>
-                                                        <Button variant={`link`} className="text-red-500 hover:bg-red-500/30 hover:rounded-full">
+                                                        <Button 
+                                                            variant={`link`} 
+                                                            className="text-red-500 hover:bg-red-500/30 hover:rounded-full"
+                                                            onClick={() => deleteChapter(chapter)} // Otwórz modal po kliknięciu
+                                                        >
                                                             <X/>
                                                         </Button>
                                                         <Button variant={`link`}>
@@ -519,6 +542,34 @@ const CourseIdPage = ({
                         setDeleteAttachmentModal(false)
                     }} // Przekazujemy funkcję do aktualizacji
                     initialData={attachment}
+                />
+            )}
+            {deleteChapterModal && (
+                <DeleteChapterForm
+                    courseID={course.id}
+                    chapter={chapter}
+                    userID={user.id}
+                    onClose={()=>{
+                        setDeleteChapterModal(false)
+                    }}
+                    onUpdate={()=>{
+                        fetchCourse()
+                        setDeleteChapterModal(false)
+                    }}
+                />
+            )}
+            {editChapterModal && (
+                <EditChapterForm
+                    courseID={course.id}
+                    chapter={chapter}
+                    userID={user.id}
+                    onClose={()=>{
+                        setEditChapterModal(false)
+                    }}
+                    onUpdate={()=>{
+                        fetchCourse()
+                        setEditChapterModal(false)
+                    }}
                 />
             )}
         </div>

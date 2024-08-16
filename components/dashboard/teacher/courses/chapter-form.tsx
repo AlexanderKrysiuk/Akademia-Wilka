@@ -88,7 +88,7 @@ const ChapterForm = ({
                                 <div className="flex flex-col items-center space-y-[1vh] w-full">
                                     <div className="justify-start w-full">
                                         <Button className="gap-x-[1vw]">
-                                            <SquarePlus/> Dodaj Rozdział
+                                            <SquarePlus/> Dodaj rozdział
                                         </Button>
                                     </div>
                                     {isPending && (

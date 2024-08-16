@@ -33,8 +33,6 @@ const CourseIdPage = ({
     const user = useCurrentUser();
     const router = useRouter();
     const [course, setCourse] = useState<Course>();
-    const [editTitle, setEditTitle] = useState(false);
-    const [editDescription, setEditDescription] = useState(false);
     const [editImage, setEditImage] = useState(false);
     const [editCategory, setEditCategory] = useState(false)
     const [editLevel, setEditLevel] = useState(false)
@@ -188,44 +186,22 @@ const CourseIdPage = ({
                 </CardContent>
             </Card>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-[1vw] gap-y-[1vh]">
-                <TitleForm
-                    course={course}
-                    userID={user.id}
-                    onUpdate={() => {
-                        fetchCourse();
-                    }}
-                />
-                <Card className="py-[1vh] px-[1vw] w-full">
-                    <CardHeader>
-                        <h2 className="justify-between w-full flex items-center">
-                            Opis kursu
-                            <Button
-                                variant={`link`}
-                                className="gap-x-[1vw]"
-                                onClick={() => {
-                                    setEditDescription(prev => !prev);
-                                }}
-                            >
-                                {!editDescription && <SquarePen />}
-                                {editDescription ? "Anuluj" : "Edytuj opis"}
-                            </Button>
-                        </h2>
-                    </CardHeader>
-                    <CardContent className="w-full">
-                        {editDescription ? (
-                            <DescriptionForm
-                                initialData={course}
-                                userID={user.id}
-                                onUpdate={() => {
-                                    fetchCourse();
-                                    setEditDescription(false);
-                                }}
-                            />
-                        ) : (
-                            <div dangerouslySetInnerHTML={{ __html: course.description || "Brak opisu..." }} />
-                        )}
-                    </CardContent>
-                </Card>
+                <div>
+                    <TitleForm
+                        course={course}
+                        userID={user.id}
+                        onUpdate={() => {
+                            fetchCourse();
+                        }}
+                    />
+                    <DescriptionForm
+                        course={course}
+                        userID={user.id}
+                        onUpdate={() => {
+                            fetchCourse();
+                        }}
+                        />            
+                </div>
                 <Card>
                     <CardHeader>
                         <h2 className="justify-between w-full flex items-center">

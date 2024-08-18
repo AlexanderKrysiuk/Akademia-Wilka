@@ -240,3 +240,41 @@ export const moveChapter = async (courseId: string, chapterId: string, newPositi
         return { success: true, message: "Rozdział został przeniesiony." };
     });
 }
+
+export const reOrderChapters = async (Data: { id: string, position: number }[], userID: string, courseID:string) => {
+    
+    const existingUser = await getUserById(userID)
+
+    if (!existingUser) {
+        return { success: false, message: "Nie znaleziono użytkownika!" }
+    }
+
+    if (!existingUser?.role?.teacher) {
+        return { success: false, message: "Nie masz uprawnień do usunięcia tego rozdziału!" }
+    }
+
+    const existingCourse = await getCourseById(courseID)
+
+    if (!existingCourse) {
+        return { success: false, message: "Nie znaleziono kursu!" }
+    }
+
+    if (existingCourse.ownerId !== existingUser.id) {
+        return { success: false, message: "Nie jesteś właścicielem tego kursu!" }
+    }
+
+    if (!Data) {
+        return { success: false, message: "Nie wykrto listy do zaktualizowania!" }
+    }
+
+    const updatePromises = Data.map(async ({ id, position }) => {
+        return await prisma.chapter.update({
+            where: { id },
+            data: { order: position }
+        });
+    });
+
+    await Promise.all(updatePromises);
+
+    return { success: true, message: "Kolejność rozdziałów została zaktualizowana!" }
+}

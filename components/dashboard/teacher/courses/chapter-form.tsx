@@ -1,16 +1,18 @@
 "use client";
 import { DragDropContext, Draggable, Droppable, DropResult } from "@hello-pangea/dnd";
-import { getChaptersByCourseID, moveChapter } from "@/actions/course/chapter"; // Upewnij się, że masz tę funkcję w swoim module
-import { useState, useEffect, useRef } from "react";
+import { getChaptersByCourseID, moveChapter, reOrderChapters } from "@/actions/course/chapter"; // Upewnij się, że masz tę funkcję w swoim module
+import { useState, useEffect, useRef, startTransition, useTransition } from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Chapter } from "@prisma/client";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp, Scroll, SquarePen, SquarePlus, X } from "lucide-react";
+import { ChevronDown, ChevronUp, Loader2, Scroll, SquarePen, SquarePlus, X } from "lucide-react";
 import AddChapterForm from "./add-chapter-form";
 import EditChapterForm from "./edit-chapter-form";
 import DeleteChapterForm from "./delete-chapter-form";
 import LessonsList from "./lessons-list";
 import React from "react";
+import { toast } from "@/components/ui/use-toast";
+import { motion } from 'framer-motion';
 
 interface ChapterFormProps {
     course: {
@@ -28,7 +30,7 @@ const ChapterForm = ({ course, userID }: ChapterFormProps) => {
     const [expandedChapters, setExpandedChapters] = useState<string[]>([]);
     const firstCardRef = useRef<HTMLDivElement>(null);
     const [firstCardHeight, setFirstCardHeight] = React.useState<number | null>(null)
-    
+    const [isPending, startTransition] = useTransition();
 
     const fetchChapters = async () => {
         const chapters = await getChaptersByCourseID(course.id);
@@ -96,11 +98,28 @@ const ChapterForm = ({ course, userID }: ChapterFormProps) => {
             id: chapter.id,
             position: items.findIndex((item) => item.id === chapter.id)
         }))
+
+    
+        startTransition(()=>{
+            reOrderChapters(bulkUpdateData, userID, course.id)
+            .then((data) => {
+                toast({
+                    title: data.success ? "✅ Sukces!" : "❌ Błąd!",
+                    description: data.message,
+                    variant: data.success? "success" : "failed",
+                });
+            })
+        })
     }
 
     return (
 <div>
-    <Card>
+    <Card className="relative">
+        {isPending && (
+            <div className="absolute inset-0 h-full w-full bg-black/50 flex items-center justify-center rounded-md">
+                <Loader2 className="animate"/>
+            </div>
+        )}
         <CardHeader>
             <h2 className="w-full flex items-center justify-between">
                 Rozdziały kursu
@@ -132,10 +151,12 @@ const ChapterForm = ({ course, userID }: ChapterFormProps) => {
                                                     </div>
                                                     <div className="flex items-center gap-x-[1vw]">
                                                         <SquarePen
+                                                            data-tip="Edytuj"
                                                             className="hover:text-primary transition duration-300 cursor-pointer"
                                                             onClick={() => editChapter(chapter)}
                                                         />
                                                         <X
+                                                            data-tip="Usuń"
                                                             className="hover:text-red-500 transition duration-300 cursor-pointer"
                                                             onClick={() => deleteChapter(chapter)}
                                                         />
@@ -152,14 +173,21 @@ const ChapterForm = ({ course, userID }: ChapterFormProps) => {
                                                         }
                                                     </div>
                                                 </div>
-                                                {expandedChapters.includes(chapter.id) && (
+                                                {/*{expandedChapters.includes(chapter.id) && (*/}
+                                                <motion.div
+                                                    initial={{ height: 0, opacity: 0 }}
+                                                    animate={{ height: expandedChapters.includes(chapter.id) ? 'auto' : 0, opacity: expandedChapters.includes(chapter.id) ? 1 : 0 }}
+                                                    transition={{ duration: 0.5 }}
+                                                    style={{ overflow: 'hidden' }}
+                                                >
                                                     <CardContent>
                                                         <LessonsList 
                                                             chapterID={chapter.id} 
                                                             userID={userID}    
                                                         />
                                                     </CardContent>
-                                                )}
+                                                </motion.div>
+                                                {/* })} */}
                                             </Card>
                                         </div>
                                     )}

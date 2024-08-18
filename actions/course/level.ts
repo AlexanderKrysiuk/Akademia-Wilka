@@ -58,6 +58,6 @@ export const updateCourseLevel = async (values: z.infer<typeof EditCourseLevelSc
         where: {id: courseID },
         data: {levelId: levelID}
     })
-    return {success: true, message: "Zmieniono poziome kursu"}
+    return {success: true, message: "Zmieniono poziom kursu!"}
 
 }

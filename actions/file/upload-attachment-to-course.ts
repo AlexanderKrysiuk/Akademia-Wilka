@@ -14,25 +14,25 @@ export async function uploadAttachmentToCourse(formData: FormData) {
     const userId: string = formData.get('userId') as string;
 
     if (!file) {
-        throw new Error("Nie udało się odczytać pliku!");
+        return { success: false, message: "Nie udało się odczytać pliku!" };
     }
 
     const user = await getUserById(userId);
     if (!user) {
-        throw new Error("Nie znaleziono użytkownika!");
+        return { success: false, message: "Nie znaleziono użytkownika!" };
     }
 
     if (!user.role?.teacher) {
-        throw new Error("Użytkownik nie ma uprawnień do edycji kursu!");
+        return { success: false, message: "Użytkownik nie ma uprawnień do edycji kursu!" };
     }
 
     const course = await getCourseById(courseId);
     if (!course) {
-        throw new Error("Nie znaleziono kursu!");
+        return { success: false, message: "Nie znaleziono kursu!" };
     }
 
     if (course.ownerId !== user.id) {
-        throw new Error("Użytkownik nie jest twórcą kursu!");
+        return { success: false, message: "Użytkownik nie jest twórcą kursu!" }
     }
 
     const fileServer = process.env.FILE_SERVER_URL;
@@ -71,8 +71,7 @@ export async function uploadAttachmentToCourse(formData: FormData) {
         });
 
     } catch (error) {
-        console.error("Błąd podczas przesyłania załącznika:", error);
-        throw new Error("Wystąpił błąd podczas przesyłania załącznika.");
+        return { success: false, message: "Wystąpił błąd podczas przesyłania załącznika." };
     } finally {
         client.close();
     }

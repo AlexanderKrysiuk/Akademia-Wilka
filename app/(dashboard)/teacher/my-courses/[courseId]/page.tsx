@@ -1,28 +1,20 @@
 "use client"
 import { getCourseById } from "@/actions/course/get";
 import { useCurrentUser } from "@/hooks/user";
-import { Category, Course, Level, Attachment, Chapter } from "@prisma/client";
+import { Course, Chapter } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Settings, SquarePen, SquarePlus, File, FilePlus, Loader, X, Scroll, ChevronDown } from 'lucide-react';
 import TitleForm from "@/components/dashboard/teacher/courses/title-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import DescriptionForm from "@/components/dashboard/teacher/courses/description-form";
 import CategoryForm from "@/components/dashboard/teacher/courses/category-form";
-import { getCategoryByID } from "@/actions/course/category"; // Dodaj tę funkcję, aby pobrać kategorię
-import { getLevelByID } from "@/actions/course/level";
 import LevelForm from "@/components/dashboard/teacher/courses/level-form";
 import PriceForm from "@/components/dashboard/teacher/courses/price-form";
-import { formatPrice } from "@/lib/format";
-import { getAttachmentsByCourseId } from "@/actions/course/attachments";
-import { uploadAttachment } from "@/utils/attachment";
-import DeleteAttachmentModal from "@/components/dashboard/teacher/courses/delete-attachment-modal";
 import ChapterForm from "@/components/dashboard/teacher/courses/chapter-form";
 import ImageForm from "@/components/dashboard/teacher/courses/image-form"
 import { getChaptersByCourseID } from "@/actions/course/chapter";
-import DeleteChapterForm from "@/components/dashboard/teacher/courses/delete-chapter-form";
-import EditChapterForm from "@/components/dashboard/teacher/courses/edit-chapter-form";
+import AttachmentForm from "@/components/dashboard/teacher/courses/attachment-form";
 
 
 const CourseIdPage = ({
@@ -33,19 +25,11 @@ const CourseIdPage = ({
     const user = useCurrentUser();
     const router = useRouter();
     const [course, setCourse] = useState<Course>();
-    const [editLevel, setEditLevel] = useState(false)
-    const [editPrice, setEditPrice] = useState(false)
-    const [deleteAttachmentModal, setDeleteAttachmentModal] = useState(false)
-    const [attachmentUploading, setAttachmentUploading] = useState(false); // Stan do monitorowania przesyłania pliku
-    const [level, setLevel] = useState<Level | null>(null); // Stan do przechowywania poziomu
-    const [attachments, setAttachments] = useState<Attachment[]>([]);
-    const [attachment, setAttachment] = useState<Attachment>()
     const [chapters, setChapters] = useState<Chapter[]>([])
     const [chapter, setChapter] = useState<Chapter>()
     const [addChapter, setAddChapter] = useState(false)
     const [deleteChapterModal, setDeleteChapterModal] = useState(false)
     const [editChapterModal, setEditChapterModal] = useState(false)
-    const attachmentInputRef = useRef<HTMLInputElement | null>(null); // Ref do input file
 
 
     if (!user) {
@@ -70,19 +54,6 @@ const CourseIdPage = ({
             return;
         }
         setCourse(course);
-
-        if (course.levelId) {
-            const fetchedLevel = await getLevelByID(course.levelId)
-            setLevel(fetchedLevel || null)
-        } else {
-            setLevel(null)
-        }
-
-        const attachments = await getAttachmentsByCourseId(course.id);
-        setAttachments(attachments || []);
-
-        const chapters = await getChaptersByCourseID(course.id)
-        setChapters(chapters)
     };
 
     useEffect(() => {
@@ -112,38 +83,6 @@ const CourseIdPage = ({
     const totalFields = requiredFields.length;
     const completedFields = requiredFields.filter(Boolean).length;
     const completionText = `(${completedFields}/${totalFields})`;
-
-    const handleAddAttachmentClick = () => {
-        if (attachmentInputRef.current) {
-            attachmentInputRef.current.click(); // Kliknij ukryty input
-        }
-    };
-
-    const handleAttachmentChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files.length > 0) {
-            const file = e.target.files[0];
-            await uploadAttachment(file, course.id, user.id, fetchCourse, setAttachmentUploading);
-        }
-    };
-
-    const deleteAttachment = (attachment: Attachment) => {
-        setAttachment(attachment);
-        setDeleteAttachmentModal(true);
-    };
-
-    const deleteChapter = (chapter: Chapter) => {
-        setChapter(chapter);
-        setDeleteChapterModal(true);
-    };
-
-    const editChapter = (chapter: Chapter) => {
-        setChapter(chapter);
-        setEditChapterModal(true);
-    }
-
-    const showLessons = (chapter: Chapter) => {
-        setChapter(chapter);
-    }
 
     return (
         <div className="w-full px-[1vw] py-[1vh] space-y-[1vh] mb-[10vh]">
@@ -187,247 +126,32 @@ const CourseIdPage = ({
                             fetchCourse()
                         }}
                     />   
+                    <LevelForm
+                        course={course}
+                        userID={user.id}
+                        onUpdate={() => {
+                            fetchCourse()
+                        }}
+                    />    
+                    <PriceForm
+                        course={course}
+                        userID={user.id}
+                        onUpdate={() => {
+                            fetchCourse()
+                        }}
+                    />
+                    <AttachmentForm
+                        course={course}
+                        userID={user.id} 
+                    />
                 </div>
-                <Card>
-                    <CardHeader>
-                        <h2 className="justify-between w-full flex items-center">
-                            Poziom kursu
-                            <Button
-                                variant={`link`}
-                                className="gap-x-[1vw]"
-                                onClick={() => {
-                                    setEditLevel(prev => !prev);
-                                }}
-                            >
-                                {!editLevel && <SquarePen />}
-                                {editLevel ? "Anuluj" : "Edytuj poziom"}
-                            </Button>
-                        </h2>
-                    </CardHeader>
-                    <CardContent className="w-full">
-                        {editLevel ? (
-                            <LevelForm
-                                initialData={course}
-                                userID={user.id}
-                                onUpdate={() => {
-                                    fetchCourse()
-                                    setEditLevel(false)
-                                }}
-                            />
-                        ) : (
-                            <div>
-                                {level ? level.name : "Brak poziomu"}
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
-                <Card>
-                <CardHeader>
-                        <h2 className="justify-between w-full flex items-center">
-                            Cena kursu
-                            <Button
-                                variant={`link`}
-                                className="gap-x-[1vw]"
-                                onClick={() => {
-                                    setEditPrice(prev => !prev);
-                                }}
-                            >
-                                {!editPrice && <SquarePen />}
-                                {editPrice ? "Anuluj" : "Edytuj cenę"}
-                            </Button>
-                        </h2>
-                    </CardHeader>
-                    <CardContent className="w-full">
-                        {editPrice ? (
-                            <PriceForm
-                                initialData={course}
-                                userID={user.id}
-                                onUpdate={() => {
-                                    fetchCourse()
-                                    setEditPrice(false)
-                                }}
-                            />
-                        ) : (
-                            <div>
-                                {course.price ? formatPrice(course.price) : "Kurs bezpłatny"}
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader>
-                    <h2 className="justify-between w-full flex items-center">
-                            Załączniki kursu
-                            <Button
-                                variant={`link`}
-                                className="gap-x-[1vw]"
-                                onClick={handleAddAttachmentClick}
-                                disabled={attachmentUploading} // Wyłącz przycisk podczas przesyłania
-                            >
-                            <FilePlus /> Dodaj załącznik
-                        </Button>
-                        </h2>
-                    </CardHeader>
-                    <CardContent className="w-full">
-                        {attachments.length > 0 ? (
-                            attachments.map((attachment) => (
-                                <div key={attachment.id} className="flex items-center gap-x-[1vw]">
-                                    <File/>
-                                    <a href={attachment.url} download className="text-primary truncate hover:underline">
-                                        {attachment.name}
-                                    </a>
-                                    <Button
-                                    variant="link"
-                                    className="text-red-500"
-                                    onClick={() => deleteAttachment(attachment)} // Otwórz modal po kliknięciu
-                                >
-                                    <X className="h-4 w-4" />
-                                </Button>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="flex items-center bg-primary/10 rounded-md px-[1vw] py-[1vh]">
-                                Brak załączników
-                            </div>
-                        )}
-                        {attachmentUploading && (
-                            <div className="flex items-center justify-center mt-2">
-                                <Loader className="animate-spin" />
-                                <span> Dodawanie załącznika...</span>
-                            </div>
-                        )}
-                        {/* Dodaj input do wyboru pliku */}
-                        <input
-                            type="file"
-                            accept="*/*" // Akceptuj wszystkie typy plików
-                            ref={attachmentInputRef} // Użyj referencji
-                            style={{ display: 'none' }} // Ukrywamy input
-                            onChange={handleAttachmentChange} // Obsłuż zmianę pliku
-                        />
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader>
-                        <h2 className="w-full flex items-center justify-between">
-                            Rozdziały kursu
-                            <Button
-                                variant={'link'}
-                                className="gap-x-[1vw]"
-                                onClick={()=>{
-                                    setAddChapter(prev => !prev);
-                                }}
-                            >
-                                <SquarePlus/> Dodaj rozdział
-                                {/*}
-                                {!editChapter && <SquarePen />}
-                                {editChapter ? "Anuluj" : "Edytuj rozdziały"}
-                            */}
-                            </Button>
-                        </h2>
-                    </CardHeader>
-                    <CardContent className="w-full">
-                        {addChapter && (
-                            <ChapterForm
-                                initialData={course}
-                                userID={user.id}
-                                onUpdate={() => {
-                                    fetchCourse()
-                                    setAddChapter(false)
-                                }}
-                                onClose={() => {
-                                    setAddChapter(false)
-                                }}
-                            />
-                        )}
-                        <div className="space-y-[1vh]">
-                            {chapters.length > 0 ? (
-                                chapters.map((chapter) => (
-                                    <div key={chapter.id}>
-                                        <Card className="w-full">
-                                            <CardHeader>
-                                                <div className="flex flex-col space-y-[1vh] md:space-y-[0vh] md:flex-row items-center justify-between">
-                                                    <div className="flex items-center gap-x-[1vw] overflow-hidden">
-                                                        <Scroll/>
-                                                        <div className="w-full truncate">
-                                                            {chapter.title}
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex items-center">
-                                                        <Button 
-                                                            variant={`link`} 
-                                                            className="hover:bg-primary-foreground hover:rounded-full"
-                                                            onClick={() => editChapter(chapter)}
-                                                        >
-                                                            <SquarePen/>
-                                                        </Button>
-                                                        <Button 
-                                                            variant={`link`} 
-                                                            className="text-red-500 hover:bg-red-500/30 hover:rounded-full"
-                                                            onClick={() => deleteChapter(chapter)} // Otwórz modal po kliknięciu
-                                                        >
-                                                            <X/>
-                                                        </Button>
-                                                        <Button 
-                                                            variant={`link`}
-                                                            onClick={() => showLessons(chapter)}>
-                                                            <ChevronDown/>
-                                                        </Button>
-                                                    </div>
-                                                </div>
-                                            </CardHeader>
-                                        </Card>
-                                    </div>
-                                ))
-                            ) : (
-                                <div>
-                                    Brak rozdziałów
-                                </div>
-                            )}
-                        </div>
-                        
-                    </CardContent>
-                </Card>
+                <div>
+                    <ChapterForm
+                        course={course}
+                        userID={user.id}
+                    />
+                </div>           
             </div>
-            {/* Modal potwierdzenia usunięcia */}
-            {deleteAttachmentModal && (
-                <DeleteAttachmentModal
-                    isOpen={deleteAttachmentModal}
-                    onClose={() => setDeleteAttachmentModal(false)}
-                    onUpdate={()=>{
-                        fetchCourse()
-                        setDeleteAttachmentModal(false)
-                    }} // Przekazujemy funkcję do aktualizacji
-                    initialData={attachment}
-                />
-            )}
-            {deleteChapterModal && (
-                <DeleteChapterForm
-                    courseID={course.id}
-                    chapter={chapter}
-                    userID={user.id}
-                    onClose={()=>{
-                        setDeleteChapterModal(false)
-                    }}
-                    onUpdate={()=>{
-                        fetchCourse()
-                        setDeleteChapterModal(false)
-                    }}
-                />
-            )}
-            {editChapterModal && (
-                <EditChapterForm
-                    courseID={course.id}
-                    chapter={chapter}
-                    userID={user.id}
-                    onClose={()=>{
-                        setEditChapterModal(false)
-                    }}
-                    onUpdate={()=>{
-                        fetchCourse()
-                        setEditChapterModal(false)
-                    }}
-                />
-            )}
         </div>
     );
 };

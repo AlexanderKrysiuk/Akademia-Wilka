@@ -153,6 +153,7 @@ model Chapter{
   courseId String
   course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
+  order Int
   lessons Lesson[]
 
   createdAt DateTime @default(now())

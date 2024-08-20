@@ -113,222 +113,94 @@ const ChapterForm = ({ course, userID }: ChapterFormProps) => {
     }
 
     return (
-<div>
-    <Card className="relative">
-        {isPending && (
-            <div className="absolute inset-0 h-full w-full bg-black/50 flex items-center justify-center rounded-md">
-                <Loader2 className="animate"/>
-            </div>
-        )}
-        <CardHeader>
-            <h2 className="w-full flex items-center justify-between">
-                Rozdziały kursu
-                <Button
-                    variant={'link'}
-                    className="gap-x-[1vw]"
-                    onClick={() => setAddChapterModal(true)}
-                >
-                    <SquarePlus /> Dodaj rozdział
-                </Button>
-            </h2>
-        </CardHeader>
-        <CardContent>
-            <DragDropContext onDragEnd={onDragEnd}>
-                <Droppable droppableId="chapters">
-                    {(provided) => (
-                        <div {...provided.droppableProps} ref={provided.innerRef}>
-                            {chapters.map((chapter,index) => (
-                                <Draggable key={chapter.id} draggableId={chapter.id} index={index}>
-                                    {(provided) => (
-                                        <div ref={provided.innerRef} {...provided.draggableProps} className="mb-[1vh]">
-                                            <Card className="w-full">
-                                                <div className="flex items-center px-[1vw] py-[1vh] justify-between">
-                                                    <div className="flex items-center gap-x-[1vw]">
-                                                        <div {...provided.dragHandleProps} className="hover:text-primary transition duration-300">
-                                                            <Scroll/>
-                                                        </div>
-                                                        {chapter.title}
-                                                    </div>
-                                                    <div className="flex items-center gap-x-[1vw]">
-                                                        <SquarePen
-                                                            data-tip="Edytuj"
-                                                            className="hover:text-primary transition duration-300 cursor-pointer"
-                                                            onClick={() => editChapter(chapter)}
-                                                        />
-                                                        <X
-                                                            data-tip="Usuń"
-                                                            className="hover:text-red-500 transition duration-300 cursor-pointer"
-                                                            onClick={() => deleteChapter(chapter)}
-                                                        />
-                                                        {expandedChapters.includes(chapter.id) ? 
-                                                            <ChevronUp 
-                                                                onClick={() => toggleExpandChapter(chapter.id)}
-                                                                className="hover:text-primary transition duration-300 cursor-pointer"
-                                                            /> 
-                                                            : 
-                                                            <ChevronDown 
-                                                                onClick={() => toggleExpandChapter(chapter.id)}
-                                                                className="hover:text-primary transition duration-300 cursor-pointer"
-                                                            />
-                                                        }
-                                                    </div>
-                                                </div>
-                                                {/*{expandedChapters.includes(chapter.id) && (*/}
-                                                <motion.div
-                                                    initial={{ height: 0, opacity: 0 }}
-                                                    animate={{ height: expandedChapters.includes(chapter.id) ? 'auto' : 0, opacity: expandedChapters.includes(chapter.id) ? 1 : 0 }}
-                                                    transition={{ duration: 0.5 }}
-                                                    style={{ overflow: 'hidden' }}
-                                                >
-                                                    <CardContent>
-                                                        <LessonsList 
-                                                            chapterID={chapter.id} 
-                                                            userID={userID}    
-                                                        />
-                                                    </CardContent>
-                                                </motion.div>
-                                                {/* })} */}
-                                            </Card>
-                                        </div>
-                                    )}
-                                </Draggable>
-                            ))}
-                            {provided.placeholder}
-                        </div>
-                    )}
-                </Droppable>
-            </DragDropContext>
-        </CardContent>
-        <CardFooter>
-            Przeciągnij i upuść by ustalić kolejność rozdziałów
-        </CardFooter>
-    </Card>
-        {/*
-    <DragDropContext onDragEnd={handleDragEnd}>
-    <Droppable droppableId="droppable" type="CARD">
-    {(provided) => (
-        <div
-        ref={provided.innerRef}
-        {...provided.droppableProps}
-        >
-        <Card>
-        <CardHeader>
-        <h2 className="w-full flex items-center justify-between">
-        Rozdziały kursu
-        <Button
-        variant={'link'}
-                                        className="gap-x-[1vw]"
-                                        onClick={() => setAddChapterModal(true)}
-                                        >
-                                        <SquarePlus /> Dodaj rozdział
-                                        </Button>
-                                        </h2>
-                                        </CardHeader>
-                                        <CardContent className="w-full">
-                                        <div className="space-y-[1vh]">
-                                        {chapters.length > 0 ? (
-                                            chapters.map((chapter, index) => (
-                                                <Draggable key={chapter.id} draggableId={chapter.id} index={index}>
-                                                {(provided) => (
-                                                    <div
-                                                    ref={provided.innerRef}
-                                                    {...provided.draggableProps}
-                                                    {...provided.dragHandleProps}
-                                                    className="mb-2"
-                                                    >
+        <div>
+            <Card className="relative">
+                {isPending && (
+                    <div className="absolute inset-0 h-full w-full bg-black/50 flex items-center justify-center rounded-md">
+                        <Loader2 className="animate"/>
+                    </div>
+                )}
+                <CardHeader>
+                    <h2 className="w-full flex items-center justify-between">
+                        Rozdziały kursu
+                        <Button
+                            variant={'link'}
+                            className="gap-x-[1vw]"
+                            onClick={() => setAddChapterModal(true)}
+                        >
+                            <SquarePlus /> Dodaj rozdział
+                        </Button>
+                    </h2>
+                </CardHeader>
+                <CardContent>
+                    <DragDropContext onDragEnd={onDragEnd}>
+                        <Droppable droppableId="chapters">
+                            {(provided) => (
+                                <div {...provided.droppableProps} ref={provided.innerRef}>
+                                    {chapters.map((chapter,index) => (
+                                        <Draggable key={chapter.id} draggableId={chapter.id} index={index}>
+                                            {(provided) => (
+                                                <div ref={provided.innerRef} {...provided.draggableProps} className="mb-[1vh]">
                                                     <Card className="w-full">
-                                                    <CardHeader>
-                                                    <div className="flex flex-col space-y-[1vh] md:space-y-[0vh] md:flex-row items-center justify-between">
-                                                    <div className="flex items-center gap-x-[1vw] overflow-hidden">
-                                                    <Scroll />
-                                                    <div className="w-full truncate">
-                                                                            {chapter.title}
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="flex items-center">
-                                                                    <Button
-                                                                    variant={`link`}
-                                                                    onClick={() => editChapter(chapter)}
-                                                                    >
-                                                                    <SquarePen />
-                                                                    </Button>
-                                                                    <Button
-                                                                    variant={`link`}
-                                                                    className="text-red-500 hover:bg-red-500/30"
-                                                                    onClick={() => deleteChapter(chapter)}
-                                                                    >
-                                                                    <X />
-                                                                    </Button>
-                                                                    <Button
-                                                                    variant={`link`}
-                                                                    onClick={() => toggleExpandChapter(chapter.id)}
-                                                                    >
-                                                                    {expandedChapters.includes(chapter.id) ? <ChevronUp /> : <ChevronDown />}
-                                                                    </Button>
-                                                                    </div>
+                                                        <div className="flex items-center px-[1vw] py-[1vh] justify-between">
+                                                            <div className="flex items-center gap-x-[1vw]">
+                                                                <div {...provided.dragHandleProps} className="hover:text-primary transition duration-300">
+                                                                    <Scroll/>
                                                                 </div>
-                                                            </CardHeader>
-                                                            {expandedChapters.includes(chapter.id) && (
-                                                                <CardContent>
-                                                                    <LessonsList 
+                                                                {chapter.title}
+                                                            </div>
+                                                            <div className="flex items-center gap-x-[1vw]">
+                                                                <SquarePen
+                                                                    className="hover:text-primary transition duration-300 cursor-pointer"
+                                                                    onClick={() => editChapter(chapter)}
+                                                                />
+                                                                <X
+                                                                    className="hover:text-red-500 transition duration-300 cursor-pointer"
+                                                                    onClick={() => deleteChapter(chapter)}
+                                                                />
+                                                                {expandedChapters.includes(chapter.id) ? 
+                                                                    <ChevronUp 
+                                                                        onClick={() => toggleExpandChapter(chapter.id)}
+                                                                        className="hover:text-primary transition duration-300 cursor-pointer"
+                                                                    /> 
+                                                                    : 
+                                                                    <ChevronDown 
+                                                                        onClick={() => toggleExpandChapter(chapter.id)}
+                                                                        className="hover:text-primary transition duration-300 cursor-pointer"
+                                                                    />
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                {/*{expandedChapters.includes(chapter.id) && (*/}
+                                                        <motion.div
+                                                            initial={{ height: 0, opacity: 0 }}
+                                                            animate={{ height: expandedChapters.includes(chapter.id) ? 'auto' : 0, opacity: expandedChapters.includes(chapter.id) ? 1 : 0 }}
+                                                            transition={{ duration: 0.5 }}
+                                                            style={{ overflow: 'hidden' }}
+                                                        >
+                                                            <CardContent>
+                                                                <LessonsList 
                                                                     chapterID={chapter.id} 
                                                                     userID={userID}    
-                                                                    />
-                                                                </CardContent>
-                                                            )}
-                                                            </Card>
-                                                    </div>
-                                                )}
-                                                </Draggable>
-                                        ))
-                                    ) : (
-                                        <div>Brak rozdziałów</div>
-                                    )}
+                                                                />
+                                                            </CardContent>
+                                                        </motion.div>
+                                                {/* })} */}
+                                                    </Card>
+                                                </div>
+                                            )}
+                                        </Draggable>
+                                    ))}
                                     {provided.placeholder}
-                                    </div>
-                                    </CardContent>
-                                    </Card>
-                                    </div>
-                                )}
-                                </Droppable>
-                                {/* Modale do dodawania, edytowania i usuwania rozdziałów */}{/*
-                                {addChapterModal && (
-                                    <AddChapterForm
-                                    course={course}
-                                    userID={userID}
-                                    onUpdate={() => {
-                                        fetchChapters();
-                                        setAddChapterModal(false);
-                                    }}
-                    onClose={() => setAddChapterModal(false)}
-                    />
-            )}
-            {editChapterModal && (
-                <EditChapterForm
-                courseID={course.id}
-                chapter={chapter}
-                userID={userID}
-                onClose={() => setEditChapterModal(false)}
-                onUpdate={() => {
-                    fetchChapters();
-                    setEditChapterModal(false);
-                }}
-                />
-            )}
-            {deleteChapterModal && (
-                <DeleteChapterForm
-                courseID={course.id}
-                chapter={chapter}
-                userID={userID}
-                onClose={() => setDeleteChapterModal(false)}
-                onUpdate={() => {
-                    fetchChapters();
-                    setDeleteChapterModal(false);
-                }}
-                />
-            )}
-            </DragDropContext>
-        */}
+                                </div>
+                            )}
+                        </Droppable>
+                    </DragDropContext>
+                </CardContent>
+                <CardFooter>
+                    Przeciągnij i upuść by ustalić kolejność rozdziałów
+                </CardFooter>
+            </Card>
             {addChapterModal && (
                 <AddChapterForm
                     course={course}
@@ -342,26 +214,26 @@ const ChapterForm = ({ course, userID }: ChapterFormProps) => {
             )}
             {editChapterModal && (
                 <EditChapterForm
-                courseID={course.id}
-                chapter={chapter}
-                userID={userID}
-                onClose={() => setEditChapterModal(false)}
-                onUpdate={() => {
-                    fetchChapters();
-                    setEditChapterModal(false);
-                }}
+                    courseID={course.id}
+                    chapter={chapter}
+                    userID={userID}
+                    onClose={() => setEditChapterModal(false)}
+                    onUpdate={() => {
+                        fetchChapters();
+                        setEditChapterModal(false);
+                    }}
                 />
             )}
             {deleteChapterModal && (
                 <DeleteChapterForm
-                courseID={course.id}
-                chapter={chapter}
-                userID={userID}
-                onClose={() => setDeleteChapterModal(false)}
-                onUpdate={() => {
-                    fetchChapters();
-                    setDeleteChapterModal(false);
-                }}
+                    courseID={course.id}
+                    chapter={chapter}
+                    userID={userID}
+                    onClose={() => setDeleteChapterModal(false)}
+                    onUpdate={() => {
+                        fetchChapters();
+                        setDeleteChapterModal(false);
+                    }}
                 />
             )}
         </div>

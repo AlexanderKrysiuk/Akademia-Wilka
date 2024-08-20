@@ -164,7 +164,8 @@ model Lesson{
   id String @id @default(uuid())
   title String
   type LessonType
-  content String?
+  order Int
+  content String? @db.Text
   videoUrl String?
   audioUrl String?
   free Boolean @default(false)

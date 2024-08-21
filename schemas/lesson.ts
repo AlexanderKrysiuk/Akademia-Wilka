@@ -4,9 +4,18 @@ import { LessonType, VideoSource } from "@prisma/client";
 const titleTemplate = z.string()
     .min(1, { message: "Podaj poprawny tytuł!" })
 
+
+export const EditLessonSchema = z.object({
+    title: titleTemplate,
+    content: z.string().nullable().optional(),
+})
+
+export const EditLessonTitleSchema = z.object({
+    title: titleTemplate
+})
+
 export const CreateLessonSchema = z.object({
     title: titleTemplate,
-    //content: z.string().optional(),
     //videoSource: z.nativeEnum(VideoSource).optional(),
     //videoUrl: z.string().url().optional(),
     //videoFile: z.any().optional(),

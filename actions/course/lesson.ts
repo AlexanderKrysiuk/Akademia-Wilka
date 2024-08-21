@@ -1,17 +1,19 @@
 "use server"
 import { getUserById } from "@/data/user"
 import { prisma } from "@/lib/prisma"
-import { CreateLessonSchema } from "@/schemas/lesson"
+import { CreateLessonSchema, EditLessonSchema, EditLessonTitleSchema } from "@/schemas/lesson"
 import * as z from 'zod'
 import { getChapterByID } from "./chapter"
 import { getCourseById } from "./get"
 import { v4 as uuidv4 } from "uuid";
 import { LessonType, VideoSource } from "@prisma/client"
 import { uploadVideoLessonToServer } from "../file/video"
+import EditLessonTitleForm from "@/components/dashboard/teacher/courses/lesson/edit-lesson-title-form"
 
 export const getLessonsByChapterID = async (id:string) => {
     const lessons = await prisma.lesson.findMany({
-        where: { chapterId: id}
+        where: { chapterId: id},
+        orderBy: { order: 'asc'}
     })
     return lessons
 }
@@ -23,6 +25,125 @@ export const getLessonByID = async (id: string) => {
     return lesson
 }
 
+export const updateLesson = async (values: z.infer<typeof EditLessonSchema>, userID: string, lessonID: string) => {
+    const validatedFields = EditLessonSchema.safeParse(values)
+
+    if (!validatedFields.success) {
+        return { success: false, message: "Podane pola są nieprawidłoe!" }
+    }
+
+    const existingLesson = await getLessonByID(lessonID)
+
+    if (!existingLesson) {
+        return { success: false, message: "Nie znaleziono lekcji!" }
+    }
+
+    const existingChapter = await getChapterByID(existingLesson.chapterId)
+
+    if (!existingChapter) {
+        return { success: false, message: "Nie znaleziono rozdziału!" }
+    }
+
+    const existingCourse = await getCourseById(existingChapter.courseId)
+
+    if (!existingCourse) {
+        return { success: false, message: "Nie znaleziono kursu!" }
+    }
+
+    if (!userID) {
+        return { success: false, message: "Nie podano właściciela kursu!"}
+    }
+
+    const existingUser = await getUserById(userID)
+
+    if (!existingUser) {
+        return { success: false, message: "Nie znaleziono użytkownika!" }
+    }
+
+    if (!existingUser.role?.teacher) {
+        return { success: false, message: "Nie masz uprawnień do utworzenia kursu!" }
+    }
+
+    if (existingCourse.ownerId !== existingUser.id) {
+        return { success: false, message: "Nie jesteś właścicielem tego kursu!" }
+    }
+
+    const title = validatedFields.data.title
+
+    if (!title) {
+        return { success: false, message: "Nie podano tytułu!" }
+    }
+
+    const content = validatedFields.data.content
+
+    await prisma.lesson.update({
+        where: {id: existingLesson.id},
+        data: {
+            title: title,
+            content: content
+        }
+    })
+
+    return { success: true, message: "Zaktualizowano lekcję!" }
+}
+
+export const updateLessonTitle = async (values: z.infer<typeof EditLessonTitleSchema>, userID: string, lessonID: string) => {
+    const validatedFields = EditLessonTitleSchema.safeParse(values)
+
+    if (!validatedFields.success) {
+        return { success: false, message: "Podane pola są nieprawidłoe!" }
+    }
+
+    const existingLesson = await getLessonByID(lessonID)
+
+    if (!existingLesson) {
+        return { success: false, message: "Nie znaleziono lekcji!" }
+    }
+
+    const existingChapter = await getChapterByID(existingLesson.chapterId)
+
+    if (!existingChapter) {
+        return { success: false, message: "Nie znaleziono rozdziału!" }
+    }
+
+    const existingCourse = await getCourseById(existingChapter.courseId)
+
+    if (!existingCourse) {
+        return { success: false, message: "Nie znaleziono kursu!" }
+    }
+
+    if (!userID) {
+        return { success: false, message: "Nie podano właściciela kursu!"}
+    }
+
+    const existingUser = await getUserById(userID)
+
+    if (!existingUser) {
+        return { success: false, message: "Nie znaleziono użytkownika!" }
+    }
+
+    if (!existingUser.role?.teacher) {
+        return { success: false, message: "Nie masz uprawnień do utworzenia kursu!" }
+    }
+
+    if (existingCourse.ownerId !== existingUser.id) {
+        return { success: false, message: "Nie jesteś właścicielem tego kursu!" }
+    }
+
+    const title = validatedFields.data.title
+
+    if (!title) {
+        return { success: false, message: "Nie podano tytułu!" }
+    }
+
+    await prisma.lesson.update({
+        where: {id: lessonID},
+        data: {title: title}
+    })
+
+    return { success: true, message: "Zaktualizowano tytuł!" }
+}
+
 export const createLesson = async (values: z.infer<typeof CreateLessonSchema>, userID: string, chapterID: string) => {
     const validatedFields = CreateLessonSchema.safeParse(values)
 
@@ -31,7 +152,7 @@ export const createLesson = async (values: z.infer<typeof CreateLessonSchema>, u
     }
 
     if (!userID) {
-        return { success: false, message: "Nie podano właśiciela kursu!"}
+        return { success: false, message: "Nie podano właściciela kursu!"}
     }
 
     const existingUser = await getUserById(userID)

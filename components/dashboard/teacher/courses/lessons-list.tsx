@@ -9,6 +9,7 @@ import { BookOpenText, Loader2, NotepadText, SquarePen, SquarePlus, Tv, Volume2,
 import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
 import { toast } from "@/components/ui/use-toast";
 import DeleteLessonForm from "./lesson/delete-lesson-form";
+import EditLessonForm from "./lesson/edit-lesson-form";
 
 interface LessonsListProps {
     chapterID: string
@@ -23,6 +24,7 @@ const LessonsList = ({
     const [lesson, setLesson] = useState<Lesson>()
     const [addLessonModal, setAddLessonModal] = useState(false)
     const [deleteLessonModal, setDeleteLessonModal] = useState(false)
+    const [editLessonModal, setEditLessonModal] = useState(false)
 
     const fetchLessons = async () => {
         const lessons = await getLessonsByChapterID(chapterID)
@@ -69,6 +71,11 @@ const LessonsList = ({
         setDeleteLessonModal(true)
     }
 
+    const editLesson = (lesson: Lesson) => {
+        setLesson(lesson)
+        setEditLessonModal(true)
+    }
+
     if (!lessons) {
         return (
             <div className="flex items-center justify-center">
@@ -113,6 +120,7 @@ const LessonsList = ({
                                             <div className="flex items-center hover:text-primary transition duration-300">
                                                 <SquarePen
                                                     className="cursor-pointer"
+                                                    onClick={() => editLesson(lesson)}
                                                     />
                                             </div>
                                             <div className="flex items-center hover:text-red-500 transition duration-300">
@@ -161,6 +169,17 @@ const LessonsList = ({
                 onUpdate={()=>{
                     fetchLessons()
                     setDeleteLessonModal(false)
+                }}
+            />
+        )}
+        {editLessonModal && (
+            <EditLessonForm
+                userID={userID}
+                lesson={lesson}
+                onClose={() => setEditLessonModal(false)}
+                onUpdate={()=>{
+                    fetchLessons()
+                    setEditLessonModal(false)
                 }}
             />
         )}

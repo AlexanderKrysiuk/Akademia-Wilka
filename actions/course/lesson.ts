@@ -6,7 +6,8 @@ import * as z from 'zod'
 import { getChapterByID } from "./chapter"
 import { getCourseById } from "./get"
 import { v4 as uuidv4 } from "uuid";
-import { LessonType } from "@prisma/client"
+import { LessonType, VideoSource } from "@prisma/client"
+import { uploadVideoLessonToServer } from "../file/video"
 
 export const getLessonsByChapterID = async (id:string) => {
     const lessons = await prisma.lesson.findMany({
@@ -15,7 +16,7 @@ export const getLessonsByChapterID = async (id:string) => {
     return lessons
 }
 
-export const createLesson = async (values: z.infer<typeof CreateLessonSchema>, userID: string, chapterID: string, lessonType: LessonType) => {
+export const createLesson = async (values: z.infer<typeof CreateLessonSchema>, userID: string, chapterID: string) => {
     const validatedFields = CreateLessonSchema.safeParse(values)
 
     if (!validatedFields.success) {
@@ -58,7 +59,45 @@ export const createLesson = async (values: z.infer<typeof CreateLessonSchema>, u
         return { success: false, message: "Nie podano tytułu lekcji!" }
     }
 
+    const lessonType = validatedFields.data.lessonType
+
+    if (!lessonType) {
+        return { success: false, message: "Nie podano rodzaju lekcji!" }
+    }
+
     const lessonID = uuidv4()
+
+    {/*
+    let videoUrl: string | undefined
+    
+    if (lessonType === LessonType.Video) {
+        //const videoSource = validatedFields.data.videoSource
+
+        //if (!videoSource) {
+        //    return { success: false , message: "Podany film nie ma źródła!" }
+        //}
+        if (videoSource === VideoSource.internal) {
+            const videoFile = validatedFields.data.videoFile
+
+            if (!videoFile) {
+                return { success: false, message: "Nie znaleziono filmu do przesłania!" }
+            }
+
+            const videoUploadResponse = await uploadVideoLessonToServer(videoFile, existingUser.id, existingChapter.id, lessonID)
+            
+            if (!videoUploadResponse?.dataPath){
+                return { success: videoUploadResponse?.success, message: videoUploadResponse?.message}
+            }
+
+            videoUrl = videoUploadResponse.dataPath
+
+        } else {
+            videoUrl = validatedFields.data.videoUrl   
+        }
+    }
+    */}
+
+    //const content = validatedFields.data.content;
 
     const highestOrderLesson = await getHighestOrderLessonByChapterID(chapterID)
     const newOrder = highestOrderLesson ? highestOrderLesson.order + 1 : 1
@@ -69,14 +108,16 @@ export const createLesson = async (values: z.infer<typeof CreateLessonSchema>, u
             title: title,
             chapterId: existingChapter.id,
             order: newOrder,
-            type: lessonType
+            type: lessonType,
+            //content: lessonType === LessonType.Subchapter ? undefined : content, // Tylko dla lekcji, nie dla subrozdziałów
+            //videoUrl: videoUrl, // URL wideo, jeśli przesłano
         }
     })
 
-    if (lessonType = LessonType.Subchapter) {
+    if (lessonType === LessonType.Subchapter) {
         return { success: true, message: "Utworzono nowy podrozdział!" }
     }
-    return { success: true, message: "Utworzono nowa lekcję!" }
+    return { success: true, message: "Utworzono nowa lekcję!", }
 }
 
 export const getHighestOrderLessonByChapterID = async (id: string) => {

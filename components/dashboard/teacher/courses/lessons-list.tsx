@@ -4,7 +4,8 @@ import { getLessonsByChapterID } from "@/actions/course/lesson";
 import { Button } from "@/components/ui/button";
 import { Lesson, LessonType } from "@prisma/client";
 import { useEffect, useState } from "react";
-import AddLessonForm from "./add-lesson-form";
+import AddLessonForm from "./lesson/add-lesson-form";
+import { SquarePlus } from "lucide-react";
 
 interface LessonsListProps {
     chapterID: string
@@ -17,7 +18,6 @@ const LessonsList = ({
 }: LessonsListProps) => {
     const [lessons, setLessons] = useState<Lesson[]>([])
     const [addLessonModal, setAddLessonModal] = useState(false)
-    const [lessonType, setLessonType] = useState<LessonType>(LessonType.Subchapter)
 
     const fetchLessons = async () => {
         const lessons = await getLessonsByChapterID(chapterID)
@@ -32,20 +32,21 @@ const LessonsList = ({
         
     <div className="flex flex-col px-[1vw] py-[1vh]">
         {JSON.stringify(lessons)}
+        <div className="flex">
         <Button
+            className="gap-x-[1vw]"
             onClick={() => {
-                setLessonType(LessonType.Subchapter)
                 setAddLessonModal(true)
             }}
             size={`sm`}
-        >
-            Dodaj Podrozdział
-        </Button>
+            >
+            <SquarePlus/> Dodaj Treść
+        </Button>       
+        </div>
         {addLessonModal && (
             <AddLessonForm
                 chapterID={chapterID}
                 userID={userID}
-                LessonType={lessonType}
                 onUpdate={() => {
                     fetchLessons();
                     setAddLessonModal(false)

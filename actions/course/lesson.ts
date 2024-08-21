@@ -16,6 +16,13 @@ export const getLessonsByChapterID = async (id:string) => {
     return lessons
 }
 
+export const getLessonByID = async (id: string) => {
+    const lesson = await prisma.lesson.findUnique({
+        where: {id}
+    })
+    return lesson
+}
+
 export const createLesson = async (values: z.infer<typeof CreateLessonSchema>, userID: string, chapterID: string) => {
     const validatedFields = CreateLessonSchema.safeParse(values)
 
@@ -170,4 +177,64 @@ export const reOrderLessons = async (Data: { id: string, position: number}[], us
 
     return { success: true, message: "Kolejność lekcji została zaktualizowana!" }
 
+}
+
+export const deleteLessonByID = async (lessonID: string, userID: string) => {
+    const existingLesson = await getLessonByID(lessonID)
+
+    if (!existingLesson) {
+        return { success: false, message: "Nie znaleziono lekcji!" }
+    }
+
+    const existingChapter = await getChapterByID(existingLesson.chapterId)
+
+    if (!existingChapter) {
+        return { success: false, message: "Nie znaleziono rodziału!" }
+    }
+
+    const existingCourse = await getCourseById(existingChapter.courseId)
+
+    if (!existingCourse) {
+        return { success: false, message: "Nie znaleziono kursu!" }
+    }
+
+    const existingUser = await getUserById(userID)
+
+    if (!existingUser) {
+        return { success: false, message: "Nie znaleziono użytkownika!" }
+    }
+
+    if (!existingUser?.role?.teacher) {
+        return { success: false, message: "Nie masz uprawnień do usunięcia tego rozdziału!" }
+    }
+
+    if (existingCourse.ownerId !== existingUser.id) {
+        return { success: false, message: "Nie jesteś właścicielem tego kursu!" }
+    }
+
+    if (existingCourse.id !== existingChapter.courseId) {
+        return { success: false, message: "Ten rozdział nie należy do tego kursu!"}
+    }
+
+    if (existingChapter.id !== existingLesson.chapterId) {
+        return { success: false, message: "Ta lekcja nie należy do tego rozdziału!"}
+    }
+
+    const deletedLesson = await prisma.lesson.delete({
+        where: { id: existingLesson.id }
+    })
+
+    await prisma.lesson.updateMany({
+        where: {
+          chapterId: existingChapter.id,
+          order: { gt: deletedLesson.order },  // Znajdź rozdziały o wyższej wartości order
+        },
+        data: {
+          order: {
+            decrement: 1,  // Zmniejsz wartość order o 1
+          },
+        },
+      });
+
+    return { success: true, message: "Pomyślnie usunięto lekcję!" }
 }

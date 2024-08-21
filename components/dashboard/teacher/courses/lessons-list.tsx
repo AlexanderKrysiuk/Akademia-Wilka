@@ -8,6 +8,7 @@ import AddLessonForm from "./lesson/add-lesson-form";
 import { BookOpenText, Loader2, NotepadText, SquarePen, SquarePlus, Tv, Volume2, X } from "lucide-react";
 import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
 import { toast } from "@/components/ui/use-toast";
+import DeleteLessonForm from "./lesson/delete-lesson-form";
 
 interface LessonsListProps {
     chapterID: string
@@ -19,7 +20,9 @@ const LessonsList = ({
     userID
 }: LessonsListProps) => {
     const [lessons, setLessons] = useState<Lesson[]>([])
+    const [lesson, setLesson] = useState<Lesson>()
     const [addLessonModal, setAddLessonModal] = useState(false)
+    const [deleteLessonModal, setDeleteLessonModal] = useState(false)
 
     const fetchLessons = async () => {
         const lessons = await getLessonsByChapterID(chapterID)
@@ -59,6 +62,11 @@ const LessonsList = ({
                 });
             })
         })
+    }
+
+    const deleteLesson = (lesson: Lesson) => {
+        setLesson(lesson)
+        setDeleteLessonModal(true)
     }
 
     if (!lessons) {
@@ -110,7 +118,8 @@ const LessonsList = ({
                                             <div className="flex items-center hover:text-red-500 transition duration-300">
                                                 <X
                                                     className="cursor-pointer"
-                                                    />
+                                                    onClick={() => deleteLesson(lesson)}
+                                                />
                                             </div>
                                         </div>
                                     </div>
@@ -142,6 +151,17 @@ const LessonsList = ({
                     setAddLessonModal(false)
                 }}
                 onClose = {() => setAddLessonModal(false)}
+            />
+        )}
+        {deleteLessonModal && (
+            <DeleteLessonForm
+                userID={userID}
+                lesson={lesson}
+                onClose={() => setDeleteLessonModal(false)}
+                onUpdate={()=>{
+                    fetchLessons()
+                    setDeleteLessonModal(false)
+                }}
             />
         )}
     </div> );

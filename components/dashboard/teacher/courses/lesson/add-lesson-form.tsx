@@ -87,6 +87,7 @@ const AddLessonForm = ({
                                                 <SelectItem value={LessonType.Audio}>Lekcja audio</SelectItem>
                                             </SelectContent>
                                         </Select>
+                                        <FormMessage/>
                                     </FormItem>
                                 )}
                             />

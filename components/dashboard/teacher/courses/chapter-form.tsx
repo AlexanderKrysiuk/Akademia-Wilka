@@ -198,7 +198,7 @@ const ChapterForm = ({ course, userID }: ChapterFormProps) => {
                     </DragDropContext>
                 </CardContent>
                 <CardFooter>
-                    Przeciągnij i upuść by ustalić kolejność rozdziałów
+                    Przeciągnij i upuść by ustalić kolejność
                 </CardFooter>
             </Card>
             {addChapterModal && (

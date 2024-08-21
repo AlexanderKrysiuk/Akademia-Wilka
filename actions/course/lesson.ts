@@ -100,7 +100,7 @@ export const createLesson = async (values: z.infer<typeof CreateLessonSchema>, u
     //const content = validatedFields.data.content;
 
     const highestOrderLesson = await getHighestOrderLessonByChapterID(chapterID)
-    const newOrder = highestOrderLesson ? highestOrderLesson.order + 1 : 1
+    const newOrder = highestOrderLesson ? highestOrderLesson.order + 1 : 0
 
     await prisma.lesson.create({
         data: {
@@ -122,7 +122,7 @@ export const createLesson = async (values: z.infer<typeof CreateLessonSchema>, u
 
 export const getHighestOrderLessonByChapterID = async (id: string) => {
     const highestOrderLesson = await prisma.lesson.findFirst({
-        where: {id: id},
+        where: { chapterId: id},
         orderBy: { order: 'desc'}
     })
     return highestOrderLesson

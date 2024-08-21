@@ -22,7 +22,7 @@ export const getChapterByID = async (id: string) => {
 
 export const getHighestOrderChapterByCourseID = async (id:string) => {
     const highestOrderChapter = await prisma.chapter.findFirst({
-        where: { id: id },
+        where: { courseId: id },
         orderBy: { order: 'desc' } 
     })
     return highestOrderChapter
@@ -68,7 +68,7 @@ export const createChapter = async (values: z.infer<typeof CreateChapterSchema>,
     const chapterID = uuidv4()
 
     const highestOrderChapter = await getHighestOrderChapterByCourseID(courseID)
-    const newOrder = highestOrderChapter ? highestOrderChapter.order + 1 : 1;
+    const newOrder = highestOrderChapter ? highestOrderChapter.order + 1 : 0;
 
     await prisma.chapter.create({
         data: {

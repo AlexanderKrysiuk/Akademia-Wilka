@@ -127,3 +127,47 @@ export const getHighestOrderLessonByChapterID = async (id: string) => {
     })
     return highestOrderLesson
 }
+
+export const reOrderLessons = async (Data: { id: string, position: number}[], userID:string, chapterID:string) => {
+    const existingUser = await getUserById(userID)
+
+    if (!existingUser) {
+        return { success: false, message: "Nie znaleziono użytkownika!" }
+    }
+
+    if (!existingUser?.role?.teacher) {
+        return { success: false, message: "Nie masz uprawnień do usunięcia tego rozdziału!" }
+    }
+
+    const existingChapter = await getChapterByID(chapterID)
+
+    if (!existingChapter) {
+        return { success: false, message: "Nie znaleziono rozdziału!" }
+    }
+
+    const existingCourse = await getCourseById(existingChapter.courseId)
+
+    if (!existingCourse) {
+        return { success: false, message: "Nie znaleziono kursu!" }
+    }
+
+    if (existingCourse.ownerId !== existingUser.id) {
+        return { success: false, message: "Nie jesteś właścicielem tego kursu!" }
+    }
+
+    if (!Data) {
+        return { success: false, message: "Nie wykrto listy do zaktualizowania!" }
+    }
+
+    const updatePromises = Data.map(async ({ id, position }) => {
+        return await prisma.lesson.update({
+            where: { id },
+            data: { order: position }
+        });
+    });
+
+    await Promise.all(updatePromises)
+
+    return { success: true, message: "Kolejność lekcji została zaktualizowana!" }
+
+}

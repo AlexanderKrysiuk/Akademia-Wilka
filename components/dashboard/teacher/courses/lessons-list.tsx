@@ -1,12 +1,13 @@
 "use client"
 
-import { getLessonsByChapterID } from "@/actions/course/lesson";
+import { getLessonsByChapterID, reOrderLessons } from "@/actions/course/lesson";
 import { Button } from "@/components/ui/button";
 import { Lesson, LessonType } from "@prisma/client";
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import AddLessonForm from "./lesson/add-lesson-form";
-import { BookOpenText, NotepadText, SquarePen, SquarePlus, Tv, Volume2, X } from "lucide-react";
-import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
+import { BookOpenText, Loader2, NotepadText, SquarePen, SquarePlus, Tv, Volume2, X } from "lucide-react";
+import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
+import { toast } from "@/components/ui/use-toast";
 
 interface LessonsListProps {
     chapterID: string
@@ -28,12 +29,52 @@ const LessonsList = ({
     useEffect(()=>{
         fetchLessons();
     },[])
+
+    const onDragEnd = (result: DropResult) => {
+        if (!result.destination) return
+
+        const items = Array.from(lessons);
+        const [reorderedItems] = items.splice(result.source.index, 1)
+        items.splice(result.destination.index, 0, reorderedItems)
+
+        const startIndex = Math.min(result.source.index, result.destination.index);
+        const endIndex = Math.max(result.source.index, result.destination.index)
+
+        const updatedLessons = items.slice(startIndex, endIndex + 1);
+
+        setLessons(items)
+
+        const bulkUpdatedData = updatedLessons.map((lesson)=>({
+            id: lesson.id,
+            position: items.findIndex((item) => item.id === lesson.id)
+        }))
+
+        startTransition(()=>{
+            reOrderLessons(bulkUpdatedData, userID, chapterID)
+            .then((data) => {
+                toast({
+                    title: data.success ? "✅ Sukces!" : "❌ Błąd!",
+                    description: data.message,
+                    variant: data.success? "success" : "failed",
+                });
+            })
+        })
+    }
+
+    if (!lessons) {
+        return (
+            <div className="flex items-center justify-center">
+                <Loader2 className="animate-spin" />
+                <span> Ładowanie lekcji... </span>
+            </div>
+        )
+    }
     
     return ( 
         
     <div className="flex flex-col px-[1vw] py-[1vh]">
         {/* {JSON.stringify(lessons)} */}
-        <DragDropContext onDragEnd={()=>{}}>
+        <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="lessons">
                 {(provided) => (
                     <div {...provided.droppableProps} ref={provided.innerRef}>

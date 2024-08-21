@@ -41,35 +41,35 @@ const LessonsList = ({
                             <Draggable key={lesson.id} draggableId={lesson.id} index={index}>
                                 {(provided) => (
                                     <div ref={provided.innerRef} {...provided.draggableProps} className="mb-[1vh]">
-                                        <div className="flex items-center px-[1vw] py-[1vh] justify-between bg-primary/10 rounded-md">
-                                            <div className="flex items-center gap-x-[1vw]">
-                                                <div {...provided.dragHandleProps} className="hover:text-primary transition duration-300">
-                                                    {lesson.type === LessonType.Text && (
-                                                        <NotepadText/>
-                                                    )}
-                                                    {lesson.type === LessonType.Subchapter && (
-                                                        <BookOpenText/>
-                                                    )}
-                                                    {lesson.type === LessonType.Audio && (
-                                                        <Volume2/>
-                                                    )}
-                                                    {lesson.type === LessonType.Video && (
-                                                        <Tv/>
-                                                    )}
-                                                </div>
+                                        <div className="flex justify-between items-center bg-primary/10 rounded-md px-[1vw] py-[1vh] gap-x-[1vw]">
+                                            <div {...provided.dragHandleProps} className="hover:text-primary transition duration-300">
+                                                {lesson.type === LessonType.Text && (
+                                                    <NotepadText/>
+                                                )}
+                                                {lesson.type === LessonType.Subchapter && (
+                                                    <BookOpenText/>
+                                                )}
+                                                {lesson.type === LessonType.Audio && (
+                                                    <Volume2/>
+                                                )}
+                                                {lesson.type === LessonType.Video && (
+                                                    <Tv/>
+                                                )}
+                                            </div>
+                                            <div className="truncate w-full">
                                                 {lesson.title}
                                             </div>
-                                            <div className="flex items-center gap-x-[1vw]">
-                                                <div className="flex items-center hover:text-primary transition duration-300">
-                                                    <SquarePen
-                                                        className="cursor-pointer"
+                                            
+
+                                            <div className="flex items-center hover:text-primary transition duration-300">
+                                                <SquarePen
+                                                    className="cursor-pointer"
                                                     />
-                                                </div>
-                                                <div className="flex items-center hover:text-red-500 transition duration-300">
-                                                    <X
-                                                        className="cursor-pointer"
+                                            </div>
+                                            <div className="flex items-center hover:text-red-500 transition duration-300">
+                                                <X
+                                                    className="cursor-pointer"
                                                     />
-                                                </div>
                                             </div>
                                         </div>
                                     </div>

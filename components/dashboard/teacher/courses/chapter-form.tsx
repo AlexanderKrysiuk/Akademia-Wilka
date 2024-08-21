@@ -142,31 +142,35 @@ const ChapterForm = ({ course, userID }: ChapterFormProps) => {
                                             {(provided) => (
                                                 <div ref={provided.innerRef} {...provided.draggableProps} className="mb-[1vh]">
                                                     <Card className="w-full">
-                                                        <div className="flex items-center px-[1vw] py-[1vh] justify-between">
-                                                            <div className="flex items-center gap-x-[1vw]">
-                                                                <div {...provided.dragHandleProps} className="hover:text-primary transition duration-300">
-                                                                    <Scroll/>
-                                                                </div>
+                                                        <div className="flex justify-between items-center px-[1vw] py-[1vh] gap-x-[1vw]">
+                                                            <div {...provided.dragHandleProps} className="hover:text-primary transition duration-300">
+                                                                <Scroll/>
+                                                            </div>
+                                                            <div className="truncate w-full">
                                                                 {chapter.title}
                                                             </div>
-                                                            <div className="flex items-center gap-x-[1vw]">
+                                                            <div className="flex items-center hover:text-primary transition duration-300">
                                                                 <SquarePen
-                                                                    className="hover:text-primary transition duration-300 cursor-pointer"
+                                                                    className="cursor-pointer"
                                                                     onClick={() => editChapter(chapter)}
                                                                 />
+                                                            </div>
+                                                            <div className="flex items-center hover:text-red-500 transition duration-300">
                                                                 <X
-                                                                    className="hover:text-red-500 transition duration-300 cursor-pointer"
+                                                                    className="cursor-pointer"
                                                                     onClick={() => deleteChapter(chapter)}
                                                                 />
+                                                            </div>
+                                                            <div className="flex items-center hover:text-primary transition duration-300">
                                                                 {expandedChapters.includes(chapter.id) ? 
                                                                     <ChevronUp 
-                                                                        onClick={() => toggleExpandChapter(chapter.id)}
-                                                                        className="hover:text-primary transition duration-300 cursor-pointer"
+                                                                    onClick={() => toggleExpandChapter(chapter.id)}
+                                                                    className="cursor-pointer"
                                                                     /> 
                                                                     : 
                                                                     <ChevronDown 
-                                                                        onClick={() => toggleExpandChapter(chapter.id)}
-                                                                        className="hover:text-primary transition duration-300 cursor-pointer"
+                                                                    onClick={() => toggleExpandChapter(chapter.id)}
+                                                                    className="cursor-pointer"
                                                                     />
                                                                 }
                                                             </div>

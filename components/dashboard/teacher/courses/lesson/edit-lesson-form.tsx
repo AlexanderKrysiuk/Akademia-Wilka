@@ -18,6 +18,7 @@ import ReactQuill from "react-quill"
 import { Select, SelectValue, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select"
 import { ExtendedLesson } from "@/types/lesson"
 import VideoPlayer from "@/utils/video"
+import { uploadVideoLessonToServer } from "@/actions/file/video"
 
 interface EditLessonFormProps {
     userID: string
@@ -61,11 +62,38 @@ const EditLessonForm = ({
         }
     })
 
+    const handleVideoFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files?.[0]) {
+            const selectedFile = e.target.files[0]
+            const formData = new FormData();
+            formData.append('videofile', selectedFile);
+            formData.append('lessonID', lesson.id);
+            formData.append('userID', userID);
+            startTransition(async () => {
+                try {
+                    const { URL } = await uploadVideoLessonToServer(formData);
+                    setVideoUrl(URL);
+                    toast({
+                        title: "✅ Sukces!",
+                        description: "Film został przesłany pomyślnie.",
+                        variant: "success",
+                    });
+                } catch (error) {
+                    toast({
+                        title: "❌ Błąd!",
+                        description: (error as Error).message || "Wystąpił błąd podczas przesyłania filmu.",
+                        variant: "failed",
+                    });
+                }
+            });
+        }
+    }
     
+
     const onSubmit = (values: z.infer<typeof EditLessonSchema>) => {
         console.log("VALUES: ", values)
         startTransition(()=>{
-            updateLesson(values, userID, lesson.id, file)
+            updateLesson(values, userID, lesson.id)
             .then((data) =>{
                 toast({
                     title: data.success ? "✅ Sukces!" : "❌ Błąd!",
@@ -194,15 +222,16 @@ const EditLessonForm = ({
                                             id="video"
                                             type="file"
                                             accept="video/*"
-                                            onChange={(e) => {
-                                                if (e.target.files?.[0]) {
-                                                    setFile(e.target.files[0]);
-                                                }
-                                            }}
+                                            onChange={handleVideoFileChange}
                                         />
                                     )}
                                     {videoUrl && videoSource && (
-                                        <VideoPlayer source={videoSource} url={videoUrl}/>
+                                        <div className="max-w-full flex justify-center">
+                                            <div className="max-w-[20vw]">
+
+                                                <VideoPlayer source={videoSource} url={videoUrl}/>
+                                            </div>
+                                        </div>
                                     )}
                                 </>
                             )}

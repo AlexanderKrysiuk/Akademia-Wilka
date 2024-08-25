@@ -32,7 +32,6 @@ export const updateLesson = async (
     values: z.infer<typeof EditLessonSchema>, 
     userID: string, 
     lessonID: string, 
-    file?: File
 ) => {
     const validatedFields = EditLessonSchema.safeParse(values);
 
@@ -70,12 +69,15 @@ export const updateLesson = async (
 
     const title = validatedFields.data.title;
     const content = validatedFields.data.content;
+    
+    
+    {/* 
     const video = validatedFields.data.video;
-
+    
     let videoID: string | undefined = undefined;
     let videoURL: string | undefined = undefined;
     let videoDuration: number | undefined = undefined;
-
+    
     if (video) {
         if (video.source === VideoSource.internal) {
             if (!file) {
@@ -110,6 +112,8 @@ export const updateLesson = async (
             }
         });
     }
+    */}
+    
 
     await prisma.lesson.update({
         where: { id: existingLesson.id },

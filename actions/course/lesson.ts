@@ -9,10 +9,12 @@ import { v4 as uuidv4 } from "uuid";
 import { LessonType, VideoSource } from "@prisma/client"
 import { uploadVideoLessonToServer } from "../file/video"
 import EditLessonTitleForm from "@/components/dashboard/teacher/courses/lesson/edit-lesson-title-form"
+import { url } from "inspector"
 
 export const getLessonsByChapterID = async (id:string) => {
     const lessons = await prisma.lesson.findMany({
         where: { chapterId: id},
+        include: { video: true },
         orderBy: { order: 'asc'}
     })
     return lessons
@@ -20,72 +22,105 @@ export const getLessonsByChapterID = async (id:string) => {
 
 export const getLessonByID = async (id: string) => {
     const lesson = await prisma.lesson.findUnique({
-        where: {id}
+        where: {id},
+        include: { video: true }
     })
     return lesson
 }
 
-export const updateLesson = async (values: z.infer<typeof EditLessonSchema>, userID: string, lessonID: string) => {
-    const validatedFields = EditLessonSchema.safeParse(values)
+export const updateLesson = async (
+    values: z.infer<typeof EditLessonSchema>, 
+    userID: string, 
+    lessonID: string, 
+    file?: File
+) => {
+    const validatedFields = EditLessonSchema.safeParse(values);
 
     if (!validatedFields.success) {
-        return { success: false, message: "Podane pola są nieprawidłoe!" }
+        return { success: false, message: "Podane pola są nieprawidłowe!" };
     }
 
-    const existingLesson = await getLessonByID(lessonID)
-
+    const existingLesson = await getLessonByID(lessonID);
     if (!existingLesson) {
-        return { success: false, message: "Nie znaleziono lekcji!" }
+        return { success: false, message: "Nie znaleziono lekcji!" };
     }
 
-    const existingChapter = await getChapterByID(existingLesson.chapterId)
-
+    const existingChapter = await getChapterByID(existingLesson.chapterId);
     if (!existingChapter) {
-        return { success: false, message: "Nie znaleziono rozdziału!" }
+        return { success: false, message: "Nie znaleziono rozdziału!" };
     }
 
-    const existingCourse = await getCourseById(existingChapter.courseId)
-
+    const existingCourse = await getCourseById(existingChapter.courseId);
     if (!existingCourse) {
-        return { success: false, message: "Nie znaleziono kursu!" }
+        return { success: false, message: "Nie znaleziono kursu!" };
     }
 
     if (!userID) {
-        return { success: false, message: "Nie podano właściciela kursu!"}
+        return { success: false, message: "Nie podano właściciela kursu!" };
     }
 
-    const existingUser = await getUserById(userID)
-
-    if (!existingUser) {
-        return { success: false, message: "Nie znaleziono użytkownika!" }
-    }
-
-    if (!existingUser.role?.teacher) {
-        return { success: false, message: "Nie masz uprawnień do utworzenia kursu!" }
+    const existingUser = await getUserById(userID);
+    if (!existingUser || !existingUser.role?.teacher) {
+        return { success: false, message: "Nie masz uprawnień do utworzenia kursu!" };
     }
 
     if (existingCourse.ownerId !== existingUser.id) {
-        return { success: false, message: "Nie jesteś właścicielem tego kursu!" }
+        return { success: false, message: "Nie jesteś właścicielem tego kursu!" };
     }
 
-    const title = validatedFields.data.title
+    const title = validatedFields.data.title;
+    const content = validatedFields.data.content;
+    const video = validatedFields.data.video;
 
-    if (!title) {
-        return { success: false, message: "Nie podano tytułu!" }
+    let videoID: string | undefined = undefined;
+    let videoURL: string | undefined = undefined;
+    let videoDuration: number | undefined = undefined;
+
+    if (video) {
+        if (video.source === VideoSource.internal) {
+            if (!file) {
+                return { success: false, message: "Nie znaleziono pliku do przesłania na serwer!" };
+            }
+            const uploadResult = await uploadVideoLessonToServer(file, existingLesson.id);
+            if (!uploadResult) {
+                return { success: false, message: "Wystąpił błąd podczas przesyłania filmu!" };
+            }
+            videoID = uploadResult.ID;
+            videoURL = uploadResult.URL;
+            videoDuration = uploadResult.Duration;
+        } else {
+            videoURL = video.url;
+        }
+
+        await prisma.videoLesson.upsert({
+            where: { lessonId: existingLesson.id },
+            update: {
+                url: videoURL,
+                name: video.name || null,
+                source: video.source,
+                duration: videoDuration || undefined,
+            },
+            create: {
+                id: videoID || "",
+                url: videoURL || "",
+                name: video.name || null,
+                source: video.source,
+                duration: videoDuration || undefined,
+                lesson: { connect: { id: existingLesson.id } }
+            }
+        });
     }
-
-    const content = validatedFields.data.content
 
     await prisma.lesson.update({
-        where: {id: existingLesson.id},
+        where: { id: existingLesson.id },
         data: {
             title: title,
             content: content
         }
-    })
+    });
 
-    return { success: true, message: "Zaktualizowano lekcję!" }
-}
+    return { success: true, message: "Zaktualizowano lekcję!" };
+};
 
 export const updateLessonTitle = async (values: z.infer<typeof EditLessonTitleSchema>, userID: string, lessonID: string) => {
     const validatedFields = EditLessonTitleSchema.safeParse(values)

@@ -8,7 +8,23 @@ const titleTemplate = z.string()
 export const EditLessonSchema = z.object({
     title: titleTemplate,
     content: z.string().nullable().optional(),
-})
+    video: z.object({
+        url: z.string().url("Podaj poprawny link").optional(),
+        name: z.string().optional(),
+        source: z.nativeEnum(VideoSource)
+    }).nullable().optional()
+}).refine(data => {
+    // Walidacja, która zapewnia, że jeśli source jest różny od 'internal', to url jest obecne
+    if (data.video) {
+        if (data.video.source !== VideoSource.internal && !data.video.url) {
+            return false;
+        }
+    }
+    return true;
+}, {
+    message: "Jeśli źródło wideo nie jest serwerem, musisz podać URL.",
+    path: ["video"]
+});
 
 export const EditLessonTitleSchema = z.object({
     title: titleTemplate

@@ -158,23 +158,22 @@ model Chapter {
 }
 
 model Lesson {
-  id         String      @id @default(uuid())
-  title      String
-  type       LessonType
-  order      Int
-  content    String?     @db.Text
+  id        String      @id @default(uuid())
+  title     String
+  type      LessonType
+  order     Int
+  content   String?     @db.Text
 
-  videoSource VideoSource? // Opcjonalne źródło wideo
-  videoUrl    String?     // Opcjonalny URL wideo
-  audioUrl    String?
-  free        Boolean     @default(false)
+  video     VideoLesson? 
+  
+  audioUrl  String?
+  free      Boolean     @default(false)
 
   chapterId String
   chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
 
   // Relacja 1:1 z VideoLesson
-  video     VideoLesson?
-  videoId   String?
+
 
   attachments Attachment[]
 
@@ -188,7 +187,8 @@ model Lesson {
 model VideoLesson {
   id       String      @id @default(uuid())
   url      String
-  name     String
+  name     String?
+  duration  Float?     // Czas trwania wideo w sekundach, opcjonalne pole
   source   VideoSource // Źródło wideo (np. enum VideoSource)
 
   // Relacja 1:1 z Lesson
@@ -198,7 +198,6 @@ model VideoLesson {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
 
 enum VideoSource {
   youtube

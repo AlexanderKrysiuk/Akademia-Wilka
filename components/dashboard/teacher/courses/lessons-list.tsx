@@ -10,6 +10,7 @@ import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea
 import { toast } from "@/components/ui/use-toast";
 import DeleteLessonForm from "./lesson/delete-lesson-form";
 import EditLessonForm from "./lesson/edit-lesson-form";
+import { ExtendedLesson } from "@/types/lesson";
 
 interface LessonsListProps {
     chapterID: string
@@ -20,8 +21,8 @@ const LessonsList = ({
     chapterID,
     userID
 }: LessonsListProps) => {
-    const [lessons, setLessons] = useState<Lesson[]>([])
-    const [lesson, setLesson] = useState<Lesson>()
+    const [lessons, setLessons] = useState<ExtendedLesson[]>([])
+    const [lesson, setLesson] = useState<ExtendedLesson>()
     const [addLessonModal, setAddLessonModal] = useState(false)
     const [deleteLessonModal, setDeleteLessonModal] = useState(false)
     const [editLessonModal, setEditLessonModal] = useState(false)
@@ -66,12 +67,12 @@ const LessonsList = ({
         })
     }
 
-    const deleteLesson = (lesson: Lesson) => {
+    const deleteLesson = (lesson: ExtendedLesson) => {
         setLesson(lesson)
         setDeleteLessonModal(true)
     }
 
-    const editLesson = (lesson: Lesson) => {
+    const editLesson = (lesson: ExtendedLesson) => {
         setLesson(lesson)
         setEditLessonModal(true)
     }

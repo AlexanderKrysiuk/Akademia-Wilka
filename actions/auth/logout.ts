@@ -1,8 +1,12 @@
-"use server";
+"use client";
 
-import { signOut } from "@/auth";
-import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export const logout = async () => {
-    await signOut({redirectTo: DEFAULT_LOGIN_REDIRECT});
-}
+    // Wykonaj wylogowanie
+    await signOut({ redirect: false }); // Zapobiega automatycznemu przekierowaniu
+    // Ręczne przekierowanie po wylogowaniu
+    const router = useRouter();
+    router.push("/"); // Przekierowanie na stronę główną lub logowania
+};

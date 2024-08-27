@@ -1,21 +1,25 @@
+// components/auth/LogOutButton.tsx
+
 "use client";
 
-import { logout } from "@/actions/auth/logout";
+import { signOut } from "next-auth/react";
 
 interface LogOutButtonProps {
     children?: React.ReactNode;
-};
+    redirectUrl?: string; // Opcjonalny URL do przekierowania
+}
 
-export const LogOutButton = ({
-    children
+export const LogOutButton = ({ 
+    children,
+    redirectUrl = "/" // Domyślny URL przekierowania
 }: LogOutButtonProps) => {
-    const onClick = () => {
-        logout();
-    }
+    const handleClick = async () => {
+        await signOut({ callbackUrl: redirectUrl }); // Wywołanie `signOut` z `callbackUrl`
+    };
 
     return (
-        <span onClick={onClick} className="cursor-pointer">
+        <span onClick={handleClick} className="cursor-pointer">
             {children}
         </span>
-    )
-}
+    );
+};

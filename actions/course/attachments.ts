@@ -41,6 +41,7 @@ export const deleteAttachmentByID = async (id: string) => {
 
     const dirPath = join('courses', attachment.courseId, 'attachments');
     const filePath = join(dirPath, fileName);
+    console.log("FILEPATH: ",filePath)
 
     const client = new ftp.Client()
     client.ftp.verbose = true

@@ -8,7 +8,8 @@ import { v4 as uuidv4 } from "uuid";
 
 export const getChaptersByCourseID = async (id: string) => {
     const chapters = await prisma.chapter.findMany({
-        where: { courseId: id}
+        where: { courseId: id},
+        orderBy: { order: 'asc' }
     })
     return chapters
 }

@@ -46,6 +46,7 @@
     "react-player": "^2.16.0",
     "react-quill": "^2.0.0",
     "react-spinners": "^0.14.1",
+    "react-toastify": "^10.0.5",
     "react-tooltip": "^5.28.0",
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",

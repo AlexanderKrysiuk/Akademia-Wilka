@@ -8,7 +8,6 @@ import { getChapterByID } from "../course/chapter";
 import { getCourseById } from "../course/get";
 import { getUserById } from "@/data/user";
 import { prisma } from "@/lib/prisma";
-import { getVideoDurationFromURL } from "@/lib/video";
 
 export async function uploadVideoLessonToServer(formData: FormData): Promise<{ ID: string, URL: string }> {
     const videoFile = formData.get('videofile') as File;
@@ -72,6 +71,22 @@ export async function uploadVideoLessonToServer(formData: FormData): Promise<{ I
             password: process.env.FTP_PASS,
             secure: false
         });
+
+        const existingVideo = await prisma.videoLesson.findUnique({
+            where: { lessonId: lessonID },
+        });
+
+        if (existingVideo && existingVideo.url) {
+            // Usuń stare wideo z serwera FTP
+            const existingVideoName = existingVideo.url.split('/').pop();
+            if (!existingVideoName) {
+                throw new Error("Nie udało się odczytać nazwy video z URL.");
+            }
+            const existingFilePath = join(dirPath, existingVideoName);
+            console.log("FULL FILE NAME: ", fullFileName)
+            console.log("EXISTINGFILEPATH:", existingFilePath)
+            await client.remove(existingFilePath);
+        }
 
         const fileStream = Readable.from(buffer);
 

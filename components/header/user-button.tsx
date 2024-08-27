@@ -10,6 +10,7 @@ import { TfiDashboard } from "react-icons/tfi";
 
 
 const UserButton = () => {
+    
     const user = useCurrentUser(); // Użyj hooka do pobrania użytkownika
 
     if (user) {

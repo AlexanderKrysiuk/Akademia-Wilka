@@ -97,7 +97,12 @@ const LessonsList = ({
                         {lessons.map((lesson,index) => (
                             <Draggable key={lesson.id} draggableId={lesson.id} index={index}>
                                 {(provided) => (
-                                    <div ref={provided.innerRef} {...provided.draggableProps} className="mb-[1vh]">
+                                    <div 
+                                        ref={provided.innerRef} 
+                                        {...provided.draggableProps} 
+                                        style={provided.draggableProps.style as React.CSSProperties}  // Dodano rzutowanie typów    
+                                        className="mb-[1vh]"
+                                    >
                                         <div className="flex justify-between items-center bg-primary/10 rounded-md px-[1vw] py-[1vh] gap-x-[1vw]">
                                             <div {...provided.dragHandleProps} className="hover:text-primary transition duration-300">
                                                 {lesson.type === LessonType.Text && (

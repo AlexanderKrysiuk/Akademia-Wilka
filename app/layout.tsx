@@ -8,7 +8,8 @@ import { auth } from "@/auth";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "@/components/theme-providet";
 import { Toaster } from "@/components/ui/toaster"
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Import stylów
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -37,6 +38,7 @@ export default async function RootLayout({
               >
           <Header/>
           {children}
+          <ToastContainer/>
           <Toaster/>
           </ThemeProvider>
         </body>

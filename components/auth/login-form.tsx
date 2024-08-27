@@ -1,38 +1,49 @@
-"use client"
-import { LoginSchema } from "@/schemas/user";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from 'zod'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useState, useTransition } from "react";
-import { Input } from "@/components/ui/input";
-import Link from "next/link";
-import { Button } from "../ui/button";
-import RenderResultMessage from "@/components/render-result-message";
-import { Login } from "@/actions/auth/login";
-import { useSearchParams } from "next/navigation";
+"use client";
 
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { LoginSchema } from "@/schemas/user";
+import { toast } from 'react-toastify'
 
 const LoginForm = () => {
-    const searchParams = useSearchParams();
-    const [result, setResult] = useState<{ success: boolean, message: string} | null>(null)
-    const [isPending, startTransition] = useTransition()
-    const callbackUrl = searchParams.get("callbackUrl");
+    const router = useRouter();
+    const [isPending, setIsPending] = useState(false);
 
     const form = useForm<z.infer<typeof LoginSchema>>({
-        resolver: zodResolver(LoginSchema)
-    })
+        resolver: zodResolver(LoginSchema),
+    });
 
-    const onSubmit = (values: z.infer<typeof LoginSchema>) => {
-        setResult(null)
-        startTransition(() => {
-            Login(values, callbackUrl)
-        })
-    }
-    
-    return ( 
+    const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
+        setIsPending(true);
+
+        // Wywołaj `signIn` z `redirect: true`, aby przekierować po zalogowaniu
+        const result = await signIn("credentials", {
+            redirect: true,
+            email: values.email,
+            password: values.password,
+            callbackUrl: "/kokpit" // Ustaw swój URL docelowy tutaj
+        });
+
+        if (result?.url) {
+            toast.success("Logowanie udane!"); // Wyświetlenie powiadomienia o sukcesie
+            router.push(result.url); // Automatyczne przekierowanie na bazie URL z `signIn`
+        } else {
+            toast.error("Błąd logowania!"); // Wyświetlenie powiadomienia o błędzie
+        }
+
+        setIsPending(false);
+    };
+
+    return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-[1vh]">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
                     control={form.control}
                     name="email"
@@ -40,14 +51,9 @@ const LoginForm = () => {
                         <FormItem>
                             <FormLabel>Email</FormLabel>
                             <FormControl>
-                                <Input
-                                    {...field}
-                                    disabled={isPending}
-                                    placeholder="john.doe@example.com"
-                                    type="email"
-                                />
+                                <Input {...field} placeholder="john.doe@example.com" type="email" />
                             </FormControl>
-                            <FormMessage/>
+                            <FormMessage />
                         </FormItem>
                     )}
                 />
@@ -58,30 +64,18 @@ const LoginForm = () => {
                         <FormItem>
                             <FormLabel>Hasło</FormLabel>
                             <FormControl>
-                                <Input
-                                    {...field}
-                                    disabled={isPending}
-                                    placeholder="********"
-                                    type="password"
-                                />
+                                <Input {...field} placeholder="********" type="password" />
                             </FormControl>
-                            <Button variant={`link`} asChild>
-                                <Link href="/auth/reset" passHref>
-                                    Nie pamiętasz hasła?
-                                </Link>
-                            </Button>
-                            <FormMessage/>
+                            <FormMessage />
                         </FormItem>
                     )}
                 />
-                <div className="flex justify-center space-y-[1vh]">
-                    <Button type="submit" disabled={isPending}>
-                        Zaloguj się
-                    </Button>
-                </div>
-                {RenderResultMessage(result)}
+                <Button type="submit" disabled={isPending}>
+                    Zaloguj się
+                </Button>
             </form>
-        </Form>  
+        </Form>
     );
-}
+};
+
 export default LoginForm;

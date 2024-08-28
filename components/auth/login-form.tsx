@@ -11,6 +11,8 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { LoginSchema } from "@/schemas/user";
 import { toast } from 'react-toastify'
+import { checkVerificationEmail } from "@/actions/auth/check-verification-email";
+import Link from "next/link";
 
 const LoginForm = () => {
     const router = useRouter();
@@ -20,26 +22,60 @@ const LoginForm = () => {
         resolver: zodResolver(LoginSchema),
     });
 
+    {/* 
+    const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
+
+        setIsPending(true);
+        await login(values);
+        setIsPending(false);
+        try {
+            const result = await login(values);
+            
+            if (result.redirect) {
+                if (result.url) {
+                    router.push(result.url); // Automatyczne przekierowanie na bazie URL
+                }
+            } else {
+                toast.success(result.message || "Logowanie udane!"); // Wyświetlenie komunikatu o weryfikacji e-maila
+            }
+        } catch (error) {
+            toast.error("Błąd logowania!"); // Wyświetlenie komunikatu o błędzie logowania
+        }
+        
+    };
+*/}
+
     const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
         setIsPending(true);
 
-        // Wywołaj `signIn` z `redirect: true`, aby przekierować po zalogowaniu
-        const result = await signIn("credentials", {
-            redirect: true,
-            email: values.email,
-            password: values.password,
-            callbackUrl: "/kokpit" // Ustaw swój URL docelowy tutaj
-        });
+        try {
+            await checkVerificationEmail(values);
+            
+            // E-mail jest zweryfikowany, przeprowadź logowanie
+            const result = await signIn("credentials", {
+                redirect: true,
+                email: values.email,
+                password: values.password,
+                callbackUrl: "/kokpit" // Ustaw swój URL docelowy tutaj
+            });
 
-        if (result?.url) {
-            toast.success("Logowanie udane!"); // Wyświetlenie powiadomienia o sukcesie
-            router.push(result.url); // Automatyczne przekierowanie na bazie URL z `signIn`
-        } else {
-            toast.error("Błąd logowania!"); // Wyświetlenie powiadomienia o błędzie
+            if (result?.url) {
+                toast.success("Logowanie udane!");
+                router.push(result.url);
+            } else {
+                toast.error("Błąd logowania!");
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                toast.error(error.message); // Wyświetl komunikat o błędzie
+            } else {
+                toast.error("Wystąpił nieznany błąd.");
+            }
+        } finally {
+            setIsPending(false);
         }
-
-        setIsPending(false);
     };
+
 
     return (
         <Form {...form}>
@@ -62,7 +98,12 @@ const LoginForm = () => {
                     name="password"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Hasło</FormLabel>
+                            <div className="flex justify-between items-center w-full">
+                                <FormLabel>Hasło</FormLabel>
+                                <Link href="/auth/reset">
+                                    <Button variant="link">Nie pamiętasz hasła?</Button>
+                                </Link>
+                            </div>
                             <FormControl>
                                 <Input {...field} placeholder="********" type="password" />
                             </FormControl>

@@ -13,7 +13,7 @@ export const reset = async (values: z.infer<typeof ResetSchema>) => {
         return { success: false, message: "Podano nieprawidłowe pola!" }
     }
 
-    const email = validatedFields.data.email;
+    const email = validatedFields.data.email.toLowerCase();
     const existingUser = await getUserByEmail(email);
 
     

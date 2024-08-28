@@ -8,13 +8,13 @@ generator client {
 }
 
 model User {
-  id            String    @id @default(uuid())
+  id            String              @id @default(uuid())
   name          String?
-  email         String    @unique
+  email         String              @unique
   emailVerified DateTime?
   password      String
   image         String?
-  role          UserRole?
+  roles         UserRoleAssignment[] // Relacja wiele-do-wielu do ról
   accounts      Account[]
   sessions      Session[]
 
@@ -22,20 +22,25 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
-model UserRole {
-  userId  String  @unique
-  teacher Boolean @default(false) // Rola nauczyciela
+model UserRoleAssignment {
+  id     String       @id @default(uuid())
+  user   User      @relation(fields: [userId], references: [id])
+  userId String
+  role   UserRole  // Przechowujemy role bezpośrednio jako enum
 
-  user User? @relation(fields: [userId], references: [id])
+  @@unique([userId, role]) // Zapewnia, że użytkownik nie może mieć tej samej roli więcej niż raz
+}
+
+enum UserRole {
+  ADMIN
+  TEACHER
 }
 
 model UserProgress {
   id     String @id @default(uuid())
   userId String
-
   lessonId String
   lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-
   completed Boolean @default(false)
 
   createdAt DateTime @default(now())
@@ -97,7 +102,7 @@ model PasswordResetToken {
 model Course {
   id          String  @id @default(uuid())
   ownerId     String
-  title       String  @db.Text
+  title       String  @db.Text @unique
   description String? @db.Text
   imageUrl    String? @db.Text
   price       Float?
@@ -147,6 +152,8 @@ model Attachment {
 model Chapter {
   id       String @id @default(uuid())
   title    String
+  published Boolean @default(false)
+
   courseId String
   course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
@@ -165,15 +172,12 @@ model Lesson {
   content   String?     @db.Text
 
   video     VideoLesson? 
-  
   audioUrl  String?
+  published Boolean     @default(false)
   free      Boolean     @default(false)
 
   chapterId String
   chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-
-  // Relacja 1:1 z VideoLesson
-
 
   attachments Attachment[]
 
@@ -183,7 +187,6 @@ model Lesson {
   updatedAt DateTime @updatedAt
 }
 
-
 model VideoLesson {
   id       String      @id @default(uuid())
   url      String
@@ -191,7 +194,6 @@ model VideoLesson {
   duration  Float?     // Czas trwania wideo w sekundach, opcjonalne pole
   source   VideoSource // Źródło wideo (np. enum VideoSource)
 
-  // Relacja 1:1 z Lesson
   lesson   Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   lessonId String     @unique
 

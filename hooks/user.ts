@@ -1,15 +1,13 @@
+import { UserRole } from "@prisma/client";
 import { useSession } from "next-auth/react";
-import { redirect } from 'next/navigation';
 
 export const useCurrentUser = () => {
-    const session = useSession();
+    const {data} = useSession();
 
-    return session.data?.user;
+    return data?.user;
 }
 
-export function checkIfTeacherRedirect() {
-    const user = useCurrentUser();
-    if (!user?.role?.teacher) {
-        redirect("/");
-    }
+export const useIsTeacher = () => {
+    const user = useCurrentUser()
+    return user?.roles.includes(UserRole.TEACHER ?? false)    
 }

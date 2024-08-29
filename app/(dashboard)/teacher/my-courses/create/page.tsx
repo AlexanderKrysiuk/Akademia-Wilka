@@ -1,10 +1,8 @@
 "use client"
 import CreateCourseForm from "@/components/dashboard/teacher/courses/create-course-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { checkIfTeacherRedirect } from "@/hooks/user";
 
 const CreateCoursePage = () => {
-    checkIfTeacherRedirect
 
     return ( 
             <Card className="mx-[1vw] my-[1vh] py-[1vh] px-[1vw] space-y-[1vh]">

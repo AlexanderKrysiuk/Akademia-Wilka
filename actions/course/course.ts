@@ -7,3 +7,24 @@ export const getMyCourses = async (id: string) => {
         where: { ownerId: id },
     })
 }
+
+export const getAllPublishedCourses = async () => {
+    try {
+        return await prisma.course.findMany({
+            where: {
+                isPublished: true
+            },
+            include: {
+                chapters: {
+                    where: {
+                        published: true
+                    }
+                }
+            }
+        })
+        
+    } catch (error) {
+        return [];
+    }
+
+}

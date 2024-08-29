@@ -5,6 +5,7 @@ import { ModeButton } from '../ModeButton';
 import { Menu } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import SideBar from '@/components/dashboard/sidebar';
+import { MenuLinks } from '@/components/header/menu-links';
 
 const Header = () => {
     return ( 
@@ -33,6 +34,7 @@ const Header = () => {
                 </h1>
             </Link>
             <div className='max-h-[8vh] flex items-center space-x-[1vw]'>
+                <MenuLinks/>
                 <ModeButton/>
                 <UserButton/>
             </div>

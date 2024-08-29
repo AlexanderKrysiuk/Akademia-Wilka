@@ -1,5 +1,6 @@
 export const publicRoutes = [
-    "/"
+    "/",
+    "/kursy"
 ];
 export const authRoutes = [
     "/auth/login",

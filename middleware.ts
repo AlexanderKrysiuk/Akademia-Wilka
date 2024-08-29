@@ -36,9 +36,9 @@ export default auth((req) => {
     return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, req.url))
    }
 
-  console.log("USER: ",user)
-  console.log("TEACHER: ",isTeacher)
-  console.log("Is Logged In", isLoggedIn)
+  //console.log("USER: ",user)
+  //console.log("TEACHER: ",isTeacher)
+  //console.log("Is Logged In", isLoggedIn)
 
   //if(!isLoggedIn && !publicRoutes.includes(pathname)) {
   //  return NextResponse.redirect(new URL("/auth/login", req.url))

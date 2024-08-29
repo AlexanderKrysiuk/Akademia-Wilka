@@ -10,6 +10,7 @@ import { LessonType, VideoSource } from "@prisma/client"
 import { uploadVideoLessonToServer } from "../file/video"
 import EditLessonTitleForm from "@/components/dashboard/teacher/courses/lesson/edit-lesson-title-form"
 import { url } from "inspector"
+import { isTeacher } from "@/lib/permissions"
 
 export const getLessonsByChapterID = async (id:string) => {
     const lessons = await prisma.lesson.findMany({
@@ -26,6 +27,22 @@ export const getLessonByID = async (id: string) => {
         include: { video: true }
     })
     return lesson
+}
+
+export const getPublishedLessonsByCourseID = async (courseID:string) => {
+    const lessons = await prisma.lesson.findMany({
+        where: {
+            chapter: {
+                published: true,
+                courseId: courseID
+            },
+            published: true,
+            type: { not: LessonType.Subchapter}
+        },
+        include: {
+            chapter: true
+        }
+    })
 }
 
 export const updateLesson = async (
@@ -59,8 +76,12 @@ export const updateLesson = async (
     }
 
     const existingUser = await getUserById(userID);
-    if (!existingUser || !existingUser.role?.teacher) {
+    if (!existingUser) {
         return { success: false, message: "Nie masz uprawnień do utworzenia kursu!" };
+    }
+
+    if (!isTeacher(existingUser)) {
+        return { success: false, message: "Nie masz uprawnień do edycji kursu!" };
     }
 
     if (existingCourse.ownerId !== existingUser.id) {
@@ -69,6 +90,8 @@ export const updateLesson = async (
 
     const title = validatedFields.data.title;
     const content = validatedFields.data.content;
+    const free = validatedFields.data.free;
+    const published = validatedFields.data.published
     
     
     {/* 
@@ -119,7 +142,9 @@ export const updateLesson = async (
         where: { id: existingLesson.id },
         data: {
             title: title,
-            content: content
+            content: content,
+            free: free,
+            published: published,
         }
     });
 
@@ -161,8 +186,8 @@ export const updateLessonTitle = async (values: z.infer<typeof EditLessonTitleSc
         return { success: false, message: "Nie znaleziono użytkownika!" }
     }
 
-    if (!existingUser.role?.teacher) {
-        return { success: false, message: "Nie masz uprawnień do utworzenia kursu!" }
+    if (!isTeacher(existingUser)) {
+        return { success: false, message: "Nie masz uprawnień do edycji kursu!" };
     }
 
     if (existingCourse.ownerId !== existingUser.id) {
@@ -200,8 +225,8 @@ export const createLesson = async (values: z.infer<typeof CreateLessonSchema>, u
         return { success: false, message: "Nie znaleziono użytkownika!" }
     }
 
-    if (!existingUser?.role?.teacher) {
-        return { success: false, message: "Nie masz uprawnień do utworzenia kursu!" }
+    if (!isTeacher(existingUser)) {
+        return { success: false, message: "Nie masz uprawnień do edycji kursu!" };
     }
 
     const existingChapter = await getChapterByID(chapterID)
@@ -302,8 +327,8 @@ export const reOrderLessons = async (Data: { id: string, position: number}[], us
         return { success: false, message: "Nie znaleziono użytkownika!" }
     }
 
-    if (!existingUser?.role?.teacher) {
-        return { success: false, message: "Nie masz uprawnień do usunięcia tego rozdziału!" }
+    if (!isTeacher(existingUser)) {
+        return { success: false, message: "Nie masz uprawnień do edycji kursu!" };
     }
 
     const existingChapter = await getChapterByID(chapterID)
@@ -364,8 +389,8 @@ export const deleteLessonByID = async (lessonID: string, userID: string) => {
         return { success: false, message: "Nie znaleziono użytkownika!" }
     }
 
-    if (!existingUser?.role?.teacher) {
-        return { success: false, message: "Nie masz uprawnień do usunięcia tego rozdziału!" }
+    if (!isTeacher(existingUser)) {
+        return { success: false, message: "Nie masz uprawnień do edycji kursu!" };
     }
 
     if (existingCourse.ownerId !== existingUser.id) {

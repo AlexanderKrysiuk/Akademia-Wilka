@@ -25,20 +25,7 @@ const CourseIdPage = ({
     const router = useRouter();
     const [course, setCourse] = useState<Course>();
 
-    if (!user) {
-        router.push("/");
-        return;
-    }
 
-    if (!user.id){
-        router.push("/");
-        return;
-    }
-
-    if (!user?.role?.teacher) {
-        router.push("/");
-        return;
-    }
 
     const fetchCourse = async () => {
         const course = await getCourseById(params.courseId);

@@ -3,6 +3,7 @@ import { getUserById } from "@/data/user";
 import { EditCourseDescriptionSchema } from "@/schemas/course";
 import * as z from 'zod'
 import { getCourseById } from "./get";
+import { isTeacher } from "@/lib/permissions";
 
 export const updateCourseDescription = async (values: z.infer<typeof EditCourseDescriptionSchema>, userID: string, courseID: string) => {
     const validatedFields = EditCourseDescriptionSchema.safeParse(values)
@@ -20,8 +21,8 @@ export const updateCourseDescription = async (values: z.infer<typeof EditCourseD
         return { success: false, message: "Nie znaleziono użytkownika!" }
     }
     
-    if (!existingUser?.role?.teacher) {
-        return { success: false, message: "Nie masz uprawnień do edycji kursu!" }
+    if (!isTeacher(existingUser)) {
+        return { success: false, message: "Nie masz uprawnień do edycji kursu!" };
     }
     
     const existingCourse = await getCourseById(courseID)

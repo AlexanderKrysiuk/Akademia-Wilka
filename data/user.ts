@@ -5,6 +5,9 @@ import { UserRoleAssignment, UserRole } from "@prisma/client";
 export const getUserByEmail = async (email: string) => {
     return await prisma.user.findUnique({
         where: { email },
+        include: {
+            roles: true
+        }
     });
 };
 
@@ -12,6 +15,9 @@ export const getUserByEmail = async (email: string) => {
 export const getUserById = async (id: string) => {
     return await prisma.user.findUnique({
         where: { id },
+        include: {
+            roles: true
+        }
     });
 };
 

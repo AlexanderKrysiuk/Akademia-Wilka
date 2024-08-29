@@ -7,7 +7,7 @@ import EditLessonTitleForm from "./edit-lesson-title-form"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { useEffect, useState, useTransition } from "react"
 import { z } from "zod"
-import { useForm } from "react-hook-form"
+import { useFieldArray, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { EditLessonSchema } from "@/schemas/lesson"
 import { Input } from "@/components/ui/input"
@@ -19,6 +19,7 @@ import { Select, SelectValue, SelectContent, SelectItem, SelectTrigger } from "@
 import { ExtendedLesson } from "@/types/lesson"
 import VideoPlayer from "@/utils/video"
 import { uploadVideoLessonToServer } from "@/actions/file/video"
+import { Switch } from "@/components/ui/switch"
 
 interface EditLessonFormProps {
     userID: string
@@ -59,6 +60,8 @@ const EditLessonForm = ({
                 name: lesson.video.name || undefined,
                 source: lesson.video.source
             } : null,
+            free: lesson.free,
+            published: lesson.published,
         }
     })
 
@@ -235,6 +238,36 @@ const EditLessonForm = ({
                                     )}
                                 </>
                             )}
+                            <FormField
+                                control={form.control}
+                                name="free"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Czy lekcja jest darmowa?</FormLabel>
+                                        <FormControl>
+                                            <Switch
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                                />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="published"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Czy lekcja jest opublikowana?</FormLabel>
+                                        <FormControl>
+                                            <Switch
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                                />
+                                        </FormControl>
+                                    </FormItem>
+                                )}
+                            />
                         </CardContent>
                         <CardFooter>
                             <div className="flex justify-start space-y-[1vh]">

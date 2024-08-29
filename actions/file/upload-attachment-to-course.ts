@@ -6,6 +6,7 @@ import path, {join} from "path";
 import { Readable } from "stream";
 import { prisma } from "@/lib/prisma"; // Zakładając, że używasz Prisma
 import * as ftp from "basic-ftp";
+import { isTeacher } from "@/lib/permissions";
 
 
 export async function uploadAttachmentToCourse(formData: FormData) {
@@ -22,8 +23,8 @@ export async function uploadAttachmentToCourse(formData: FormData) {
         return { success: false, message: "Nie znaleziono użytkownika!" };
     }
 
-    if (!user.role?.teacher) {
-        return { success: false, message: "Użytkownik nie ma uprawnień do edycji kursu!" };
+    if (!isTeacher(user)) {
+        return { success: false, message: "Nie masz uprawnień do edycji kursu!" };
     }
 
     const course = await getCourseById(courseId);

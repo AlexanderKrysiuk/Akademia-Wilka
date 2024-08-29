@@ -6,6 +6,7 @@ import * as ftp from "basic-ftp";
 import { Readable } from "stream";
 import { getCourseById } from "../course/get";
 import { prisma } from "@/lib/prisma"; // Zakładając, że używasz Prisma
+import { isTeacher } from "@/lib/permissions";
 
 export async function uploadCourseImage(formData: FormData) {
     const file: File | null = formData.get('image') as unknown as File;
@@ -21,7 +22,7 @@ export async function uploadCourseImage(formData: FormData) {
         throw new Error("Nie znaleziono użytkownika!");
     }
 
-    if (!user.role?.teacher) {
+    if (!isTeacher(user)) {
         throw new Error("Użytkownik nie ma uprawnień do edycji kursu!");
     }
 

@@ -1,6 +1,7 @@
 "use server"
 
 import { getUserById } from "@/data/user";
+import { isTeacher } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
 import { CreateCourseSchema } from "@/schemas/course"
 import { v4 as uuidv4 } from "uuid";
@@ -23,8 +24,8 @@ export const create = async (values: z.infer<typeof CreateCourseSchema>, userID:
         return { success: false, message: "Nie znaleziono użytkownika!" }
     }
 
-    if (!existingUser?.role?.teacher) {
-        return { success: false, message: "Nie masz uprawnień do utworzenia kursu!" }
+    if (!isTeacher(existingUser)) {
+        return { success: false, message: "Nie masz uprawnień do edycji kursu!" };
     }
 
     const title = validatedFields.data.title

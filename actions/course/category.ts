@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { EditCourseCategorySchema } from "@/schemas/course"
 import { z } from "zod"
 import { getCourseById } from "./get"
+import { isTeacher } from "@/lib/permissions"
 
 export const getCategories = async () => {
     const categories = await prisma.category.findMany()
@@ -33,8 +34,8 @@ export const updateCourseCategory = async (values: z.infer<typeof EditCourseCate
         return { success: false, message: "Nie znaleziono użytkownika!" }
     }
 
-    if (!existingUser?.role?.teacher) {
-        return { success: false, message: "Nie masz uprawnień do edycji kursu!" }
+    if (!isTeacher(existingUser)) {
+        return { success: false, message: "Nie masz uprawnień do edycji kursu!" };
     }
 
     const existingCourse = await getCourseById(courseID)

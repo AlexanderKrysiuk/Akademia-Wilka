@@ -5,6 +5,7 @@ import { CreateChapterSchema, EditChapterSchema } from "@/schemas/chapter"
 import * as z from 'zod'
 import { getCourseById } from "./get"
 import { v4 as uuidv4 } from "uuid";
+import { isTeacher } from "@/lib/permissions"
 
 export const getChaptersByCourseID = async (id: string) => {
     const chapters = await prisma.chapter.findMany({
@@ -46,8 +47,8 @@ export const createChapter = async (values: z.infer<typeof CreateChapterSchema>,
         return { success: false, message: "Nie znaleziono użytkownika!" }
     }
 
-    if (!existingUser?.role?.teacher) {
-        return { success: false, message: "Nie masz uprawnień do utworzenia kursu!" }
+    if (!isTeacher(existingUser)) {
+        return { success: false, message: "Nie masz uprawnień do edycji kursu!" };
     }
 
     const existingCourse = await getCourseById(courseID)
@@ -102,8 +103,8 @@ export const deleteChapterByID = async (chapterID: string, userID: string, cours
         return { success: false, message: "Nie znaleziono użytkownika!" }
     }
 
-    if (!existingUser?.role?.teacher) {
-        return { success: false, message: "Nie masz uprawnień do usunięcia tego rozdziału!" }
+    if (!isTeacher(existingUser)) {
+        return { success: false, message: "Nie masz uprawnień do edycji kursu!" };
     }
 
     if (existingCourse.ownerId !== existingUser.id) {
@@ -158,8 +159,8 @@ export const updateChapterByID = async (values: z.infer<typeof EditChapterSchema
         return { success: false, message: "Nie znaleziono użytkownika!" }
     }
 
-    if (!existingUser?.role?.teacher) {
-        return { success: false, message: "Nie masz uprawnień do usunięcia tego rozdziału!" }
+    if (!isTeacher(existingUser)) {
+        return { success: false, message: "Nie masz uprawnień do edycji kursu!" };
     }
 
     if (existingCourse.ownerId !== existingUser.id) {
@@ -250,8 +251,8 @@ export const reOrderChapters = async (Data: { id: string, position: number }[], 
         return { success: false, message: "Nie znaleziono użytkownika!" }
     }
 
-    if (!existingUser?.role?.teacher) {
-        return { success: false, message: "Nie masz uprawnień do usunięcia tego rozdziału!" }
+    if (!isTeacher(existingUser)) {
+        return { success: false, message: "Nie masz uprawnień do edycji kursu!" };
     }
 
     const existingCourse = await getCourseById(courseID)

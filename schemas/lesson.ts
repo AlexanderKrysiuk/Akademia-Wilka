@@ -12,7 +12,9 @@ export const EditLessonSchema = z.object({
         url: z.string().url("Podaj poprawny link").optional(),
         name: z.string().optional(),
         source: z.nativeEnum(VideoSource)
-    }).nullable().optional()
+    }).nullable().optional(),
+    free: z.boolean(),
+    published: z.boolean()
 }).refine(data => {
     // Walidacja, która zapewnia, że jeśli source jest różny od 'internal', to url jest obecne
     if (data.video) {

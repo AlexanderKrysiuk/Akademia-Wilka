@@ -3,6 +3,8 @@ import { getUserById } from "@/data/user";
 import { EditCourseTitleSchema } from "@/schemas/course";
 import * as z from 'zod'
 import { getCourseById } from "./get";
+import { UserRole } from "@prisma/client";
+import { isTeacher } from "@/lib/permissions";
 
 export const updateCourseTitle = async (values: z.infer<typeof EditCourseTitleSchema>, userID: string, courseID: string) => {
     const validatedFields = EditCourseTitleSchema.safeParse(values)
@@ -20,8 +22,8 @@ export const updateCourseTitle = async (values: z.infer<typeof EditCourseTitleSc
         return { success: false, message: "Nie znaleziono użytkownika!" }
     }
     
-    if (!existingUser?.role?.teacher) {
-        return { success: false, message: "Nie masz uprawnień do edycji kursu!" }
+    if (!isTeacher(existingUser)) {
+        return { success: false, message: "Nie masz uprawnień do edycji kursu!" };
     }
     
     const existingCourse = await getCourseById(courseID)

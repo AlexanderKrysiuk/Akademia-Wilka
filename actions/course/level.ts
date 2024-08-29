@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma"
 import { EditCourseLevelSchema } from "@/schemas/course"
 import * as z from 'zod'
 import { getCourseById } from "./get"
+import { isTeacher } from "@/lib/permissions"
 
 export const getLevels = async () => {
     const levels = await prisma.level.findMany()
@@ -34,8 +35,8 @@ export const updateCourseLevel = async (values: z.infer<typeof EditCourseLevelSc
         return { success: false, message: "Nie znaleziono użytkownika!" }
     }
 
-    if (!existingUser?.role?.teacher) {
-        return { success: false, message: "Nie masz uprawnień do edycji kursu!" }
+    if (!isTeacher(existingUser)) {
+        return { success: false, message: "Nie masz uprawnień do edycji kursu!" };
     }
 
     const existingCourse = await getCourseById(courseID)

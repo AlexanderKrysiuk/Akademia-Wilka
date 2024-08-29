@@ -1,6 +1,6 @@
 import { UserRole } from '@prisma/client'
 import { auth } from './auth'
-import { DEFAULT_LOGIN_REDIRECT, apiAuthPrefix, authRoutes, publicRoutes } from './routes'
+import { DEFAULT_LOGIN_REDIRECT, apiAuthPrefix, authRoutes, publicRoutes, teacherPrefix } from './routes'
 import { NextResponse } from 'next/server'
 import { NextURL } from 'next/dist/server/web/next-url'
 
@@ -30,6 +30,10 @@ export default auth((req) => {
 
    if (!isLoggedIn && !isPublicRoute) {
     return Response.redirect(new URL("/auth/login", req.url))
+   }
+
+   if (isLoggedIn && !isTeacher && pathname.startsWith(teacherPrefix)) {
+    return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, req.url))
    }
 
   console.log("USER: ",user)

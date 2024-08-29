@@ -49,8 +49,13 @@ const LoginForm = () => {
         setIsPending(true);
 
         try {
-            await checkVerificationEmail(values);
+            const respone = await checkVerificationEmail(values);
             
+            if (respone?.message) {
+                toast.info(respone.message)
+                return
+            }
+
             // E-mail jest zweryfikowany, przeprowadź logowanie
             const result = await signIn("credentials", {
                 redirect: true,

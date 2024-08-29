@@ -22,7 +22,7 @@ export const checkVerificationEmail = async (values: z.infer<typeof LoginSchema>
         // Wyślij e-mail weryfikacyjny, jeśli e-mail nie jest zweryfikowany
         const verificationToken = await generateVerificationToken(user.email);
         await sendVerificationEmail(verificationToken.email, verificationToken.token);
-        throw new Error("Wysłano e-mail weryfikacyjny!"); // Rzucamy wyjątek, aby informować klienta
+        return { message: "Wysłano e-mail weryfikacyjny!" }; // Rzucamy wyjątek, aby informować klienta
     }
 
     // W przypadku zweryfikowanego e-maila

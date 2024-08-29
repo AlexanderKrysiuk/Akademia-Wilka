@@ -1,6 +1,59 @@
-export { auth as middleware } from "@/auth" 
+import { UserRole } from '@prisma/client'
+import { auth } from './auth'
+import { DEFAULT_LOGIN_REDIRECT, apiAuthPrefix, authRoutes, publicRoutes } from './routes'
+import { NextResponse } from 'next/server'
+import { NextURL } from 'next/dist/server/web/next-url'
+
+export default auth((req) => {
+  const user = req.auth?.user
+  const { pathname } = req.nextUrl
+
+  const isLoggedIn = !!user
+  const isTeacher = user?.roles.includes(UserRole.TEACHER)
+
+  const isApiAuthRoute = pathname.startsWith(apiAuthPrefix)
+  const isPublicRoute = publicRoutes.includes(pathname)
+  const isAuthRoute = authRoutes.includes(pathname)
+
+
+  // Zwracaj NextResponse.next() dla API i trpc tras
+  if (isApiAuthRoute) {
+    return NextResponse.next();
+  }
+
+  if (isAuthRoute) {
+    if (isLoggedIn) {
+      return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, req.url))
+    }
+    return NextResponse.next();
+  }
+
+   if (!isLoggedIn && !isPublicRoute) {
+    return Response.redirect(new URL("/auth/login", req.url))
+   }
+
+  console.log("USER: ",user)
+  console.log("TEACHER: ",isTeacher)
+  console.log("Is Logged In", isLoggedIn)
+
+  //if(!isLoggedIn && !publicRoutes.includes(pathname)) {
+  //  return NextResponse.redirect(new URL("/auth/login", req.url))
+  //}
+})
+
+
+export const config = {
+  matcher: [
+    // Skip Next.js internals and all static files, unless found in search params
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Always run for API routes
+    '/(api|trpc)(.*)',
+  ],
+}
 
 {/* 
+export { auth as middleware } from "@/auth" 
+
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import authConfig from "./auth.config"; // Załóżmy, że eksportujesz swój obiekt konfiguracyjny

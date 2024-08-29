@@ -9,6 +9,6 @@ export const authRoutes = [
     "/auth/new-password"
 ]
 
-export const teacherPrefix = "/dashboard/teacher"
+export const teacherPrefix = "/teacher"
 export const apiAuthPrefix = "/api/auth"
 export const DEFAULT_LOGIN_REDIRECT = "/kokpit"

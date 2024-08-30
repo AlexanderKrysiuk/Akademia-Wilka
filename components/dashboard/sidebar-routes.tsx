@@ -4,7 +4,7 @@ import { Compass, Layout, Rocket } from 'lucide-react'
 import SidebarItem from '@/components/dashboard/sidebar-item';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import { useCurrentUser } from '@/hooks/user';
+import { useCurrentUser, useIsTeacher } from '@/hooks/user';
 import { Separator } from '@/components/ui/separator';
 import { FaChalkboardTeacher } from "react-icons/fa";
 
@@ -30,7 +30,7 @@ const teacherRoutes = [
 
 const SidebarRoutes = () => {
     const user = useCurrentUser()
-
+    const isTeacher = useIsTeacher()
     return ( 
         <div>
             <div className='w-full min-h-[15vh] max-h-[20vh] py-[1vh] px-[1vw] flex items-center space-x-[1vw] md:hidden'>
@@ -56,7 +56,7 @@ const SidebarRoutes = () => {
                     />
                 ))}
             </div>
-            {user?.role?.teacher && (
+            {isTeacher && (
                 <div className="flex flex-col w-full">
                     <Separator/>
                     <div className='flex py-[1vh] px-[2vw] gap-x-[1vw] items-center'>

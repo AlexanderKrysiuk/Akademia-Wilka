@@ -10,8 +10,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from 'zod'
 import { EditChapterSchema } from "@/schemas/chapter";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 
 interface EditChapterFormProps {
     courseID: string;
@@ -35,7 +36,8 @@ const EditChapterForm: React.FC<EditChapterFormProps> = ({
     const form = useForm<z.infer<typeof EditChapterSchema>>({
         resolver: zodResolver(EditChapterSchema),
         defaultValues: {
-            title: chapter.title
+            title: chapter.title,
+            published: chapter.published
         }
     })
 
@@ -71,7 +73,7 @@ const EditChapterForm: React.FC<EditChapterFormProps> = ({
                 </CardHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-[1vh]">
-                        <CardContent>
+                        <CardContent className="space-y-[1vh]">
                             <FormField
                                 control={form.control}
                                 name="title"
@@ -85,6 +87,27 @@ const EditChapterForm: React.FC<EditChapterFormProps> = ({
                                                 {...field}
                                             />
                                         </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="published"
+                                render={({field})=>(
+                                    <FormItem>
+                                        <div className="flex items-center justify-between">
+                                            <FormLabel>Publikacja</FormLabel>
+                                            <FormControl>
+                                                <Switch
+                                                    checked={field.value}
+                                                    onCheckedChange={field.onChange}
+                                                />
+                                            </FormControl>
+                                        </div>
+                                        <FormDescription>
+                                            Czy chcesz opublikować kurs?
+                                        </FormDescription>
                                         <FormMessage/>
                                     </FormItem>
                                 )}

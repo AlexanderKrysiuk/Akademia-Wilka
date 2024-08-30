@@ -9,5 +9,5 @@ export const useCurrentUser = () => {
 
 export const useIsTeacher = () => {
     const user = useCurrentUser()
-    return user?.roles.includes(UserRole.TEACHER ?? false)    
+    return user?.roles.includes(UserRole.Teacher ?? false)    
 }

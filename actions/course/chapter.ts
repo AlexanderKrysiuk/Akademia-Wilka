@@ -135,7 +135,7 @@ export const deleteChapterByID = async (chapterID: string, userID: string, cours
 }
 
 export const updateChapterByID = async (values: z.infer<typeof EditChapterSchema>, chapterID: string, userID: string, courseID: string) => {
-    const validatedFields = CreateChapterSchema.safeParse(values)
+    const validatedFields = EditChapterSchema.safeParse(values)
 
     if (!validatedFields.success){
         return { success: false, message: "Podane pola są nieprawidłowe!" }
@@ -177,10 +177,13 @@ export const updateChapterByID = async (values: z.infer<typeof EditChapterSchema
         return { success: false, message: "Nie podano tytułu rozdziału!" }
     }
 
+    const published = validatedFields.data.published
+
     await prisma.chapter.update({
         where: { id: existingChapter.id },
         data: {
-            title: title
+            title: title,
+            published: published
         }
     })
 

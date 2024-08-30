@@ -8,5 +8,6 @@ export const CreateChapterSchema = z.object({
 })
 
 export const EditChapterSchema = z.object({
-    title: titleTemplate
+    title: titleTemplate,
+    published: z.boolean()
 })

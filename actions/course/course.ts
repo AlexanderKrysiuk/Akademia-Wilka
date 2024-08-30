@@ -9,22 +9,24 @@ export const getMyCourses = async (id: string) => {
 }
 
 export const getAllPublishedCourses = async () => {
-    try {
-        return await prisma.course.findMany({
-            where: {
-                isPublished: true
-            },
-            include: {
-                chapters: {
-                    where: {
-                        published: true
+    const courses = await prisma.course.findMany({
+        where: { published: true },
+        include: {
+            category: true,
+            level: true,
+            chapters: {
+                where: { published: true },
+                include: {
+                    lessons: {
+                        where: { published: true }
                     }
                 }
-            }
-        })
-        
-    } catch (error) {
-        return [];
-    }
-
+            }   
+        }
+    })
+    return courses.map(course => ({
+        ...course,
+        chapterCount: course.chapters.length,
+        lessonCount: course.chapters.reduce((count, chapter) => count + chapter.lessons.length, 0)
+    }))
 }

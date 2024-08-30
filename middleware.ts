@@ -1,6 +1,6 @@
 import { UserRole } from '@prisma/client'
 import { auth } from './auth'
-import { DEFAULT_LOGIN_REDIRECT, apiAuthPrefix, authRoutes, publicRoutes, teacherPrefix } from './routes'
+import { DEFAULT_LOGIN_REDIRECT, apiAuthPrefix, authRoutes, courseprefix, publicRoutes, teacherPrefix } from './routes'
 import { NextResponse } from 'next/server'
 import { NextURL } from 'next/dist/server/web/next-url'
 
@@ -9,16 +9,20 @@ export default auth((req) => {
   const { pathname } = req.nextUrl
 
   const isLoggedIn = !!user
-  const isTeacher = user?.roles.includes(UserRole.TEACHER)
+  const isTeacher = user?.roles.includes(UserRole.Teacher)
 
   const isApiAuthRoute = pathname.startsWith(apiAuthPrefix)
   const isPublicRoute = publicRoutes.includes(pathname)
   const isAuthRoute = authRoutes.includes(pathname)
-
+  const isCourseRoute = pathname.startsWith(courseprefix)
 
   // Zwracaj NextResponse.next() dla API i trpc tras
   if (isApiAuthRoute) {
     return NextResponse.next();
+  }
+
+  if (isCourseRoute) {
+    return NextResponse.next()
   }
 
   if (isAuthRoute) {
@@ -37,7 +41,7 @@ export default auth((req) => {
    }
 
   //console.log("USER: ",user)
-  //console.log("TEACHER: ",isTeacher)
+  //console.log("Teacher: ",isTeacher)
   //console.log("Is Logged In", isLoggedIn)
 
   //if(!isLoggedIn && !publicRoutes.includes(pathname)) {

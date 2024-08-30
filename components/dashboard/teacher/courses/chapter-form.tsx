@@ -13,6 +13,7 @@ import LessonsList from "./lessons-list";
 import React from "react";
 import { toast } from "@/components/ui/use-toast";
 import { motion } from 'framer-motion';
+import { Badge } from "@/components/ui/badge";
 
 interface ChapterFormProps {
     course: {
@@ -62,22 +63,6 @@ const ChapterForm = ({ course, userID }: ChapterFormProps) => {
     const deleteChapter = (chapter: Chapter) => {
         setChapter(chapter);
         setDeleteChapterModal(true);
-    };
-
-    const handleDragEnd = async (result: any) => {
-        const { source, destination } = result;
-
-        if (!destination || source.index === destination.index) return;
-
-        // Zaktualizuj lokalny stan rozdziałów
-        const updatedChapters = Array.from(chapters);
-        const [movedChapter] = updatedChapters.splice(source.index, 1);
-        updatedChapters.splice(destination.index, 0, movedChapter);
-
-        setChapters(updatedChapters);
-
-        // Zaktualizuj kolejność na serwerze
-        await moveChapter(course.id, movedChapter.id, destination.index + 1);
     };
 
     const onDragEnd = (result: DropResult) => {
@@ -153,6 +138,13 @@ const ChapterForm = ({ course, userID }: ChapterFormProps) => {
                                                             </div>
                                                             <div className="truncate w-full">
                                                                 {chapter.title}
+                                                            </div>
+                                                            <div>
+                                                                {chapter.published ? (
+                                                                    <Badge>Opublikowano</Badge>
+                                                                ):(
+                                                                    <Badge variant="outline">Szkic</Badge>
+                                                                )}
                                                             </div>
                                                             <div className="flex items-center hover:text-primary transition duration-300">
                                                                 <SquarePen

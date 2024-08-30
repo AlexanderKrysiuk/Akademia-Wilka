@@ -10,5 +10,5 @@ export const hasPermission = (user: ExtendedUser | null, requiredRoles: UserRole
 
 // Specyficzna funkcja do sprawdzania, czy użytkownik jest nauczycielem lub administratorem
 export const isTeacher = (user: ExtendedUser | null): boolean => {
-    return hasPermission(user, [UserRole.TEACHER, UserRole.ADMIN]);
+    return hasPermission(user, [UserRole.Teacher, UserRole.ADMIN]);
 };

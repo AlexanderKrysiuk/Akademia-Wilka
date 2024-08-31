@@ -4,6 +4,7 @@ import { getUserById } from "@/data/user";
 import { isTeacher } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
 import { CreateCourseSchema } from "@/schemas/course"
+import { slugify } from "@/utils/link";
 import { v4 as uuidv4 } from "uuid";
 import * as z from 'zod'
 
@@ -34,12 +35,15 @@ export const create = async (values: z.infer<typeof CreateCourseSchema>, userID:
         return { success: false, message: "Nie znaleziono tytułu!" }
     }
 
+    const slug = slugify(title)
+
     const courseId = uuidv4()
 
     const course = await prisma.course.create({
         data: {
             id: courseId,
             title: title,
+            slug: slug,
             ownerId: userID
         }
     })

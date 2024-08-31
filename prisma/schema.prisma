@@ -103,7 +103,8 @@ model PasswordResetToken {
 model Course {
   id          String  @id @default(uuid())
   ownerId     String
-  title       String  @db.Text @unique
+  title       String  @db.Text
+  slug        String  @unique
   description String? @db.Text
   imageUrl    String? @db.Text
   price       Float?
@@ -170,6 +171,7 @@ model Chapter {
 model Lesson {
   id        String      @id @default(uuid())
   title     String
+  slug      String?
   type      LessonType
   order     Int
   content   String?     @db.Text
@@ -188,6 +190,8 @@ model Lesson {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([chapterId, slug], map: "unique_lesson_slug_per_chapter")
 }
 
 model VideoLesson {

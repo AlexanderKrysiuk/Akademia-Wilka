@@ -11,6 +11,7 @@ import { uploadVideoLessonToServer } from "../file/video"
 import EditLessonTitleForm from "@/components/dashboard/teacher/courses/lesson/edit-lesson-title-form"
 import { url } from "inspector"
 import { isTeacher } from "@/lib/permissions"
+import { slugify } from "@/utils/link"
 
 export const getLessonsByChapterID = async (id:string) => {
     const lessons = await prisma.lesson.findMany({
@@ -251,6 +252,8 @@ export const createLesson = async (values: z.infer<typeof CreateLessonSchema>, u
         return { success: false, message: "Nie podano tytułu lekcji!" }
     }
 
+    const slug = slugify(title)
+
     const lessonType = validatedFields.data.lessonType
 
     if (!lessonType) {
@@ -298,6 +301,7 @@ export const createLesson = async (values: z.infer<typeof CreateLessonSchema>, u
         data: {
             id: lessonID,
             title: title,
+            slug: slug,
             chapterId: existingChapter.id,
             order: newOrder,
             type: lessonType,

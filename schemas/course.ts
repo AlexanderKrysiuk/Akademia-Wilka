@@ -14,6 +14,13 @@ const priceTemplate = z.coerce.number()
     .min(0, { message: "Cena nie może być mniejsza niż 0" })
     .nullable()
 
+const slugTemplate = z.string()
+    .min(1, { message: "Kurs musi mieć odnośnik" })
+
+export const EditSlugSchema = z.object({
+    slug: slugTemplate
+})
+
 export const CreateCourseSchema = z.object({
     title: titleTemplate
 })

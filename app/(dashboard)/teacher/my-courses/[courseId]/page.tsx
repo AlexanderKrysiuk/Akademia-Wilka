@@ -15,6 +15,7 @@ import ChapterForm from "@/components/dashboard/teacher/courses/chapter-form";
 import ImageForm from "@/components/dashboard/teacher/courses/image-form"
 import AttachmentForm from "@/components/dashboard/teacher/courses/attachment-form";
 import { motion } from "framer-motion";
+import { CourseSlugForm } from "@/components/dashboard/teacher/courses/course-slug-form";
 
 const CourseIdPage = ({
     params
@@ -85,6 +86,15 @@ const CourseIdPage = ({
                             course={course}
                             userID={user.id}
                             onUpdate={() => {
+                                fetchCourse();
+                            }}
+                        />
+                    </motion.div>
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.7 }}>
+                        <CourseSlugForm
+                            course={course}
+                            userID={user.id}
+                            onUpdate={()=>{
                                 fetchCourse();
                             }}
                         />

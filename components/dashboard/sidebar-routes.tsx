@@ -42,9 +42,9 @@ const SidebarRoutes = () => {
                     alt="Opis obrazka"
                     />
                 </div>
-                <h1>
+                <h6>
                     Akademia Wilka
-                </h1>
+                </h6>
             </div>
             <div className="flex flex-col w-full">
                 {geustRoutes.map((route) => (
@@ -61,9 +61,9 @@ const SidebarRoutes = () => {
                     <Separator/>
                     <div className='flex py-[1vh] px-[2vw] gap-x-[1vw] items-center'>
                         <FaChalkboardTeacher size={22}/>
-                        <h1>
+                        <h6>
                             Nauczyciel
-                        </h1>
+                        </h6>
                     </div>
 
                     {teacherRoutes.map((route) => (

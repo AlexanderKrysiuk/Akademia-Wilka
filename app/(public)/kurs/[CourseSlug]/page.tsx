@@ -7,7 +7,8 @@ import { ImageIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import Image from "next/image";
-import { Separator } from "@radix-ui/react-dropdown-menu"
+import { Preview } from "@/components/editor"
+import { Separator } from "@/components/ui/separator"
 
 const CourseTitlePage = ({
     params
@@ -66,7 +67,10 @@ const CourseTitlePage = ({
                             </CardHeader>
                             <Separator/>
                             <CardContent>
-                                <div dangerouslySetInnerHTML={{ __html: course.description }} />
+                                <Preview
+                                    value={course.description}
+                                />
+                                {/* <div dangerouslySetInnerHTML={{ __html: course.description }} /> */}
                             </CardContent>
                         </Card>
                     )}

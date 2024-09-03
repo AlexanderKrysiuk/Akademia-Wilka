@@ -46,6 +46,19 @@ export const getPublishedLessonsByCourseID = async (courseID:string) => {
     })
 }
 
+export const getPublishedLessonsByChapterID = async (chapterID:string) => {
+    return await prisma.lesson.findMany({
+        where: {
+            chapterId: chapterID,
+            published: true,
+        },
+        orderBy: { order: 'asc' },
+        include: {
+            video: true
+        }
+    })
+}
+
 export const updateLesson = async (
     values: z.infer<typeof EditLessonSchema>, 
     userID: string, 

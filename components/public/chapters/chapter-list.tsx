@@ -7,6 +7,7 @@ import { Chapter } from "@prisma/client"
 import { motion } from "framer-motion"
 import { ChevronDown, ChevronUp, Loader2 } from "lucide-react"
 import { useEffect, useState } from "react"
+import LessonList from "../lessons/lesson-list"
 
 interface ChapterListProps {
     course: {
@@ -58,8 +59,8 @@ const ChapterList = ({
                         <Card className="my-[2vh] py-0">
                             <div className={`px-[2vw] flex justify-between items-center transition-colors duration-300 ${
                             expandedChapters.includes(chapter.id) 
-                            ? "bg-foreground/10 text-primary" 
-                            : "bg-foreground/5" 
+                            ? "bg-foreground/10 text-primary rounded-t-sm" 
+                            : "bg-foreground/5 rounded-sm" 
                             }`}>
                                 <h6 className="hover:text-primary transition-all duration-300">
                                     {chapter.title}
@@ -77,8 +78,10 @@ const ChapterList = ({
                                 transition={{ duration: 0.5 }}
                                 style={{ overflow: 'hidden' }}
                             >
-                                <div className="bg-background px-[2vw] border-0 rounded-b-lg flex items-center">
-                                    123
+                                <div className="bg-background px-[2vw] rounded-b-md flex items-center">
+                                    <LessonList
+                                        chapter={chapter}
+                                    />
                                 </div>
                             </motion.div>
                                 {/* 
@@ -103,7 +106,6 @@ const ChapterList = ({
                     </CardContent>
                 )
             )}
-            {JSON.stringify(chapters,null,2)}
         </Card>
      );
 }

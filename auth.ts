@@ -35,7 +35,7 @@ export const authOptions = {
         const passwordsMatch = await bcrypt.compare(password, user.password);
         
         if (passwordsMatch) {
-          return { id: user.id, email: user.email, roles: user.roles.map(role => role.role) };
+          return { ID: user.ID, email: user.email, roles: user.roles.map(role => role.role) };
         } else {
           return null;
         }
@@ -128,7 +128,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async session({ session, token }) {
       if (token) {
-        // Sprawdzamy, czy token.id jest zdefiniowany
+        // Sprawdzamy, czy token.ID jest zdefiniowany
         if (token.id) {
           session.user.id = token.id;
         }

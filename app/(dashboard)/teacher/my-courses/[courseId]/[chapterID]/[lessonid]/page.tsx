@@ -26,4 +26,10 @@ const LessonIDPage = ({
     useEffect(()=>{
         fetchLesson();
     },[])
+
+    return (
+        <div>
+            {JSON.stringify(lesson,null,2)}
+        </div>
+    )
 }

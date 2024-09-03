@@ -9,6 +9,7 @@ import { useEffect, useState } from "react"
 import Image from "next/image";
 import { Preview } from "@/components/editor"
 import { Separator } from "@/components/ui/separator"
+import ChapterList from "@/components/public/chapters/chapter-list"
 
 const CourseTitlePage = ({
     params
@@ -70,16 +71,17 @@ const CourseTitlePage = ({
                                 <Preview
                                     value={course.description}
                                 />
-                                {/* <div dangerouslySetInnerHTML={{ __html: course.description }} /> */}
                             </CardContent>
                         </Card>
                     )}
-                    
+                    <ChapterList
+                        course={course}
+                    />
                 </div>
             
             </div>
             <div className="my-40">
-            {JSON.stringify(course, null, 2)}
+            {/* {JSON.stringify(course, null, 2)} */}
 
             </div>
         </div>

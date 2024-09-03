@@ -1,5 +1,5 @@
 "use client"
-import { getAttachmentsByCourseId } from "@/actions/course/attachments";
+import { getAttachmentsByCourseID } from "@/actions/course/attachments";
 import { uploadAttachmentToCourse } from "@/actions/file/upload-attachment-to-course";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -30,7 +30,7 @@ const AttachmentForm = ({
 
 
     const fetchAttachments = async () => {
-        const attachments = await getAttachmentsByCourseId(course.id)
+        const attachments = await getAttachmentsByCourseID(course.id)
         setAttachments(attachments || [])
     }
 

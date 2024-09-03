@@ -57,8 +57,9 @@ export async function uploadVideoLessonToServer(formData: FormData): Promise<{ I
     const buffer = Buffer.from(arrayBuffer);
 
 
-    const dirPath = join('lessons', lessonID, 'video');
-    const dataPathURL = new URL(`/akademia_wilka/lessons/${lessonID}/video/${fullFileName}`, fileServer);
+    //const dirPath = join('lessons', lessonID, 'video');
+    const dirPath = `kurs/${course.slug}/${chapter.slug}/${lesson.slug}`
+    const dataPathURL = `https://www.akademiawilka.pl/kurs/${course.slug}/${chapter.slug}/${lesson.slug}/${fullFileName}`;
     const dataPath = dataPathURL.toString();
 
     const client = new ftp.Client();
@@ -67,8 +68,11 @@ export async function uploadVideoLessonToServer(formData: FormData): Promise<{ I
     try {
         await client.access({
             host: process.env.FTP_HOST,
+
             user: process.env.FTP_USER,
+
             password: process.env.FTP_PASS,
+
             secure: false
         });
 
@@ -120,6 +124,15 @@ export async function uploadVideoLessonToServer(formData: FormData): Promise<{ I
     return { ID: uniqueFileName, URL: dataPath };
 }
 
+export const updateVideoDuration = async (id:string, duration:number) => {
+    if (!id || !duration) {
+        throw new Error("Invalid parameters!");
+    }
 
+    await prisma.videoLesson.update({
+        where: { lessonId: id},
+        data: {duration: duration}
+    })
+}
 //const dirPath = join('courses',existingCourse.id,'chapters',existingChapter.id,'lessons',lessonID,'video');
 //const dataPathURL = new URL(`/akademia_wilka/courses/${existingCourse.id}/chapters/${existingChapter.id}/lessons/${lessonID}/video/${fullFileName}`, fileServer)

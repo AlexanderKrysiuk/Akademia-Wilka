@@ -156,6 +156,7 @@ model Attachment {
 model Chapter {
   id       String @id @default(uuid())
   title    String
+  slug     String?
   published Boolean @default(false)
 
   courseId String
@@ -166,6 +167,7 @@ model Chapter {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  @@unique([courseId, slug], map: "unique_chapter_slug_per_course")
 }
 
 model Lesson {

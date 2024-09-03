@@ -3,28 +3,28 @@
 import * as ftp from "basic-ftp";
 import { join } from "path";
 
-export const getAttachmentsByCourseId = async (id: string) => {
+export const getAttachmentsByCourseID = async (ID: string) => {
     const attachments = await prisma?.attachment.findMany({
-        where: { courseId : id}
+        where: { courseId : ID}
     })
     return attachments
 }
 
-export const getAttachmentById = async (id:string) => {
+export const getAttachmentByID = async (ID:string) => {
     const attachment = await prisma?.attachment.findUnique({
-        where: {id: id}
+        where: {id: ID}
     })
     return attachment
 }
 
-export const deleteAttachmentByID = async (id: string) => {
-    const attachment = await getAttachmentById(id)
+export const deleteAttachmentByID = async (ID: string) => {
+    const attachment = await getAttachmentByID(ID)
     if (!attachment) {
         return { success: false, message: "Nie znaleziono załącznika!"}
     }
 
     if (!attachment.courseId) {
-        return { success: false, message: "Załącznik musi mieć id kursu!"} 
+        return { success: false, message: "Załącznik musi mieć ID kursu!"} 
     }
 
     const fileServer = process.env.FILE_SERVER_URL
@@ -57,7 +57,7 @@ export const deleteAttachmentByID = async (id: string) => {
         await client.remove(filePath)
 
         await prisma?.attachment.delete({
-            where: {id: id}
+            where: {id: ID}
         })
     } catch(error) {
         return { success: false, message: "Nie udało się usunąć załącznika!" }

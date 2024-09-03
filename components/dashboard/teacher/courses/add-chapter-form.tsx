@@ -8,10 +8,10 @@ import { Loader, SquarePlus, X } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { useForm } from "react-hook-form"
 import * as z from 'zod'
-import { useTransition } from "react"
+import { useEffect, useState, useTransition } from "react"
 import { createChapter } from "@/actions/course/chapter"
 import { toast } from "@/components/ui/use-toast";
-
+import { slugify } from "@/utils/link"
 
 interface AddChapterFormProps {
     course: {
@@ -29,10 +29,21 @@ const AddChapterForm = ({
     onClose
 }: AddChapterFormProps) => {
     const [isPending, startTransition] = useTransition()
-
+    
     const form = useForm<z.infer<typeof CreateChapterSchema>>({
         resolver: zodResolver(CreateChapterSchema)
     })
+
+    const { watch, setValue } = form
+
+    useEffect(() => {
+        const title = watch('title')
+        const slug = watch('slug')
+        if (title && !slug) {
+            const generatedSlug = slugify(title)
+            setValue('slug', generatedSlug, { shouldValidate: false })
+        }
+    }, [watch('title'), watch('slug'), setValue])
 
     const onSubmit = (values: z.infer<typeof CreateChapterSchema>) => {
         startTransition(()=>{
@@ -76,6 +87,23 @@ const AddChapterForm = ({
                                                 <Input
                                                     disabled={isPending}
                                                     placeholder="Podstawy Dynamiki Lotu Rakietowego"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage/>
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="slug"
+                                    render={({field})=>(
+                                        <FormItem>
+                                            <FormLabel>Unikalny Odnośnik</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    disabled={isPending}
+                                                    placeholder="tytuł-rozdziału"
                                                     {...field}
                                                 />
                                             </FormControl>

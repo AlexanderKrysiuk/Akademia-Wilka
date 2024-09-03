@@ -24,7 +24,7 @@ export const NewVerification = async (token: string) => {
     }
 
     await prisma.user.update({
-        where: { id: existingUser.id },
+        where: { ID: existingUser.ID },
         data: {
             emailVerified: new Date(),
             email: existingToken.email
@@ -32,7 +32,7 @@ export const NewVerification = async (token: string) => {
     })
 
     await prisma.verificationToken.delete({
-        where: { id: existingToken.id}
+        where: { ID: existingToken.ID}
     })
 
     return { success: true, message: "Email zweryfikowany!"}

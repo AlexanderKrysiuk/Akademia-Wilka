@@ -18,7 +18,7 @@ import ReactQuill from "react-quill"
 import { Select, SelectValue, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select"
 import { ExtendedLesson } from "@/types/lesson"
 import VideoPlayer from "@/utils/video"
-import { uploadVideoLessonToServer } from "@/actions/file/video"
+import { updateVideoDuration, uploadVideoLessonToServer } from "@/actions/file/video"
 import { Switch } from "@/components/ui/switch"
 
 interface EditLessonFormProps {
@@ -74,13 +74,26 @@ const EditLessonForm = ({
             formData.append('userID', userID);
             startTransition(async () => {
                 try {
-                    const { URL } = await uploadVideoLessonToServer(formData);
+                    const { ID, URL } = await uploadVideoLessonToServer(formData);
                     setVideoUrl(URL);
                     toast({
                         title: "✅ Sukces!",
                         description: "Film został przesłany pomyślnie.",
                         variant: "success",
                     });
+
+                    const videoElement = document.createElement('video')
+                    videoElement.src = URL
+                    videoElement.preload = "metadata"
+
+                    videoElement.onloadedmetadata = () => {
+                        const videoDuration = videoElement.duration
+                        console.log(`Długość wideo: ${videoDuration} sekund`)
+                        console.log("ID: ", ID)
+                        updateVideoDuration(lesson.id, videoDuration)
+                    }
+
+
                 } catch (error) {
                     toast({
                         title: "❌ Błąd!",

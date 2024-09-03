@@ -7,9 +7,31 @@ import { getCourseById } from "./get"
 import { v4 as uuidv4 } from "uuid";
 import { isTeacher } from "@/lib/permissions"
 
+export const getChapterBySlug = async (slug:string, courseID:string) => {
+    return await prisma.chapter.findUnique({
+        where: {
+            courseId_slug: {
+                slug: slug,
+                courseId: courseID,
+            }
+        }
+    });
+}
+
 export const getChaptersByCourseID = async (id: string) => {
     const chapters = await prisma.chapter.findMany({
-        where: { courseId: id},
+        where: { courseId: id },
+        orderBy: { order: 'asc' }
+    })
+    return chapters
+}
+
+export const getPublishedChaptersByCourseID = async (id:string) => {
+    const chapters = await prisma.chapter.findMany({
+        where: { 
+            courseId: id,
+            published: true
+        },
         orderBy: { order: 'asc' }
     })
     return chapters
@@ -67,6 +89,18 @@ export const createChapter = async (values: z.infer<typeof CreateChapterSchema>,
         return { success: false, message: "Nie podano tytułu rozdziału!" }
     }
 
+    const slug = validatedFields.data.slug
+
+    if (!slug) {
+        return { success: false, message: "Należy podać unikalny odnośnik!"}
+    }
+
+    const existingSlug = await getChapterBySlug(slug, existingCourse.id)
+
+    if (existingSlug) {
+        return { success: false, message: "Podany odnośnik jest już w użyciu!"}
+    }
+
     const chapterID = uuidv4()
 
     const highestOrderChapter = await getHighestOrderChapterByCourseID(courseID)
@@ -76,6 +110,7 @@ export const createChapter = async (values: z.infer<typeof CreateChapterSchema>,
         data: {
             id: chapterID,
             title: title,
+            slug: slug,
             courseId: existingCourse.id,
             order: newOrder
         }
@@ -282,4 +317,18 @@ export const reOrderChapters = async (Data: { id: string, position: number }[], 
     await Promise.all(updatePromises);
 
     return { success: true, message: "Kolejność rozdziałów została zaktualizowana!" }
+}
+
+export const validateSlug = async (slug:string, courseID:string) => {
+    const chapter = await prisma.chapter.findUnique({
+        where: {
+            courseId_slug: {
+                slug: slug,
+                courseId: courseID
+            }
+        }
+    })
+    if (chapter) {
+        throw new Error("Podany odnośnik jest już w użyciu!")
+    }
 }

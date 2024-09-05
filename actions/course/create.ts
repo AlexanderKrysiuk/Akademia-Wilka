@@ -7,7 +7,7 @@ import { CreateCourseSchema } from "@/schemas/course"
 import { slugify } from "@/utils/link";
 import { v4 as uuidv4 } from "uuid";
 import * as z from 'zod'
-import { getCoureBySlug } from "./course";
+import { getCourseBySlug } from "./course";
 
 export const create = async (values: z.infer<typeof CreateCourseSchema>, userID: string) => {
     const validatedFields = CreateCourseSchema.safeParse(values);
@@ -38,7 +38,7 @@ export const create = async (values: z.infer<typeof CreateCourseSchema>, userID:
 
     const slug = slugify(title)
 
-    const existingSlug = await getCoureBySlug(slug)
+    const existingSlug = await getCourseBySlug(slug)
     if (existingSlug) {
         return { success: false, message: "Podany unikalny odnośnik jest ju zajęty!" }
     }

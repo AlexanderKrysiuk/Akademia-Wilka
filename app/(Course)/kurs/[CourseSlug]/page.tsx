@@ -1,6 +1,6 @@
 "use client"
 
-import { getCoureBySlug } from "@/actions/course/course"
+import { getCourseBySlug } from "@/actions/course/course"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Course } from "@prisma/client"
 import { ImageIcon } from "lucide-react"
@@ -20,7 +20,7 @@ const CourseTitlePage = ({
     const router = useRouter()
 
     const fetchCourse = async () => {
-        const course = await getCoureBySlug(params.CourseSlug);
+        const course = await getCourseBySlug(params.CourseSlug);
         if(!course){
             router.push("/")
             return

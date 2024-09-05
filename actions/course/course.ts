@@ -62,7 +62,7 @@ export const getAllPublishedCourses = async () => {
 
 
 /* SLUG */
-export const getCoureBySlug = async (slug:string) => {
+export const getCourseBySlug = async (slug:string) => {
     return prisma.course.findUnique({
         where: { slug: slug }
     })

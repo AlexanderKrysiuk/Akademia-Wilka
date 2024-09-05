@@ -12,6 +12,7 @@ import LessonList from "../lessons/lesson-list"
 interface ChapterListProps {
     course: {
         id:string
+        slug:string
     }
 }
 
@@ -80,6 +81,7 @@ const ChapterList = ({
                             >
                                 <div className="bg-background px-[2vw] rounded-b-md flex items-center">
                                     <LessonList
+                                        course={course}
                                         chapter={chapter}
                                     />
                                 </div>

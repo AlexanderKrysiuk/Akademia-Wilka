@@ -1,20 +1,27 @@
 "use client"
 
 import { getPublishedLessonsByChapterID, getPublishedLessonsByCourseID } from "@/actions/course/lesson"
-import { Lesson, LessonType } from "@prisma/client"
+import { Chapter, Course, Lesson, LessonType } from "@prisma/client"
 import { Eye, Lock, Loader2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { MonitorPlay } from 'lucide-react';
 import { ExtendedLesson } from "@/types/lesson"
 import { formatTime } from "@/utils/time"
+import { CardContent } from "@/components/ui/card"
+import { getCourseBySlug } from "@/actions/course/course"
+import { getCourseById } from "@/actions/course/get"
+import Link from "next/link"
 
 interface LessonListProps {
-    chapter: {
+    course: {
         id:string
+        slug:string
     }
+    chapter: Chapter
 }
 
 const LessonList = ({
+    course,
     chapter
 }:LessonListProps) => {
     const [lessons, setLessons] = useState<ExtendedLesson[]>([])
@@ -40,27 +47,31 @@ const LessonList = ({
                 </div>
             ):(
                 lessons.length > 0 ? (
-                    
                     lessons.map((lesson) => (
                         (lesson.type === LessonType.Video && (
-                            <div className="flex items-center justify-between w-full my-[2vh] space-x-[1vw]">
-                                <div>
-                                    <MonitorPlay/>
-                                </div>
-                                <div className="w-full justify-start truncate">
-                                    {lesson.title}
-                                </div>
-                                <div>
-                                    {formatTime(lesson.video?.duration)}
-                                </div>
-                                <div>
-                                    {lesson.free ? (
-                                        <Eye/>
-                                    ):(
-                                        <Lock/>
-                                    )}
-                                </div>
-                            </div>
+                            <Link
+                                key={lesson.id}
+                                href={`/kurs/${course.slug}/${chapter.slug}/${lesson.slug}`}
+                            >
+                                <CardContent className="mx-0 flex items-center justify-between w-full py-[1vh] space-x-[1vw] hover:text-primary hover:bg-foreground/10 transition-all duration-300">
+                                    <div>
+                                        <MonitorPlay/>
+                                    </div>
+                                    <div className="w-full justify-start truncate">
+                                        {lesson.title}
+                                    </div>
+                                    <div>
+                                        {formatTime(lesson.video?.duration)}
+                                    </div>
+                                    <div>
+                                        {lesson.free ? (
+                                            <Eye/>
+                                        ):(
+                                            <Lock/>
+                                        )}
+                                    </div>
+                            </CardContent>
+                            </Link>
                         ))
                     ))
                 ):(

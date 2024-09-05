@@ -29,7 +29,7 @@ export default async function RootLayout({
   return (
     <SessionProvider session={session}>
       <html lang="en">
-        <body className={inter.className}>
+        <body className={`${inter.className} h-full`}>
           <ThemeProvider
               attribute="class"
               defaultTheme="dark"
@@ -37,7 +37,9 @@ export default async function RootLayout({
               disableTransitionOnChange
               >
           <Header/>
-          {children}
+          
+            {children}
+          
           <ToastContainer/>
           <Toaster/>
           </ThemeProvider>

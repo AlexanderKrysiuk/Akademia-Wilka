@@ -1,7 +1,9 @@
 "use client"
 
 import { getPublishedLessonsByChapterID } from "@/actions/course/lesson"
+import { getCompletedLessonsByChapterID } from "@/actions/course/progress"
 import { Card } from "@/components/ui/card"
+import { useCurrentUser } from "@/hooks/user"
 import { Lesson, LessonType } from "@prisma/client"
 import { Eye, Loader2, Lock, MonitorPlay } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -13,23 +15,47 @@ interface LessonListProps {
     }
     chapter: {
         id:string
-    }
+    },
+    onLessonsCount?: (count: number) => void; // Dodaj callback do przekazywania liczby lekcji
+}
+
+interface completedLessons {
+    lessonId: string
 }
 
 const LessonList = ({
     course,
-    chapter
+    chapter,
+    onLessonsCount // Dodaj ten prop
 }:LessonListProps) => {
     const [lessons, setLessons] = useState<Lesson[]>([])
     const [loading, setLoading] = useState<boolean>(true)
+    const [completedLessons, setCompletedLessons] = useState<completedLessons[]>([])
+
+    const user = useCurrentUser()
 
     const fetchLessons = async () => {
         setLoading(true)
         const lessons = await getPublishedLessonsByChapterID(chapter.id)
+            try {
+                const user = useCurrentUser()
+                const completedLessons = await getCompletedLessonsByChapterID(chapter.id, user.id)
+                setCompletedLessons(completedLessons)
+            } catch {
+                
+            }
+
         setLessons(lessons)
+        if (onLessonsCount) {
+            onLessonsCount(lessons.length)
+        }
         setLoading(false)
     }
 
+
+
+    
+    
     useEffect(()=>{
         fetchLessons();
     },[])
@@ -66,6 +92,9 @@ const LessonList = ({
                     </div>
                 )
             )}
+            {
+                JSON.stringify(completedLessons,null,2)
+            }
             {/* 
             {JSON.stringify(lessons,null,2)}
             */}

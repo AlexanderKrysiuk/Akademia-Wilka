@@ -25,14 +25,28 @@ export const getLessonCountByChapterID = async (chapterID:string) => {
     })
 }
 
-export const getLessonsByChapterID = async (id:string) => {
-    const lessons = await prisma.lesson.findMany({
-        where: { chapterId: id},
-        include: { video: true },
-        orderBy: { order: 'asc'}
-    })
-    return lessons
-}
+export const getCompletedLessonsByCourseID = async (courseID: string, userID: string) => {
+    return await prisma.userProgress.findMany({
+        where: {
+            userId: userID,
+            lesson: {
+                chapter: {
+                    courseId: courseID
+                }
+            },
+            completed: true
+        },
+        select: {
+            lessonId: true,
+            lesson: {
+                select: {
+                    chapterId: true
+                }
+            }
+        }
+    });
+};
+
 
 export const getLessonByID = async (id: string) => {
     const lesson = await prisma.lesson.findUnique({

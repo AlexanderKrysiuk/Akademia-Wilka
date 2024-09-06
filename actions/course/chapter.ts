@@ -6,6 +6,7 @@ import * as z from 'zod'
 import { getCourseById } from "./get"
 import { v4 as uuidv4 } from "uuid";
 import { isTeacher } from "@/lib/permissions"
+import { LessonType } from "@prisma/client"
 
 export const getChapterBySlug = async (slug:string, courseID:string) => {
     return await prisma.chapter.findUnique({
@@ -25,6 +26,28 @@ export const getChaptersByCourseID = async (id: string) => {
     })
     return chapters
 }
+
+export const getPublishedChaptersByCourseIDwithPublishedLessonsID = async (courseID: string) => {
+    return await prisma.chapter.findMany({
+        where: {
+            courseId: courseID,
+            published: true
+        },
+        include: {
+            lessons: {
+                where: {
+                    published: true,
+                    type: {
+                        not: LessonType.Subchapter
+                    }
+                },
+                select: {
+                    id: true
+                }
+            }
+        }
+    });
+};
 
 export const getPublishedChaptersByCourseID = async (id:string) => {
     const chapters = await prisma.chapter.findMany({

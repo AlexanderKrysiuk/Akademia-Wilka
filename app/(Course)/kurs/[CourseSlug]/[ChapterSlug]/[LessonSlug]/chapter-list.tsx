@@ -8,6 +8,7 @@ import { motion } from "framer-motion"
 import { ChevronDown, Loader2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import LessonList from "./lesson-list"
+import { getLessonCountByChapterID } from "@/actions/course/lesson"
 
 interface ChapterListProps {
     course: {
@@ -22,11 +23,28 @@ const ChapterList = ({
     const [chapters, setChapters] = useState<Chapter[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [expandedChapters, setExpandedChapters] = useState<string[]>([])
+    const [lessonCounts, setLessonCounts] = useState<Record<string, number>>({});
 
     const fetchChapters = async () => {
         setLoading(true)
         const chapters = await getPublishedChaptersByCourseID(course.id)
         setChapters(chapters)
+
+        const counts = await Promise.all(
+            chapters.map(async (chapter) => {
+                const count = await getLessonCountByChapterID(chapter.id);
+                return { chapterId: chapter.id, count };
+            })
+        );
+
+        // Tworzenie mapy liczby lekcji
+        const countsMap = counts.reduce((acc, curr) => {
+            acc[curr.chapterId] = curr.count;
+            return acc;
+        }, {} as Record<string, number>);
+
+        setLessonCounts(countsMap);
+
         setLoading(false)
     }
 
@@ -51,12 +69,15 @@ const ChapterList = ({
                 chapters.length > 0 ? (
                     chapters.map((chapter) => (
                         <div>
-                        <Card className="flex items-center justify-between px-[1vw] py-[1vh] bg-foreground/5 text-primary border-x-0 rounded-none">
-                            <div className={`${expandedChapters.includes(chapter.id)
+                        <Card className="flex items-center justify-between px-[1vw] py-[1vh] bg-foreground/5 border-x-0 rounded-none space-x-[1vw]">
+                            <div className={`w-full ${expandedChapters.includes(chapter.id)
                                 ? "text-primary"
                                 : "text-foreground"
-                            }`}>
-                                {chapter.title}
+                            }`}>    
+                                {chapter.title}    
+                            </div>
+                            <div>
+                                {lessonCounts[chapter.id] || 0}
                             </div>
                             <ChevronDown
                                 onClick={() => toggleExpandChapter(chapter.id)}

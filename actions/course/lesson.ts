@@ -13,6 +13,18 @@ import { url } from "inspector"
 import { isTeacher } from "@/lib/permissions"
 import { slugify } from "@/utils/link"
 
+export const getLessonCountByChapterID = async (chapterID:string) => {
+    return await prisma.lesson.count({
+        where: {
+            chapterId: chapterID,
+            published: true,
+            type: {
+                not: LessonType.Subchapter
+            }
+        }
+    })
+}
+
 export const getLessonsByChapterID = async (id:string) => {
     const lessons = await prisma.lesson.findMany({
         where: { chapterId: id},

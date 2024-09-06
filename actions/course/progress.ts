@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { LessonType } from "@prisma/client";
 
-export const getProgres = async (
+export const getProgress = async (
     userID: string, 
     courseID: string): Promise<number> => {
         try {

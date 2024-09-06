@@ -75,7 +75,7 @@ const LessonList = ({
                         ))
                     ))
                 ):(
-                    <div className="flex itemst center justify-center w-full my-[2vh]">
+                    <div className="flex items-center justify-center w-full my-[2vh]">
                         Brak lekcji do wyświetlenia...
                     </div>
                 )

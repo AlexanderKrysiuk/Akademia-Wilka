@@ -12,6 +12,7 @@ import EditLessonTitleForm from "@/components/dashboard/teacher/courses/lesson/e
 import { url } from "inspector"
 import { isTeacher } from "@/lib/permissions"
 import { slugify } from "@/utils/link"
+import { error } from "console"
 
 export const getLessonCountByChapterID = async (chapterID:string) => {
     return await prisma.lesson.count({
@@ -24,6 +25,81 @@ export const getLessonCountByChapterID = async (chapterID:string) => {
         }
     })
 }
+
+export const getPreviewLesson = async (courseID:string) => {
+    const freeLesson = await prisma.lesson.findFirst({
+        where: {
+            chapter: {
+                courseId: courseID,
+                published: true,
+            },
+            type: {
+                not: LessonType.Subchapter
+            },
+            published: true,
+            free: true,  
+        },
+        select: {
+            slug: true,
+            chapter: {
+                select: {
+                    slug: true,
+                    course: {
+                        select: {
+                            slug: true 
+                        }
+                    }
+                },
+            }
+        },
+        orderBy: [
+            { chapter: { order: "asc" }},
+            { order: "asc" }
+        ]
+    })
+
+    if (freeLesson) {
+        return `${freeLesson.chapter.course.slug}/${freeLesson.chapter.slug}/${freeLesson.slug}`;
+    }
+
+    const firstLesson = await prisma.lesson.findFirst({
+        where: {
+            chapter: {
+                courseId: courseID,
+                published: true,
+            },
+            type: {
+                not: LessonType.Subchapter
+            },
+            published: true
+        },
+        select:{
+            slug: true,
+            chapter: {
+                select: {
+                    slug: true,
+                    course: {
+                        select: {
+                            slug: true
+                        }
+                    }
+                }
+            }
+        },
+        orderBy: [
+            { chapter: { order: "asc" }},
+            { order: "asc" }
+        ]
+    })
+
+    if (firstLesson) {
+        return `${firstLesson.chapter.course.slug}/${firstLesson.chapter.slug}/${firstLesson.slug}`
+    }
+
+    throw new Error("Brak dostępnych lekcji")
+}
+
+
 
 export const getCompletedLessonsByCourseID = async (courseID: string, userID: string) => {
     return await prisma.userProgress.findMany({
@@ -54,6 +130,21 @@ export const getLessonByID = async (id: string) => {
         include: { video: true }
     })
     return lesson
+}
+
+export const getLessonsCountByCourseID = async (courseID: string) => {
+    return await prisma.lesson.count({
+        where: {
+            chapter: {
+                courseId: courseID,
+                published:true
+            },
+            published: true,
+            type: {
+                not: LessonType.Subchapter
+            }
+        }
+    })
 }
 
 export const getPublishedLessonsByCourseID = async (courseID:string) => {

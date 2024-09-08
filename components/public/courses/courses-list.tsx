@@ -10,20 +10,23 @@ import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import CourseCard from "./course-card"
+import { useCurrentUser } from "@/hooks/user"
 
 interface ExtendedCourse extends Course {
     category: Category | null
     level: Level | null
     chapterCount: number
     lessonCount: number
+    purchased: boolean
 }
 
 
 export const CoursesList = () => {
     const [courses, setCourses] = useState<ExtendedCourse[]>([])
+    const user = useCurrentUser()
 
     const fetchCourses = async () => {
-        const courses = await getAllPublishedCourses();
+        const courses = await getAllPublishedCourses(user?.id);
         setCourses(courses)
     }
 
@@ -42,7 +45,9 @@ export const CoursesList = () => {
                         category={course.category!}
                         level={course.level!}
                         chapterCount={course.chapterCount}
-                        lessonCount={course.lessonCount}                    />
+                        lessonCount={course.lessonCount}
+                        purchased={course.purchased}
+                    />
                 ))
             ):(
                 <div>

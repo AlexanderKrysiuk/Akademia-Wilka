@@ -36,7 +36,7 @@ export const getMyCourses = async (id: string) => {
     })
 }
 
-export const getAllPublishedCourses = async () => {
+export const getAllPublishedCourses = async (userID?:string) => {
     const courses = await prisma.course.findMany({
         where: { published: true },
         include: {
@@ -49,11 +49,16 @@ export const getAllPublishedCourses = async () => {
                         where: { published: true }
                     }
                 }
-            }   
+            },
+            purchases: userID? {
+                where: { userId : userID },
+                select: { id: true }
+            } : false
         }
     })
     return courses.map(course => ({
         ...course,
+        purchased: userID? (course.purchases && course.purchases.length > 0 ) : false,
         chapterCount: course.chapters.length,
         lessonCount: course.chapters.reduce((count, chapter) => count + chapter.lessons.length, 0)
     }))

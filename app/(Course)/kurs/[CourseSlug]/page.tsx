@@ -7,7 +7,6 @@ import { ImageIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import Image from "next/image";
-import { Preview } from "@/components/editor"
 import { Separator } from "@/components/ui/separator"
 import ChapterList from "@/components/public/chapters/chapter-list"
 
@@ -59,6 +58,7 @@ const CourseTitlePage = ({
                             </div>
                         )}
                     </Card>
+                    {/* 
                     {course.description && (
                         <Card>
                             <CardHeader>
@@ -74,6 +74,7 @@ const CourseTitlePage = ({
                             </CardContent>
                         </Card>
                     )}
+                */}
                     <ChapterList
                         course={course}
                     />

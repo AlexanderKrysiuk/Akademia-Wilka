@@ -6,9 +6,9 @@ import Link from "next/link";
 import { slugify } from "@/utils/link";
 import { ImageIcon } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import BuyCourseButton from "@/components/Course/buy-course-button";
 import { useCurrentUser } from "@/hooks/user";
 import PreviewCourseButton from "@/components/Course/preview-course";
+import CoursePurchaseButton from "@/components/Course/course-purchase-button";
 
 interface CourseCardProps {
     course: Course;
@@ -23,9 +23,9 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, category, level, chapte
     const user = useCurrentUser()
     
     return (
-        <Link href={`/kurs/${slugify(course.title)}`}>
-            <Card>
-                <CardHeader className="px-0 py-0">
+        <Card>
+            <CardHeader className="px-0 py-0">
+                <Link href={`/kurs/${slugify(course.title)}`}>
                     {course.imageUrl ? (
                         <div className='relative aspect-video rounded-t'>
                             <Image
@@ -41,22 +41,28 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, category, level, chapte
                         </div>
                     )}
                     <h6 className="px-[1vh]">{course.title}</h6>
-                </CardHeader>
-                
-                <CardContent className="flex items-center justify-between py-[1vh]">
-                   <div>
-                        {formatPrice(course.price!)}    
-                    </div>
-                    <div>
-                        <PreviewCourseButton
-                            course={course}
-                            />
-                    </div>
+                </Link>
+            </CardHeader>    
+            <CardContent className="flex items-center justify-between py-[1vh]">
+               <div>
+                    {formatPrice(course.price!)}    
+                </div>
+                <div>
+                    <PreviewCourseButton
+                        course={course}
+                        />
+                </div>
                 </CardContent>
                 <Separator/>
                 <CardFooter>
                     <div className="items-center justify-between w-full">
-                    {purchased ? (
+                    <CoursePurchaseButton
+                        price={course.price!}
+                        courseId={course.id}
+                    />
+                    
+                    
+                    {/*purchased ? (
                         <div>
 
                             Tak
@@ -64,11 +70,10 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, category, level, chapte
                     ):(
                         <div>
                         </div>
-                    )}
+                    )*/}
                     </div>
                 </CardFooter>
             </Card>
-        </Link>
     );
 };
 

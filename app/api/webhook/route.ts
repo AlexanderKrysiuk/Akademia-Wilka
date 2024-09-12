@@ -34,10 +34,24 @@ export async function POST(req: Request) {
             return new NextResponse('Invalid session', {status: 400})
         }
 
+        const businessInfo = await prisma.bussinesInfo.findFirst({
+            orderBy: {
+                createdAt: "desc"
+            },
+            select: {
+                id: true
+            }
+        })
+
+        if (!businessInfo) {
+            return new NextResponse('Bussiness info not found', {status: 404})
+        }
+
         await prisma.purchase.create({
             data: {
                 courseId: courseId,
-                userId: userId
+                userId: userId,
+                bussinessInfoId: businessInfo.id
             }
         })
     } else {

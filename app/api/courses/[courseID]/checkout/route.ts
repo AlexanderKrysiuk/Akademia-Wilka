@@ -21,6 +21,10 @@ export async function POST(
             }
         })
 
+        if (!course) {
+            return new NextResponse("Course not found", {status: 404})
+        }
+
         const purchase = await prisma.purchase.findUnique({
             where: {
                 userId_courseId: {
@@ -34,9 +38,6 @@ export async function POST(
             return new NextResponse("Already Purchased", {status: 400})
         }
 
-        if (!course) {
-            return new NextResponse("Course not found", {status: 404})
-        }
 
         const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [
             {
@@ -80,8 +81,8 @@ export async function POST(
             cancel_url: `http://localhost:3000/kurs/${course.slug}`,
             metadata: {
                 courseId: course.id,
-                userId: user.user.id
-            }
+                userId: user.user.id,
+            },
         })
 
         return NextResponse.json({ url: session.url})

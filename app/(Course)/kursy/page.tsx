@@ -1,6 +1,6 @@
 "use client"
 
-import { CoursesList } from "@/components/public/courses/courses-list";
+import { CoursesList } from "@/components/Course/courses-list";
 
 const CourseSlugPage = () => {
     

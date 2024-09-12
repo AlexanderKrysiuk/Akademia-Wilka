@@ -9,6 +9,10 @@ import { useEffect, useState } from "react"
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator"
 import ChapterList from "@/components/public/chapters/chapter-list"
+import { Preview } from "@/components/editor"
+import { formatPrice } from "@/lib/format"
+import CourseActionButton from "@/components/Course/course-action-button"
+import CourseUserProgress from "@/components/Course/course-user-progress"
 
 const CourseTitlePage = ({
     params
@@ -57,8 +61,7 @@ const CourseTitlePage = ({
                                 <ImageIcon className="h-[10vh] w-[10vh]"/>
                             </div>
                         )}
-                    </Card>
-                    {/* 
+                    </Card> 
                     {course.description && (
                         <Card>
                             <CardHeader>
@@ -74,12 +77,32 @@ const CourseTitlePage = ({
                             </CardContent>
                         </Card>
                     )}
-                */}
                     <ChapterList
                         course={course}
                     />
                 </div>
-            
+                <div>
+                    <Card>
+                        <CardHeader className="bg-foreground/5">
+                            {course.price! > 0 ?  (
+                                formatPrice(course.price!)
+                            ):(
+                                <div>
+
+                                </div>
+                            )}
+                        </CardHeader>
+                        <CardContent className="bg-foreground/5">
+                            <CourseUserProgress
+                                courseID={course.id}
+                            />
+                            <CourseActionButton
+                                courseSlug={course.slug}
+                                courseId={course.id}
+                            />
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
             <div className="my-40">
             {/* {JSON.stringify(course, null, 2)} */}

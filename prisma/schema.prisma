@@ -222,12 +222,31 @@ enum LessonType {
   Subchapter
 }
 
+model BussinesInfo {
+  id        String  @id @default(uuid())
+  name      String
+  address   String
+  vatNumber String?
+  email     String?
+  phone     String?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  purchases Purchase[]
+}
+
 model Purchase {
   id     String @id @default(uuid())
+  
   userId String
 
   courseId String
   course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  // Fields for Bussiness info
+  bussinessInfoId String
+  bussinessInfo   BussinesInfo  @relation(fields: [bussinessInfoId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

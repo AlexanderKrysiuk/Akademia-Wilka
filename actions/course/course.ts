@@ -36,6 +36,17 @@ export const getMyCourses = async (id: string) => {
     })
 }
 
+export const getAllPublishedCoursesIDs = async() => {
+    return await prisma.course.findMany({
+        where: {
+            published:true
+        },
+        select: {
+            id: true
+        }
+    })
+}
+{/* 
 export const getAllPublishedCourses = async (userID?:string) => {
     const courses = await prisma.course.findMany({
         where: { published: true },
@@ -63,8 +74,7 @@ export const getAllPublishedCourses = async (userID?:string) => {
         lessonCount: course.chapters.reduce((count, chapter) => count + chapter.lessons.length, 0)
     }))
 }
-
-
+*/}
 
 /* SLUG */
 export const getCourseBySlug = async (slug:string) => {

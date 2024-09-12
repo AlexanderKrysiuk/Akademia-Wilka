@@ -7,7 +7,8 @@ export const getCompletedLessonsCountByCourseID = async (courseID:string, userID
             userId: userID,
             lesson: {
                 chapter: {
-                    courseId: courseID
+                    courseId: courseID,
+                    published: true
                 },
                 published: true,
                 type: {
@@ -15,7 +16,6 @@ export const getCompletedLessonsCountByCourseID = async (courseID:string, userID
                 }
             },
             completed: true
-    
         }
     })
 }

@@ -11,10 +11,9 @@ import { useTransition, useState } from "react";
 import { register } from "@/actions/auth/register";
 import RenderResultMessage from "@/components/render-result-message";
 
-
 const RegisterForm = () => {
     const [result, setResult] = useState<{ success: boolean, message: string} | null>(null)
-    const [isPending, startTransition] = useTransition() 
+    const [isPending, startTransition] = useTransition()
 
     const form = useForm<z.infer<typeof RegisterSchema>>({
         resolver: zodResolver(RegisterSchema),

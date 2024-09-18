@@ -13,6 +13,7 @@ import { Preview } from "@/components/editor"
 import { formatPrice } from "@/lib/format"
 import CourseActionButton from "@/components/Course/course-action-button"
 import CourseUserProgress from "@/components/Course/course-user-progress"
+import { findPurchase } from "@/actions/course/purchase"
 
 const CourseTitlePage = ({
     params

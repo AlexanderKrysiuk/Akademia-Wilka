@@ -14,8 +14,13 @@ import { toast } from 'react-toastify'
 import { checkVerificationEmail } from "@/actions/auth/check-verification-email";
 import Link from "next/link";
 
-const LoginForm = () => {
-    const router = useRouter();
+interface LoginFormProps {
+    onLogin?: () => void
+}
+
+const LoginForm = ({
+    onLogin
+}:LoginFormProps) => {
     const [isPending, setIsPending] = useState(false);
 
     const form = useForm<z.infer<typeof LoginSchema>>({
@@ -58,15 +63,15 @@ const LoginForm = () => {
 
             // E-mail jest zweryfikowany, przeprowadź logowanie
             const result = await signIn("credentials", {
-                redirect: true,
                 email: values.email,
                 password: values.password,
-                callbackUrl: "/kokpit" // Ustaw swój URL docelowy tutaj
             });
 
-            if (result?.url) {
+            if (result?.ok) {
                 toast.success("Logowanie udane!");
-                router.push(result.url);
+                if (onLogin) {
+                    onLogin()
+                }
             } else {
                 toast.error("Błąd logowania!");
             }

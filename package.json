@@ -13,6 +13,13 @@
     "@ffmpeg/ffmpeg": "^0.12.10",
     "@hello-pangea/dnd": "^16.6.0",
     "@hookform/resolvers": "^3.9.0",
+    "@nextui-org/button": "^2.0.38",
+    "@nextui-org/card": "^2.0.34",
+    "@nextui-org/input": "^2.2.5",
+    "@nextui-org/react": "^2.4.8",
+    "@nextui-org/system": "^2.2.6",
+    "@nextui-org/tabs": "^2.0.37",
+    "@nextui-org/theme": "^2.2.11",
     "@prisma/client": "^5.18.0",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-dropdown-menu": "^2.1.1",
@@ -26,6 +33,7 @@
     "@radix-ui/react-tabs": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.1",
     "@types/next-auth": "^3.15.0",
+    "autoprefixer": "^10.4.20",
     "axios": "^1.7.7",
     "basic-ftp": "^5.0.5",
     "bcryptjs": "^2.4.3",
@@ -70,9 +78,9 @@
     "@types/uuid": "^10.0.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
-    "postcss": "^8",
+    "postcss": "^8.4.47",
     "prisma": "^5.18.0",
-    "tailwindcss": "^3.4.1",
+    "tailwindcss": "^3.4.12",
     "typescript": "^5"
   }
 }

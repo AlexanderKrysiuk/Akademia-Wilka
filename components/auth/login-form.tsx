@@ -15,7 +15,7 @@ import { checkVerificationEmail } from "@/actions/auth/check-verification-email"
 import Link from "next/link";
 
 interface LoginFormProps {
-    onLogin?: () => void
+    onLogin?: (email: string) => void
 }
 
 const LoginForm = ({
@@ -70,7 +70,7 @@ const LoginForm = ({
             if (result?.ok) {
                 toast.success("Logowanie udane!");
                 if (onLogin) {
-                    onLogin()
+                    onLogin(values.email)
                 }
             } else {
                 toast.error("Błąd logowania!");

@@ -38,6 +38,11 @@ const CourseActionButton = ({
     }, [user, courseId])
 
     const handleCheckout = async () => {
+        if(!user) {
+            router.push(`/kurs/${courseSlug}/checkout`)
+            return
+        }
+        {/* 
         try {
             setLoading(true)
             const respone = await axios.post(`/api/courses/${courseId}/checkout`)
@@ -47,6 +52,7 @@ const CourseActionButton = ({
         } finally {
             setLoading(false)
         }
+        */}
     };
 
     if (isPending) {
@@ -71,13 +77,11 @@ const CourseActionButton = ({
                     )}
 
                 </div>
-            ):(
-                <Link href="/auth/Login"> 
-                {/* <Link href={`/kurs/${courseSlug}/checkout`}> */}
-                    <Button className="w-full">
-                        Uzyskaj dostęp
-                    </Button>
-                </Link>
+            ):( 
+                <Button onClick={handleCheckout} className="w-full">
+                    {/* <Link href={`/kurs/${courseSlug}/checkout`}> */}
+                    Uzyskaj dostęp
+                </Button>
             )}
         </div>
      );

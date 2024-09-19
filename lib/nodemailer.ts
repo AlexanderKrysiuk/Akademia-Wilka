@@ -2,12 +2,12 @@
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
-    host: "maestro.atthost24.pl",
+    host: "wolfpath.atthost24.pl",
     port: "465",
     secure: true,
     auth: {
         user: "info@akademiawilka.pl",
-        pass: "Nd6t@hhObHA@f"
+        pass: "Tz2a$w46YX#2F"
     }
 })
 

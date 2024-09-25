@@ -1,6 +1,6 @@
 import { UserRole } from '@prisma/client'
 import { auth } from './auth'
-import { DEFAULT_LOGIN_REDIRECT, apiAuthPrefix, apiPrefix, authRoutes, courseprefix, publicRoutes, teacherPrefix } from './routes'
+import { DEFAULT_LOGIN_REDIRECT, apiAuthPrefix, apiPrefix, authRoutes, basketprefix, courseprefix, publicRoutes, teacherPrefix } from './routes'
 import { NextResponse } from 'next/server'
 import { NextURL } from 'next/dist/server/web/next-url'
 
@@ -16,6 +16,7 @@ export default auth((req) => {
   const isAuthRoute = authRoutes.includes(pathname)
   const isCourseRoute = pathname.startsWith(courseprefix)
   const isApiRoute = pathname.startsWith(apiPrefix)
+  const isBasketRoute = pathname.startsWith(basketprefix)
 
   // Zwracaj NextResponse.next() dla API i trpc tras
   if (isApiRoute) {
@@ -27,6 +28,10 @@ export default auth((req) => {
   }
 
   if (isCourseRoute) {
+    return NextResponse.next()
+  }
+
+  if (isBasketRoute) {
     return NextResponse.next()
   }
 

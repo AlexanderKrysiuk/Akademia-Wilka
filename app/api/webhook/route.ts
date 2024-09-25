@@ -4,13 +4,9 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function POST(req: Request) {
-    
-    console.log("SUCCESS")
+export async function POST(req: Request) {    
     const body = await req.text()
     const signature = req.headers.get('Stripe-Signature') as string
-    console.log("Headers:", req.headers);
-    console.log("Body:", body);
 
     let event: Stripe.Event
 
@@ -28,8 +24,7 @@ export async function POST(req: Request) {
     const userId = session?.metadata?.userId
     const courseId = session?.metadata?.courseId
 
-    console.log("EVENT TYPE:", event.type)
-    if (event.type === 'checkout.session.completed') {
+    if (event.type = 'checkout.session.completed') {
         if (!userId || !courseId) {
             return new NextResponse('Invalid session', {status: 400})
         }
@@ -58,5 +53,5 @@ export async function POST(req: Request) {
         return new NextResponse("Invalid event", {status: 200})
     }
 
-    return new NextResponse(null, { status: 200})
+    return new NextResponse(null, { status: 200 })
 }

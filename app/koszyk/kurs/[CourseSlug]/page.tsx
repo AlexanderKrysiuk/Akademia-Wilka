@@ -15,11 +15,20 @@ import { formatPrice } from "@/lib/format";
 import {Tabs, Tab} from "@nextui-org/tabs";
 import { checkIfUserExistsByEmail } from "@/actions/course/payment";
 import React from "react";
+import { Elements } from '@stripe/react-stripe-js' 
+import { loadStripe } from "@stripe/stripe-js";
+import CheckoutForm from "@/components/stripe/checkout-form";
+import LoginForm from "@/components/auth/login-form";
+import RegisterForm from "@/components/auth/register-form";
+
+
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_API_KEY!)
 
 interface RegisterFormData {
   email: string,
-  name: string,
-  surname: string
+  firstName: string,
+  lastName: string
 }
 
 const CourseCheckoutPage = ({ params }: { params: { CourseSlug: string }}) => {
@@ -104,6 +113,16 @@ const CourseCheckoutPage = ({ params }: { params: { CourseSlug: string }}) => {
             </div>
             <Card>
               <CardBody>
+                <Tabs fullWidth>
+                  <Tab key="login" title="Logowanie">
+                    <LoginForm/>
+                  </Tab>
+                  <Tab key="register" title="Rejestracja">
+                    <RegisterForm/>
+                  </Tab>
+                </Tabs>
+                
+                {/* 
                 <Tabs
                   fullWidth
                   disabledKeys={["purchase"]}
@@ -113,17 +132,28 @@ const CourseCheckoutPage = ({ params }: { params: { CourseSlug: string }}) => {
                   <Tab key="information" title="Informacje">
                     <form className="space-y-[1vh]" onSubmit={handleSubmit(proceedPaymentWithRegister)}>
                       <Input {...register("email")} isRequired label="E-mail" placeholder="jan.kowalski@przykład.pl" type="email"/>
-                      <Input {...register("name")} isRequired label="Imię" placeholder="Jan"/>
-                      <Input {...register("surname")} isRequired label="Nazwisko" placeholder="Kowalski"/>
+                      <Input {...register("firstName")} isRequired label="Imię" placeholder="Jan"/>
+                      <Input {...register("lastName")} isRequired label="Nazwisko" placeholder="Kowalski"/>
                       <Button fullWidth color="primary" type="submit">
                         Przejdź do płatności
                       </Button>
                     </form>
                   </Tab>
                   <Tab key="purchase" title="Płatność">
-                      Płatność
+                      <Elements
+                        stripe={stripePromise}
+                        options={{
+                          mode: "payment",
+                          currency: "pln",
+                          amount: Math.round(course.price! * 100)
+                        }}
+                      >
+                        <CheckoutForm amount={course.price!}/>
+                      </Elements>
                   </Tab>
                 </Tabs>
+              */}
+
               </CardBody>
               {userInfo && (
                 (JSON.stringify(userInfo, null, 2))

@@ -39,7 +39,7 @@ const UserButton = () => {
 
     return (
         <Button variant="outline" className='max-h-[8vh] items-center flex'>
-            <Link href="/auth/login" passHref>
+            <Link href="/auth/start" passHref>
                 Zacznij Tutaj
             </Link>
         </Button>

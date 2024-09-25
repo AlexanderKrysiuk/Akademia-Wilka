@@ -9,6 +9,9 @@ import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Tab, Tabs } from "@nextui-org/tabs";
+import LoginForm from "../auth/login-form";
+import RegisterForm from "../auth/register-form";
 
 interface CourseActionButtonProps{
     courseSlug: string
@@ -37,22 +40,16 @@ const CourseActionButton = ({
         }
     }, [user, courseId])
 
-    const handleCheckout = async () => {
-        if(!user) {
-            router.push(`/kurs/${courseSlug}/checkout`)
-            return
-        }
-        {/* 
+    const handleCheckout = async () => {  
         try {
             setLoading(true)
-            const respone = await axios.post(`/api/courses/${courseId}/checkout`)
+            const respone = await axios.post(`/api/koszyk/kurs/${courseId}/checkout`)
             router.push(respone.data.url)
         } catch (error) {
             toast.error("Wystąpił błąd, proszę spróbować ponownie")
         } finally {
             setLoading(false)
         }
-        */}
     };
 
     if (isPending) {
@@ -61,7 +58,7 @@ const CourseActionButton = ({
             Sprawdzanie zakupu...
         </Button>
     }
-    
+ 
     return (
         <div>
             {user ? (
@@ -79,9 +76,9 @@ const CourseActionButton = ({
                 </div>
             ):( 
                 <Button onClick={handleCheckout} className="w-full">
-                    {/* <Link href={`/kurs/${courseSlug}/checkout`}> */}
                     Uzyskaj dostęp
                 </Button>
+                
             )}
         </div>
      );

@@ -2,6 +2,8 @@
 
 import { CoursesList } from "@/components/Course/courses-list";
 
+
+
 const CourseSlugPage = () => {
     
     return ( 

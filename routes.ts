@@ -1,15 +1,16 @@
 export const publicRoutes = [
     "/",
-    "/kursy"
+    "/kursy",
 ];
 export const authRoutes = [
     "/auth/login",
     "/auth/register",
     "/auth/reset",
     "/auth/new-verification",
-    "/auth/new-password"
+    "/auth/new-password",
+    "/auth/start"
 ]
-
+export const basketprefix = "/koszyk"
 export const courseprefix = "/kurs"
 export const teacherPrefix = "/teacher"
 export const apiAuthPrefix = "/api/auth"

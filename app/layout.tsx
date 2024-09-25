@@ -6,7 +6,7 @@ import 'react-quill/dist/quill.snow.css';
 import Header from "@/components/header/header";
 import { auth } from "@/auth";
 import { SessionProvider } from "next-auth/react";
-import { ThemeProvider } from "@/components/theme-providet";
+import { ThemeProvider } from "@/components/theme/theme-providet";
 import { Toaster } from "@/components/ui/toaster"
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import stylów

@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import 'react-quill/dist/quill.snow.css';
 
-import Header from "@/components/header/header";
+import Header from "@/components/navbar/header";
 import { auth } from "@/auth";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "@/components/theme/theme-providet";

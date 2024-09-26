@@ -15,10 +15,17 @@ export function ThemeSwitcher() {
 
   if(!mounted) return null
 
+  const toggleTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light')
+  }
+
   return (
-    <div>
-      <Button onClick={() => setTheme('light')}><Sun/></Button>
-      <Button onClick={() => setTheme('dark')}><Moon/></Button>
-    </div>
+    <Button size="sm" isIconOnly color="primary" variant="light" onClick={toggleTheme}>
+      {theme === 'light' ? (
+        <Moon/>
+      ) : (
+        <Sun/>
+      )}
+    </Button>
   )
 };

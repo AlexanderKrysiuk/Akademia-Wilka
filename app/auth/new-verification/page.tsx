@@ -1,28 +1,21 @@
 import NewVerificationForm from "@/components/auth/new-verification-form";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import Link from "next/link";
 
 const NewVerificationPage = () => {
     return (
-        <div className="py-[10vh] px-[10vw] flex justify-center">
-            <Card className="py-[1vh] px-[1vw] max-w-[600px] space-y-[1vh]">
-                <CardHeader>
-                    <CardTitle className="justify-center flex">
-                        🔐Weryfikacja
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <NewVerificationForm/>
-                </CardContent>
-                <CardFooter className="flex justify-center">
-                    <Link href="/auth/login" passHref>
-                        <Button variant={`link`}>
-                            Przejdź do Logowania
-                        </Button>
-                    </Link>
-                </CardFooter>
-            </Card>
+        <div className="flex flex-grow justify-center items-center">
+                <Card className="max-w-xs w-full my-[2vh] mx-[1vw]">
+                    <CardHeader className="w-full flex justify-center items-center">
+                        <h5>
+                            🔐 Weryfikacja
+                        </h5>
+                    </CardHeader>
+                    <CardBody>
+                        <NewVerificationForm/>
+                    </CardBody>
+                </Card>
         </div>
     );
 }

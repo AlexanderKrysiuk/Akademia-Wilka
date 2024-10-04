@@ -6,10 +6,11 @@ import 'react-quill/dist/quill.snow.css';
 import Header from "@/components/navbar/header";
 import { auth } from "@/auth";
 import { SessionProvider } from "next-auth/react";
-import { ThemeProvider } from "@/components/theme/theme-providet";
-import { Toaster } from "@/components/ui/toaster"
-import { ToastContainer } from 'react-toastify';
+import { ThemeProvider } from "@/components/theme/theme-provider";
+import { ToastContainer, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import stylów
+import { useTheme } from "next-themes";
+import Toaster from "@/components/toaster";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -25,7 +26,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth()
-
   return (
     <SessionProvider session={session}>
       <html lang="en">
@@ -37,10 +37,9 @@ export default async function RootLayout({
               disableTransitionOnChange
               >
           <Header/>
-          
+            <main>
             {children}
-          
-          <ToastContainer/>
+            </main>
           <Toaster/>
           </ThemeProvider>
         </body>

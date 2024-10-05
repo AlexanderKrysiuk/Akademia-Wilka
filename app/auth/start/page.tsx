@@ -7,7 +7,7 @@ import { Tab, Tabs } from "@nextui-org/tabs";
 const StartPage = () => {
     return ( 
         <div className="w-full my-[10vh] flex items-center justify-center">
-            <div className="flex flex-col max-w-[600px]">
+            <div className="flex flex-col max-w-xs w-full">
                 <Card>
                     <CardBody>
                         <Tabs fullWidth>

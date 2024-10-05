@@ -38,7 +38,7 @@ const RegisterForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-[2vh]">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-[2vh] max-w-xs w-full">
       <Input {...register("email")} 
         label="E-mail" 
         labelPlacement="outside"
@@ -48,8 +48,9 @@ const RegisterForm = () => {
         isClearable
         disabled={isSubmitting}
         variant="bordered"
-        isInvalid={errors.email ? true: false}
+        isInvalid={errors.email ? true : false}
         errorMessage={errors.email?.message}
+        autoComplete="email"
         className="max-w-s mb-10"
       />
       
@@ -61,6 +62,7 @@ const RegisterForm = () => {
         labelPlacement="outside"
         type="text"
         placeholder="Jack Sparrow"
+        autoComplete="name"
         className="mb-10 max-w-s"
       />
       <Button type="submit" color="primary" fullWidth disabled={isSubmitting} isLoading={isSubmitting}>

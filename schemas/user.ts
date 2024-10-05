@@ -5,7 +5,7 @@ const nameTemplate = z.string().optional()
 const emailTemplate = z.string().email({ message: "Podaj poprawny Email!"})
 
 const passwordTemplate = z.string()
-    .min(1, { message: "Podaj hasło do zmiany!"})
+    .min(1, { message: "Podaj hasło!"})
 
 export const NewPasswordSchema = z.object({
     password: z.string()

@@ -1,3 +1,32 @@
+"use server"
+
+import { signIn } from "@/auth";
+import { generateVerificationToken } from "@/data/token";
+import { getUserByEmail } from "@/data/user";
+import { sendVerificationEmail } from "@/lib/nodemailer";
+import { LoginSchema } from "@/schemas/user";
+import { z } from "zod";
+
+export async function LoginVerification (data: z.infer<typeof LoginSchema>) {
+    const { email, password } = data;
+
+    const user = await getUserByEmail(email.toLowerCase())
+
+    if (!user || !user.email || !user.password) {
+        throw new Error("Nie znaleziono użytkownika!")
+    }
+
+    if (!user.emailVerified) {
+        const verificationToken = await generateVerificationToken(user.email)
+        await sendVerificationEmail(
+            verificationToken.email,
+            verificationToken.token
+        )
+        throw new Error("Konto nie zostało zweryfikowane! Wysłano email weryfikacyjny!")
+    }
+}
+ 
+export default LoginVerification;
 {/* 
 "use client"
 // utils/handleLogin.ts
@@ -114,6 +143,7 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 */}
 
 
+{/* 
 import { signIn } from "@/auth"
 import { generateVerificationToken } from "@/data/token"
 import { getUserByEmail } from "@/data/user"
@@ -123,7 +153,7 @@ import { z } from "zod"
 
 export const Login = async (values: z.infer<typeof LoginSchema>, callBackUrl?: string | null) => {
     const validatedFields = LoginSchema.safeParse(values)
-
+    
     if (!validatedFields.success) {
         throw new Error("Podano nieprawidłowe pola!")
     }
@@ -145,3 +175,4 @@ export const Login = async (values: z.infer<typeof LoginSchema>, callBackUrl?: s
         return { success: true, message: "Wysłano e-mail weryfikacyjny!"}
     } 
 }
+*/}

@@ -72,6 +72,13 @@ export async function setFirstPassword(data: z.infer<typeof NewPasswordSchema>, 
     })
 }
 
+export async function sendNewVerificationEmail(email: string) {
+    const verificationToken = await generateVerificationToken(email)
+    await sendVerificationEmail(
+            verificationToken.email,
+            verificationToken.token
+    )
+}
 
 
 

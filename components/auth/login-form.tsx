@@ -1,5 +1,100 @@
 "use client";
 
+import { LoginVerification } from "@/actions/auth/login";
+import { LoginSchema } from "@/schemas/user";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button, Input } from "@nextui-org/react";
+import { Eye, EyeOff } from "lucide-react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { z } from 'zod'
+
+type FormFields = z.infer<typeof LoginSchema>
+
+interface LoginFormProps {
+    onLogin?: (email: string) => void
+    //redirectUrl?: string
+}
+
+const LoginForm = ({
+    onLogin,
+    //redirectUrl
+}: LoginFormProps ) => {
+    const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<FormFields>({ resolver: zodResolver(LoginSchema )})
+    const [passwordVisible, setPasswordVisible] = useState(false)
+    {/* const router = useRouter() */}
+
+    const onSubmit: SubmitHandler<FormFields> = async (data) => {
+        try {
+            await LoginVerification(data)
+
+            // Jeśli weryfikacja zakończy się pomyślnie, wykonujemy logowanie
+            const result = await signIn("credentials", {
+                redirect: false,
+                email: data.email,
+                password: data.password
+            });
+
+            // Sprawdzamy wynik logowania
+            if (result?.error) {
+                throw new Error();
+            }
+
+        // Logowanie zakończone sukcesem
+        toast.success("Logowanie zakończone sukcesem!");
+
+        } catch(error: any) {
+            toast.error(error.message || "Wystąpił błąd podczas logowania");
+        }
+    }
+
+    return (
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-[2vh] max-w-xs w-full">
+            <Input {...register("email")}
+                label="E-mail"
+                labelPlacement="outside"
+                type="email"
+                placeholder="jack.sparrow@pirate.com"
+                isRequired
+                isClearable
+                disabled={isSubmitting}
+                variant="bordered"
+                isInvalid={errors.email ? true : false}
+                errorMessage={errors.email?.message}
+                autoComplete="email"
+                className="max-w-s mb-10"
+            />
+            <Input {...register("password")}
+                label="Hasło"
+                labelPlacement="outside"
+                placeholder="********"
+                endContent={
+                    <Button isIconOnly type="button" variant="light" size="sm" className="flex items-center" onClick={() => setPasswordVisible((prev) => !prev)}>
+                        {passwordVisible ? <Eye/> : <EyeOff/>}
+                    </Button>
+                }
+                type={passwordVisible ? "text" : "password"}
+                isRequired
+                variant="bordered"
+                isInvalid={errors.password ? true : false}
+                errorMessage={errors.password?.message}
+                autoComplete="current-password"
+                className="max-w-xs mb-10"
+            />
+            <Button type="submit" color="primary" fullWidth disabled={isSubmitting} isLoading={isSubmitting}>
+                Zaloguj
+            </Button>
+        </form>
+    )
+
+}
+
+export default LoginForm;
+
+{/* 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -26,10 +121,10 @@ const LoginForm = ({
     const form = useForm<z.infer<typeof LoginSchema>>({
         resolver: zodResolver(LoginSchema),
     });
-
+    
     {/* 
     const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
-
+        
         setIsPending(true);
         await login(values);
         setIsPending(false);
@@ -49,28 +144,28 @@ const LoginForm = ({
         
     };
 */}
-
-    const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
-        setIsPending(true);
-
-        try {
-            const respone = await checkVerificationEmail(values);
-            
-            if (respone?.message) {
-                toast.info(respone.message)
-                return
-            }
-
-            // E-mail jest zweryfikowany, przeprowadź logowanie
-            const result = await signIn("credentials", {
-                email: values.email,
-                password: values.password,
-            });
-
-            if (result?.ok) {
-                toast.success("Logowanie udane!");
-                if (onLogin) {
-                    onLogin(values.email)
+{/*}
+const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
+    setIsPending(true);
+    
+    try {
+        const respone = await checkVerificationEmail(values);
+        
+        if (respone?.message) {
+            toast.info(respone.message)
+            return
+        }
+        
+        // E-mail jest zweryfikowany, przeprowadź logowanie
+        const result = await signIn("credentials", {
+            email: values.email,
+            password: values.password,
+        });
+        
+        if (result?.ok) {
+            toast.success("Logowanie udane!");
+            if (onLogin) {
+                onLogin(values.email)
                 }
             } else {
                 toast.error("Błąd logowania!");
@@ -85,8 +180,8 @@ const LoginForm = ({
             setIsPending(false);
         }
     };
-
-
+    
+    
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -120,7 +215,7 @@ const LoginForm = ({
                             <FormMessage />
                         </FormItem>
                     )}
-                />
+                    />
                 <Button type="submit" disabled={isPending}>
                     Zaloguj się
                 </Button>
@@ -130,3 +225,4 @@ const LoginForm = ({
 };
 
 export default LoginForm;
+*/}

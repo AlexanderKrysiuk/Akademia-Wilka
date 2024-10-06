@@ -43,13 +43,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
         */}
         
-        return user;
+        return user
       }
     })
   ],
   pages: {
     signIn: "/auth/start"
-  }
+  },
 }) 
 
 

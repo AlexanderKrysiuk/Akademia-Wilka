@@ -12,7 +12,9 @@ const StartPage = () => {
                     <CardBody>
                         <Tabs fullWidth>
                             <Tab key="login" title="Logowanie">
-                                <LoginForm/>
+                                <LoginForm
+                                    redirectUrl="/kokpit"
+                                />
                             </Tab>
                             <Tab key="register" title="Rejestracja">
                                 <RegisterForm/>

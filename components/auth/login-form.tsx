@@ -16,12 +16,12 @@ type FormFields = z.infer<typeof LoginSchema>
 
 interface LoginFormProps {
     onLogin?: (email: string) => void
-    //redirectUrl?: string
+    redirectUrl?: string
 }
 
 const LoginForm = ({
     onLogin,
-    //redirectUrl
+    redirectUrl
 }: LoginFormProps ) => {
     const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<FormFields>({ resolver: zodResolver(LoginSchema )})
     const [passwordVisible, setPasswordVisible] = useState(false)
@@ -46,6 +46,10 @@ const LoginForm = ({
         // Logowanie zakończone sukcesem
         toast.success("Logowanie zakończone sukcesem!");
 
+        if (redirectUrl) {
+            window.location.href = redirectUrl;
+        }
+        
         } catch(error: any) {
             toast.error(error.message || "Wystąpił błąd podczas logowania");
         }

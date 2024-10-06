@@ -1,4 +1,35 @@
-export { auth as middleware } from "@/auth" 
+import { NextRequest, NextResponse } from "next/server"
+import { getToken } from 'next-auth/jwt'; // Funkcja do uzyskania tokenu JWT z requestu
+
+import {auth as middleware} from "./auth"
+import { authRoutes } from "./routes";
+
+export default middleware((request) => {
+  const isLoggedIn = !!request.auth
+  const user = request.auth
+  
+  const authRoute = authRoutes.includes(request.nextUrl.pathname)
+  if (user && authRoute) {
+    return Response.redirect(new URL("/kokpit", request.nextUrl))
+  }
+
+
+  console.log("LOGGEDIN?:", isLoggedIn )
+  console.log("USER:", user)
+  console.log("ROUTE:" ,request.nextUrl.pathname)
+  console.log("running")
+
+  
+})
+
+export const config = {
+  matcher: [
+    // Skip Next.js internals and all static files, unless found in search params
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Always run for API routes
+    //'/(api|trpc)(.*)',
+  ],
+}
 
 {/* 
 import { UserRole } from '@prisma/client'

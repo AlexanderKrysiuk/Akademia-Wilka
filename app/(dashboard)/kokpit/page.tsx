@@ -1,11 +1,10 @@
 "use client";
 
-import { useIsTeacher } from "@/hooks/user";
 import { useSession, signOut } from "next-auth/react";
 import { useEffect } from "react";
 
 const DashboardPage = () => {
-    const isTeacher = useIsTeacher()
+    //const isTeacher = useIsTeacher()
     const { data: session, status } = useSession();
     
     useEffect(() => {
@@ -33,6 +32,7 @@ const DashboardPage = () => {
     
     return (
         <div>
+            {/*
             {isTeacher ? (
                 <div>
                     Tak jestem nauczycielem
@@ -43,6 +43,7 @@ const DashboardPage = () => {
                 Nie jestem nauczycielem
                 </div>
             )}
+        */}
         <h1>Welcome, {session?.user?.name}</h1>
         <button onClick={handleSignOut}>Sign out</button>
         <pre>{JSON.stringify(session, null, 2)}</pre>

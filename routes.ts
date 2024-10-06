@@ -8,6 +8,10 @@ export const authRoutes = [
     "/auth/new-password",
     "/auth/start"
 ]
+export const userRoutes = [
+    "/kokpit"
+]
+
 export const basketprefix = "/koszyk"
 export const courseprefix = "/kurs"
 export const teacherPrefix = "/teacher"

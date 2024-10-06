@@ -23,9 +23,12 @@ export const getUserById = async (id: string) => {
 
 // Funkcja do pobierania ról użytkownika na podstawie ID
 export const getUserRolesByUserID = async (id: string) => {
-    return await prisma.userRoleAssignment.findMany({
+    const roles = await prisma.userRoleAssignment.findMany({
         where: { userId: id },
+        select: { role: true}
     });
+    return roles.map(roleAssignment => roleAssignment.role);
+
 };
 
 

@@ -1,25 +1,49 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getToken } from 'next-auth/jwt'; // Funkcja do uzyskania tokenu JWT z requestu
 
-import {auth as middleware} from "./auth"
-import { authRoutes } from "./routes";
+import authConfig from "@/auth.config"
+import NextAuth from "next-auth";
 
-export default middleware((request) => {
+import { apiAuthPrefix, authRoutes, publicRoutes, userRoutes } from "./routes";
+
+const { auth } = NextAuth(authConfig)
+
+export default auth((request) => {
   const isLoggedIn = !!request.auth
   const user = request.auth
   
-  const authRoute = authRoutes.includes(request.nextUrl.pathname)
-  if (user && authRoute) {
-    return Response.redirect(new URL("/kokpit", request.nextUrl))
+  //console.log("LOGGEDIN?:", isLoggedIn )
+  //console.log("USER:", user)
+  //console.log("ROUTE:" ,request.nextUrl.pathname)
+  //console.log("running")
+
+  //const apiAuthRoute = apiAuthPrefix.startsWith(request.nextUrl.pathname)
+  const apiAuthRoute = request.nextUrl.pathname.startsWith(apiAuthPrefix)
+  if (apiAuthRoute) {
+    return NextResponse.next()
   }
 
+  const authRoute = authRoutes.includes(request.nextUrl.pathname)
+  if (authRoute) {
+    if (user) {
+      return NextResponse.redirect(new URL("/kokpit", request.nextUrl))
+    }
+    return NextResponse.next()
+  }
 
-  console.log("LOGGEDIN?:", isLoggedIn )
-  console.log("USER:", user)
-  console.log("ROUTE:" ,request.nextUrl.pathname)
-  console.log("running")
-
+  const userRoute = userRoutes.includes(request.nextUrl.pathname)
+  if (userRoute) {
+    if (user) {
+      return NextResponse.next()
+    }
+    return NextResponse.redirect(new URL("/auth/start", request.nextUrl))
+  }
   
+  const publicRoute = publicRoutes.includes(request.nextUrl.pathname)
+  if (publicRoute) {
+    return NextResponse.next()
+  }
+  return NextResponse.redirect(new URL("/", request.nextUrl))
 })
 
 export const config = {

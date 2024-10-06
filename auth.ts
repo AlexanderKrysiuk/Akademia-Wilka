@@ -1,12 +1,20 @@
 import NextAuth from "next-auth";
+import authConfig from "@/auth.config";
 import Credentials from "next-auth/providers/credentials"
-import { getUserByEmail } from "./data/user";
+import { getUserByEmail, getUserRolesByUserID } from "./data/user";
 import { compare } from "bcryptjs";
 import { sendNewVerificationEmail } from "./actions/auth/new-verification";
 import { generateVerificationToken } from "./data/token";
 import { sendVerificationEmail } from "./lib/nodemailer";
+import { PrismaClient } from "@prisma/client";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { prisma } from "@/lib/prisma"
+
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  ...authConfig,
+  adapter: PrismaAdapter(prisma),
+  session: { strategy: "jwt" },
   providers: [
     Credentials({
       credentials: {
@@ -49,6 +57,30 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   pages: {
     signIn: "/auth/start"
+  },
+  callbacks: {
+    async jwt({ token, user }) {
+      //console.log("TOKEN-->Token:", token)
+      token.customfield="this"
+      if (token.sub){
+        const userRoles = await getUserRolesByUserID(token.sub)
+        //console.log("USER_ROLES:", userRoles)
+        token.role = userRoles
+        //console.log("TOKEN.ROLE:", token.role)
+      }
+      //console.log("TOKEN-->User:", user)
+      return token
+    },
+    async session({ token, session }){
+      if (token.role){
+        session.user.role = token.role
+        //console.log("SESSION.USER.ROLE:", session.user.role)
+      }
+      //console.log("SESSION-->session:", session)
+      //console.log("SESSION-->token:", token)
+      //console.log("USER:", session.user)
+      return session
+    }
   },
 }) 
 

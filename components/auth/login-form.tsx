@@ -46,6 +46,10 @@ const LoginForm = ({
         // Logowanie zakończone sukcesem
         toast.success("Logowanie zakończone sukcesem!");
 
+        if (onLogin) {
+            onLogin(data.email); // Przekazanie emaila do onLogin
+        }
+
         if (redirectUrl) {
             window.location.href = redirectUrl;
         }

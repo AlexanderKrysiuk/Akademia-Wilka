@@ -30,7 +30,6 @@ const teacherRoutes = [
 
 const SidebarRoutes = () => {
     const user = useCurrentUser()
-    const isTeacher = useIsTeacher()
     return ( 
         <div>
             <div className='w-full min-h-[15vh] max-h-[20vh] py-[1vh] px-[1vw] flex items-center space-x-[1vw] md:hidden'>
@@ -56,7 +55,7 @@ const SidebarRoutes = () => {
                     />
                 ))}
             </div>
-            {isTeacher && (
+            {user && (
                 <div className="flex flex-col w-full">
                     <Separator/>
                     <div className='flex py-[1vh] px-[2vw] gap-x-[1vw] items-center'>

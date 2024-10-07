@@ -27,6 +27,8 @@ export const getUserRolesByUserID = async (id: string) => {
         where: { userId: id },
         select: { role: true}
     });
+
+    //return roles
     return roles.map(roleAssignment => roleAssignment.role);
 
 };

@@ -1,5 +1,4 @@
 import NextAuth from "next-auth";
-import authConfig from "@/auth.config";
 import Credentials from "next-auth/providers/credentials"
 import { getUserByEmail, getUserRolesByUserID } from "./data/user";
 import { compare } from "bcryptjs";
@@ -9,6 +8,7 @@ import { sendVerificationEmail } from "./lib/nodemailer";
 import { PrismaClient } from "@prisma/client";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma"
+import { authConfig } from "./auth.config";
 
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -50,38 +50,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           throw new Error("Podane hasło jest nieprawidłowe!")
         }
         */}
-        
         return user
       }
     })
   ],
-  pages: {
-    signIn: "/auth/start"
-  },
   callbacks: {
     async jwt({ token, user }) {
-      //console.log("TOKEN-->Token:", token)
-      token.customfield="this"
-      if (token.sub){
-        const userRoles = await getUserRolesByUserID(token.sub)
-        //console.log("USER_ROLES:", userRoles)
-        token.role = userRoles
-        //console.log("TOKEN.ROLE:", token.role)
-      }
-      //console.log("TOKEN-->User:", user)
+      if (token.sub) {
+        token.role = await getUserRolesByUserID(token.sub)
+        //console.log("token.role", token.role)
+      }    
       return token
     },
     async session({ token, session }){
-      if (token.role){
-        session.user.role = token.role
-        //console.log("SESSION.USER.ROLE:", session.user.role)
+      if (token.role) {
+        session.user.role = token.role as string[]
       }
-      //console.log("SESSION-->session:", session)
-      //console.log("SESSION-->token:", token)
-      //console.log("USER:", session.user)
-      return session
-    }
-  },
+    return session
+  }
+  }
 }) 
 
 

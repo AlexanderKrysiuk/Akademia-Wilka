@@ -1,9 +1,31 @@
+import { NextAuthConfig } from "next-auth";
+import { getUserRolesByUserID } from "./data/user";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { prisma } from "@/lib/prisma"
+
+export const authConfig = {
+    pages: { signIn: "/auth/start" },
+    adapter: PrismaAdapter(prisma),
+    session: { strategy: "jwt" },
+    providers: [],
+    callbacks: {
+        async session({ token, session,  }){
+            if (token.role) {
+                session.user.role = token.role as string[]
+            }
+          return session
+        }
+      },
+} satisfies NextAuthConfig
+
+{/* 
 import credentials from "next-auth/providers/credentials";
 import type { NextAuthConfig } from "next-auth";
 
 export default {
     providers: [credentials]
 } satisfies NextAuthConfig
+*/}
 
 {/* 
 import Credentials from "next-auth/providers/credentials";

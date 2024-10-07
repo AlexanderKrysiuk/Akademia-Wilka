@@ -1,22 +1,26 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getToken } from 'next-auth/jwt'; // Funkcja do uzyskania tokenu JWT z requestu
 
-import authConfig from "@/auth.config"
 import NextAuth from "next-auth";
 
-import { apiAuthPrefix, authRoutes, publicRoutes, userRoutes } from "./routes";
+import { apiAuthPrefix, authRoutes, publicRoutes, teacherPrefix, userRoutes } from "./routes";
+import { UserRole } from "@prisma/client";
+import { getUserByEmail } from "./data/user";
+import { useCurrentUser } from "./hooks/user";
+import { useSession } from "next-auth/react";
+import { authConfig } from "./auth.config";
 
 const { auth } = NextAuth(authConfig)
 
 export default auth((request) => {
+    
   const isLoggedIn = !!request.auth
-  const user = request.auth
+  const user = request.auth?.user  
   
   //console.log("LOGGEDIN?:", isLoggedIn )
   //console.log("USER:", user)
   //console.log("ROUTE:" ,request.nextUrl.pathname)
   //console.log("running")
-
   //const apiAuthRoute = apiAuthPrefix.startsWith(request.nextUrl.pathname)
   const apiAuthRoute = request.nextUrl.pathname.startsWith(apiAuthPrefix)
   if (apiAuthRoute) {
@@ -37,6 +41,15 @@ export default auth((request) => {
       return NextResponse.next()
     }
     return NextResponse.redirect(new URL("/auth/start", request.nextUrl))
+  }
+
+  const teacherRoute = request.nextUrl.pathname.startsWith(teacherPrefix)
+  if (teacherRoute) {
+    if (user?.role?.includes(UserRole.Teacher)) {
+      console.log("PASSED")
+      //return NextResponse.next()
+    }
+    return NextResponse.redirect(new URL("/kokpit", request.nextUrl))
   }
   
   const publicRoute = publicRoutes.includes(request.nextUrl.pathname)

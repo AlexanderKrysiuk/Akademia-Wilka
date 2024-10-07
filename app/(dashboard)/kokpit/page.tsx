@@ -1,11 +1,15 @@
 "use client";
 
+import { useCurrentUser } from "@/hooks/user";
 import { useSession, signOut } from "next-auth/react";
 import { useEffect } from "react";
+
+import {  Listbox,  ListboxSection,  ListboxItem} from "@nextui-org/listbox";
 
 const DashboardPage = () => {
     //const isTeacher = useIsTeacher()
     const { data: session, status } = useSession();
+    const user = useCurrentUser()
     
     useEffect(() => {
         if (status === "loading") {
@@ -44,9 +48,25 @@ const DashboardPage = () => {
                 </div>
             )}
         */}
+            <div className="mb-12">
+                <Listbox
+                    aria-label="Actions"
+                    onAction={(key) => alert(key)}
+                >
+                    <ListboxItem key="new">New file</ListboxItem>
+                    <ListboxItem key="copy">Copy link</ListboxItem>
+                    <ListboxItem key="edit">Edit file</ListboxItem>
+                    <ListboxItem key="delete" className="text-danger" color="danger">
+                        Delete file
+                    </ListboxItem>
+                </Listbox>
+            </div>
         <h1>Welcome, {session?.user?.name}</h1>
         <button onClick={handleSignOut}>Sign out</button>
+        Session
         <pre>{JSON.stringify(session, null, 2)}</pre>
+        USER
+        <pre>{JSON.stringify(user,null,2)}</pre>
         </div>
     );
 };

@@ -1,19 +1,15 @@
 "use client"
 
 import { checkVerificationToken, setFirstPassword } from "@/actions/auth/new-verification";
-import { Card, CardBody, CardHeader } from "@nextui-org/card";
 import { useSearchParams } from "next/navigation";
 import { startTransition, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { BeatLoader } from "react-spinners";
 import { CheckCircle, Eye, EyeOff, Loader, Loader2, LucideLoader2, ShieldEllipsis, TriangleAlert } from "lucide-react";
 import { Button, Input } from "@nextui-org/react";
 import { NewPasswordSchema } from "@/schemas/user";
 import { z } from 'zod'
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { newPassword } from "@/actions/auth/new-password";
-import { error } from "console";
 import Link from "next/link";
 
 type FormFields = z.infer<typeof NewPasswordSchema>;
@@ -33,7 +29,7 @@ const NewVerificationForm = () => {
     }
 
     const onSubmit: SubmitHandler<FormFields> = async (data) => {
-        await new Promise ((resolve)=> setTimeout(resolve, 5000))
+        //await new Promise ((resolve)=> setTimeout(resolve, 5000))
         startTransition(async()=>{
             setFirstPassword(data, token)
             .then(()=>{
@@ -122,7 +118,7 @@ const NewVerificationForm = () => {
                     className="max-w-xs mb-4"
                 />
                 {verificationCompleted && 
-                    <div className="text-primary w-full flex justify-center gap-[1vw] mb-4">
+                    <div className="text-primary w-full flex items-center text-sm gap-2 justify-center mb-4">
                         <CheckCircle/>
                         {result.message}
                     </div>
@@ -138,7 +134,7 @@ const NewVerificationForm = () => {
                 </Button>
             </form>
         ) : (
-            <div className="w-full flex justify-center text-red-500 gap-[1vw]">
+            <div className="text-red-500 w-full flex items-center text-sm gap-2 justify-center mb-4">
                 <TriangleAlert/>
                 {result.message}
             </div>

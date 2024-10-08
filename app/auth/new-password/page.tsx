@@ -1,25 +1,23 @@
 import NewPasswordForm from "@/components/auth/new-password-form";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardBody, CardFooter, CardHeader } from "@nextui-org/react";
 import Link from "next/link";
 
 const NewPasswordPage = () => {
     return ( 
-        <div className="py-[10vh] px-[10vw] flex justify-center">
-            <Card className="py-[1vh] px-[1vw] max-w-[600px] space-y-[1vh]">
-                <CardHeader>
-                    <CardTitle className="justify-center flex">
-                        🔐Nowe Hasło
-                    </CardTitle>
+        <div className="w-full flex justify-center">
+            <Card className="w-full max-w-xs my-[10vh] mx-[2vw]">
+                <CardHeader className="w-full flex justify-center">
+                    <h4>
+                        🔐 Nowe Hasło
+                    </h4>
                 </CardHeader>
-                <CardContent>
+                <CardBody>
                     <NewPasswordForm/>
-                </CardContent>
-                <CardFooter>
-                    <Link href="/auth/login" passHref>
-                        <Button variant={`link`}>
-                            Powrót do logowania
-                        </Button>
+                </CardBody>
+                <CardFooter className="flex justify-center">
+                    <Link href="/auth/start" passHref className="text-sm text-primary transition-all duration-300 hover:underline">
+                        Powrót do logowania
                     </Link>
                 </CardFooter>
             </Card>

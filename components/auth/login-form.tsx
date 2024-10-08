@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input } from "@nextui-org/react";
 import { Eye, EyeOff } from "lucide-react";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -60,7 +61,7 @@ const LoginForm = ({
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-[2vh] max-w-xs w-full">
+        <form onSubmit={handleSubmit(onSubmit)} className="max-w-xs w-full">
             <Input {...register("email")}
                 label="E-mail"
                 labelPlacement="outside"
@@ -73,10 +74,14 @@ const LoginForm = ({
                 isInvalid={errors.email ? true : false}
                 errorMessage={errors.email?.message}
                 autoComplete="email"
-                className="max-w-s mb-10"
+                className="max-w-s"
             />
+            <Link href="/auth/reset" className="absolute right-4 text-sm text-primary transition-all duration-300 hover:underline pt-3">
+                Nie pamiętasz hasła?
+            </Link>
             <Input {...register("password")}
-                label="Hasło"
+                id="password"
+                label={"Hasło"}
                 labelPlacement="outside"
                 placeholder="********"
                 endContent={
@@ -90,7 +95,7 @@ const LoginForm = ({
                 isInvalid={errors.password ? true : false}
                 errorMessage={errors.password?.message}
                 autoComplete="current-password"
-                className="max-w-xs mb-10"
+                className="max-w-xs mb-4 pt-4"
             />
             <Button type="submit" color="primary" fullWidth disabled={isSubmitting} isLoading={isSubmitting}>
                 Zaloguj

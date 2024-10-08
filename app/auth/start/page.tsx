@@ -6,23 +6,21 @@ import { Tab, Tabs } from "@nextui-org/tabs";
 
 const StartPage = () => {
     return ( 
-        <div className="w-full my-[10vh] flex items-center justify-center">
-            <div className="flex flex-col max-w-xs w-full">
-                <Card>
-                    <CardBody>
-                        <Tabs fullWidth>
-                            <Tab key="login" title="Logowanie">
-                                <LoginForm
-                                    redirectUrl="/kokpit"
-                                />
-                            </Tab>
-                            <Tab key="register" title="Rejestracja">
-                                <RegisterForm/>
-                            </Tab>
-                        </Tabs>
-                    </CardBody>
-                </Card>
-            </div>
+        <div className="w-full flex justify-center">
+            <Card className="w-full max-w-xs my-[10vh] mx-[2vw]">
+                <CardBody>
+                    <Tabs fullWidth>
+                        <Tab key="login" title="Logowanie">
+                            <LoginForm
+                                redirectUrl="/kokpit"
+                            />
+                        </Tab>
+                        <Tab key="register" title="Rejestracja">
+                            <RegisterForm/>
+                        </Tab>
+                    </Tabs>
+                </CardBody>
+            </Card>
         </div>
     );
 }

@@ -1,29 +1,25 @@
 import ResetForm from "@/components/auth/reset-form";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardBody, CardHeader, CardFooter } from "@nextui-org/react";
 import Link from "next/link";
 
 const ResetPage = () => {
     return (
-        <div className="py-[10vh] px-[10vw] flex justify-center">
-
-        <Card className="py-[1vh] px-[1vw] max-w-[600px] space-y-[1vh]">
-            <CardHeader>
-                <CardTitle className="justify-center flex">
-                    Nie pamiętasz hasła?
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <ResetForm/>
-            </CardContent>
-            <CardFooter className="flex justify-center">
-                <Link href="/auth/login" passHref>
-                    <Button variant={`link`}>
+        <div className="w-full flex justify-center">
+            <Card className="w-full max-w-xs my-[10vh] mx-[2vw]">
+                <CardHeader className="w-full flex justify-center">
+                    <h4>
+                        Nie pamiętasz hasła?
+                    </h4>
+                </CardHeader>
+                <CardBody>
+                    <ResetForm/>
+                </CardBody>
+                <CardFooter className="flex justify-center">
+                    <Link href="/auth/start" passHref className="text-sm text-primary transition-all duration-300 hover:underline">
                         Powrót do logowania
-                    </Button>
-                </Link>
-            </CardFooter>
-        </Card>
+                    </Link>
+                </CardFooter>
+            </Card>
         </div>
     );
 }

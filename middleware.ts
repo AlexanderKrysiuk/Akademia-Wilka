@@ -15,7 +15,9 @@ const { auth } = NextAuth(authConfig)
 export default auth((request) => {
     
   const isLoggedIn = !!request.auth
+  //console.log("loggedin?:", isLoggedIn) 
   const user = request.auth?.user  
+  //console.log("middleware user:", user)
   
   //console.log("LOGGEDIN?:", isLoggedIn )
   //console.log("USER:", user)

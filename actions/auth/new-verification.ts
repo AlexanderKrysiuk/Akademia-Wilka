@@ -20,7 +20,7 @@ export async function checkVerificationToken(token:string) {
     if (hasExpired) {
         const verificationToken = await generateVerificationToken(existingToken.email)
         await sendVerificationEmail(
-            verificationToken.email,
+            verificationToken.email.toLowerCase(),
             verificationToken.token
         )
         throw new Error("Token stracił ważność! wysłano nowy");

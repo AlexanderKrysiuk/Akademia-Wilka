@@ -38,7 +38,7 @@ const RegisterForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-[2vh] max-w-xs w-full">
+    <form onSubmit={handleSubmit(onSubmit)} className=" max-w-xs w-full">
       <Input {...register("email")} 
         label="E-mail" 
         labelPlacement="outside"
@@ -51,7 +51,7 @@ const RegisterForm = () => {
         isInvalid={errors.email ? true : false}
         errorMessage={errors.email?.message}
         autoComplete="email"
-        className="max-w-s mb-10"
+        className="max-w-xs mb-10"
       />
       
       <Input {...register("name")} 
@@ -63,7 +63,7 @@ const RegisterForm = () => {
         type="text"
         placeholder="Jack Sparrow"
         autoComplete="name"
-        className="mb-10 max-w-s"
+        className="mb-4 max-w-s"
       />
       <Button type="submit" color="primary" fullWidth disabled={isSubmitting} isLoading={isSubmitting}>
         {isSubmitting ? "Ładowanie..." : "Załóż konto"}

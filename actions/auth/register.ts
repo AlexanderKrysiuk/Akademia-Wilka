@@ -10,7 +10,7 @@ import { sendVerificationEmail } from '@/lib/nodemailer';
 
 export async function registerNewUser (data: z.infer<typeof RegisterSchema>) {
     const { email, name } = data;
-    const existingUser = await getUserByEmail(email)
+    const existingUser = await getUserByEmail(email.toLowerCase())
 
     if (existingUser) {
         throw new Error("Ten e-mail jest już zajęty")
@@ -18,7 +18,7 @@ export async function registerNewUser (data: z.infer<typeof RegisterSchema>) {
 
     const user = await prisma.user.create({
         data: {
-            email: email,
+            email: email.toLowerCase(),
             name: name
         }
     })

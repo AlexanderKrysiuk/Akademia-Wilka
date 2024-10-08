@@ -1,4 +1,56 @@
 "use client"
+
+import { reset } from "@/actions/auth/reset"
+import { ResetSchema } from "@/schemas/user"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Button, Input } from "@nextui-org/react"
+import { startTransition } from "react"
+import { SubmitHandler, useForm } from "react-hook-form"
+import { toast } from "react-toastify"
+import { z } from "zod"
+
+type FormFields = z.infer<typeof ResetSchema>
+
+const ResetForm = () => {
+    const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<FormFields>({ resolver: zodResolver(ResetSchema)})
+    const onSubmit: SubmitHandler<FormFields> = async (data) => {
+        startTransition(async ()=>{
+            reset(data)
+                .then(()=>{
+                    toast.success("Wysłano e-mail resetujący hasło!")
+                })
+                .catch((error)=>{
+                    setError("email", { message: error.message })
+                    toast.error(error.message)
+                })
+            })
+    }
+
+    return (
+        <form onSubmit={handleSubmit(onSubmit)} className="max-w-xs w-full">
+            <Input {...register("email")}
+                label="E-mail"
+                labelPlacement="outside"
+                type="email"
+                placeholder="jack.sparrow@pirate.com"
+                isRequired
+                isClearable
+                disabled={isSubmitting}
+                variant="bordered"
+                isInvalid={errors.email ? true : false}
+                errorMessage={errors.email?.message}
+                autoComplete="email"
+                className="max-w-xs mb-4"
+            />
+            <Button type="submit" color="primary" fullWidth disabled={isSubmitting} isLoading={isSubmitting}>
+                {isSubmitting ? "Przetwarzanie..." : "Resetuj hasło"}
+            </Button>
+        </form>
+    )
+}
+export default ResetForm;
+
+{/* 
 import { ResetSchema } from "@/schemas/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -60,3 +112,4 @@ const ResetForm = () => {
 }
  
 export default ResetForm;
+*/}

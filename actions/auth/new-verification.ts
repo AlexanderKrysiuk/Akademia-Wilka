@@ -18,7 +18,7 @@ export async function checkVerificationToken(token:string) {
     const hasExpired = new Date(existingToken.expires) < new Date();
 
     if (hasExpired) {
-        const verificationToken = await generateVerificationToken(existingToken.email)
+        const verificationToken = await generateVerificationToken(existingToken.email.toLowerCase())
         await sendVerificationEmail(
             verificationToken.email.toLowerCase(),
             verificationToken.token
@@ -45,13 +45,13 @@ export async function setFirstPassword(data: z.infer<typeof NewPasswordSchema>, 
     if (hasExpired) {
         const verificationToken = await generateVerificationToken(existingToken.email)
         await sendVerificationEmail(
-            verificationToken.email,
+            verificationToken.email.toLowerCase(),
             verificationToken.token
         )
         throw new Error("Token stracił ważność! wysłano nowy");
     }
 
-    const existingUser = await getUserByEmail(existingToken.email)
+    const existingUser = await getUserByEmail(existingToken.email.toLowerCase())
 
     if (!existingUser) {
         throw new Error("Nie znaleziono użytkownika")

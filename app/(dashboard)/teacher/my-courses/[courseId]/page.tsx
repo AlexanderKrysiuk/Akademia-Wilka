@@ -22,6 +22,14 @@ const CourseIdPage = ({
 }: {
     params: { courseId: string }
 }) => {
+
+    return (
+        <div>
+            jestem
+        </div>
+    )
+
+    {/* 
     const user = useCurrentUser();
     const router = useRouter();
     const [course, setCourse] = useState<Course>();
@@ -162,5 +170,7 @@ const CourseIdPage = ({
             </div>
         </div>
     );
+    */}
+
 };
 export default CourseIdPage;

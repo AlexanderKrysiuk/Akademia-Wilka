@@ -102,21 +102,20 @@ model PasswordResetToken {
 
 model Course {
   id          String  @id @default(uuid())
-  ownerId     String
+  ownerId     String?
   title       String  @db.Text
-  slug        String  @unique
+  slug        String?  @unique
   description String? @db.Text
   imageUrl    String? @db.Text
   price       Float?
-  published Boolean @default(false)
+  published   Boolean @default(false)
 
-  categoryId String?
-  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id])
 
-  levelId String?
-  level   Level?  @relation(fields: [levelId], references: [id])
+  levelId     String?
+  level       Level?  @relation(fields: [levelId], references: [id])
 
-  attachments Attachment[]
   chapters    Chapter[]
   purchases   Purchase[]
 
@@ -142,9 +141,6 @@ model Attachment {
   id   String @id @default(uuid())
   name String
   url  String @db.Text
-
-  courseId String?
-  course   Course? @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   lessonId String?
   lesson   Lesson? @relation(fields: [lessonId], references: [id], onDelete: Cascade)
@@ -178,8 +174,9 @@ model Lesson {
   order     Int
   content   String?     @db.Text
 
-  video     VideoLesson? 
-  audioUrl  String?
+  mediaUrls String[]
+  mediaDuration Int[]
+
   published Boolean     @default(false)
   free      Boolean     @default(false)
 
@@ -194,25 +191,6 @@ model Lesson {
   updatedAt DateTime @updatedAt
 
   @@unique([chapterId, slug], map: "unique_lesson_slug_per_chapter")
-}
-
-model VideoLesson {
-  id       String      @id @default(uuid())
-  url      String
-  name     String?
-  duration  Float?     // Czas trwania wideo w sekundach, opcjonalne pole
-  source   VideoSource // Źródło wideo (np. enum VideoSource)
-
-  lesson   Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  lessonId String     @unique
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-enum VideoSource {
-  youtube
-  internal
 }
 
 enum LessonType {

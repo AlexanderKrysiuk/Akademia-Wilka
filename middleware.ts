@@ -48,8 +48,8 @@ export default auth((request) => {
   const teacherRoute = request.nextUrl.pathname.startsWith(teacherPrefix)
   if (teacherRoute) {
     if (user?.role?.includes(UserRole.Teacher)) {
-      console.log("PASSED")
-      //return NextResponse.next()
+      //console.log("PASSED")
+      return NextResponse.next()
     }
     return NextResponse.redirect(new URL("/kokpit", request.nextUrl))
   }

@@ -12,6 +12,7 @@ export default function Home() {
   const user = useCurrentUser()
   return (
     <main>
+      {/* 
       <div className='py-8 space-y-4'>
         <div>
 
@@ -24,6 +25,7 @@ export default function Home() {
         {JSON.stringify(session,null,2)}
         </div>
       </div>
+      */}
     </main>
   );
 }

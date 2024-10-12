@@ -2,7 +2,7 @@
 
 import { Loader2 } from "lucide-react";
 
-const Loader = () => {
+const PageLoader = () => {
     return ( 
         <div className='w-full h-full flex items-center justify-center gap-2'>
             <Loader2 className="animate-spin"/>
@@ -11,4 +11,4 @@ const Loader = () => {
      );
 }
  
-export default Loader;
+export default PageLoader;

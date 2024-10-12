@@ -2,11 +2,11 @@
 import { ImageIcon } from 'lucide-react';
 import { useCurrentUser,  } from '@/hooks/user';
 import { useEffect, useState } from 'react';
-import { Course } from '@prisma/client';
+import { Course, UserRole } from '@prisma/client';
 import Image from "next/image";
 import Link from 'next/link';
 import { GetMyCreatedCourses } from '@/actions/course-teacher/course';
-import Loader from '@/components/loader';
+import PageLoader from '@/components/page-loader';
 import { Button, Card, CardBody, CardFooter, CardHeader, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react';
 import CreateCourseModal from '@/components/Course-Create/Course/CreateCourseModal';
 
@@ -17,7 +17,7 @@ const MyCourses = () => {
 
     async function fetchMyCreatedCourses() {
         try {
-            if (!user) return
+            if (!user || !user.role.includes(UserRole.Teacher || UserRole.Admin)) return
             const fetchedCourses = await GetMyCreatedCourses(user.id)
             setCourses(fetchedCourses)
         } catch (error) {
@@ -32,7 +32,7 @@ const MyCourses = () => {
     },[user])
 
     if (loading) {
-        return <Loader/>
+        return <PageLoader/>
     }
 
     return ( 

@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Settings } from 'lucide-react';
 import TitleForm from "@/components/dashboard/teacher/courses/title-form";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import DescriptionForm from "@/components/dashboard/teacher/courses/description-form";
 import CategoryForm from "@/components/dashboard/teacher/courses/category-form";
 import LevelForm from "@/components/dashboard/teacher/courses/level-form";
@@ -16,17 +15,104 @@ import ImageForm from "@/components/dashboard/teacher/courses/image-form"
 import AttachmentForm from "@/components/dashboard/teacher/courses/attachment-form";
 import { motion } from "framer-motion";
 import { CourseSlugForm } from "@/components/dashboard/teacher/courses/course-slug-form";
+import { GetMyCreatedCourse } from "@/actions/course-teacher/course";
+import PageLoader from "@/components/page-loader";
+import { Card, CardBody, CardFooter, CardHeader, Progress } from "@nextui-org/react";
+import TitleCard from "@/components/Course-Create/Course/title-card";
+import SlugCard from "@/components/Course-Create/Course/slug-card";
 
 const CourseIdPage = ({
     params
 }: {
     params: { courseId: string }
 }) => {
+    const user = useCurrentUser()
+
+    const [course, setCourse] = useState<Course>()
+    const [loading, setLoading] = useState(true)
+    const [courseCreationProgress, setCourseCreationProgress] = useState(0)
+
+    const checkCourseRequireMents = (course: Course): number => {
+        let totalRequirements = 0
+        let fullfilledRequirements = 0
+
+        if (!!course.title) {
+            fullfilledRequirements++
+        }
+        totalRequirements++
+
+        if (!!course.slug) {
+            fullfilledRequirements++
+        }
+        totalRequirements++
+
+        const percentage = (fullfilledRequirements/totalRequirements) * 100
+        return Math.round(percentage)
+    }
+
+    async function fetchMyCreatedCourse() {
+        try {
+            if (!user) return
+            const fetchedCourse = await GetMyCreatedCourse(user.id, params.courseId)
+            if (!fetchedCourse) return
+            const courseValid = checkCourseRequireMents(fetchedCourse)
+            if (courseValid < 100) {
+                //TODO: set course to unpublished
+            }
+            setCourseCreationProgress(courseValid)
+
+            setCourse(fetchedCourse)
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(()=>{
+        fetchMyCreatedCourse()
+    },[user,params])
+
+    if (loading) {
+        return <PageLoader/>
+    }
 
     return (
-        <div>
-            jestem
-        </div>
+        course && (
+                <main>
+                    <Card className="mb-[4vh]">
+                        <CardHeader className="flex items-center gap-2">
+                            <Settings/>
+                            <h6>{course?.title}</h6>
+                        </CardHeader>
+                        <CardBody>
+                            <Progress
+                                value={courseCreationProgress}
+                                showValueLabel={true}
+                                color={courseCreationProgress===100 ? "success" : "warning"}
+                            />
+                        </CardBody>
+                        <CardFooter>
+
+                        </CardFooter>
+                    </Card>
+                    <div className="flex"></div>
+                    <div className="space-y-[1vh] w-1/2">
+
+                    <TitleCard
+                        courseId={course.id}
+                        title={course.title}
+                        onUpdate={fetchMyCreatedCourse}
+                        />
+                    <SlugCard
+                        courseId={course.id}
+                        slug={course.slug}
+                        onUpdate={fetchMyCreatedCourse}
+                        />
+                    </div>
+                    {JSON.stringify(course,null,2)}
+                </main>
+            )
     )
 
     {/* 

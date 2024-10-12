@@ -3,7 +3,6 @@
 import { getUserById, getUserRolesByUserID } from "@/data/user"
 import { prisma } from "@/lib/prisma"
 import { CreateCourseSchema } from "@/schemas/course"
-import { User } from "@auth/core/types"
 import { UserRole } from "@prisma/client"
 import { z } from "zod"
 
@@ -25,16 +24,23 @@ export const CreateCourse = async (fields: z.infer<typeof CreateCourseSchema>, u
 }
 
 export const GetMyCreatedCourses = async (userId:string) => {
+    const roles = await getUserRolesByUserID(userId)
+    if (!roles.includes(UserRole.Teacher || UserRole.Admin)) {
+        throw new Error("Brak uprawień!")
+    }
     return await prisma.course.findMany({
         where: { ownerId: userId}
     })
 }
 
 export const GetMyCreatedCourse = async (userId:string, courseId:string) => {
+    const roles = await getUserRolesByUserID(userId)
     const course = await prisma.course.findUnique({
         where: { id: courseId }
     })
-    if (course?.ownerId !== userId) return null
+    if (course?.ownerId !== userId || !roles.includes(UserRole.Teacher || UserRole.Admin)) {
+        throw new Error("Brak uprawnień")
+    } 
     return course
 }
 

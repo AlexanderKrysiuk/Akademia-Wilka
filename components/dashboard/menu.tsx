@@ -36,7 +36,7 @@ const DashboardMenu = () => {
 
         <Listbox
             aria-label="Dashboard Menu"
-            className="border-violet-500 border-1 px-0 py-0"
+            className="px-0 py-0"
 //            className="border-violet-500 border-4 px-0 mx-0"
             itemClasses={{
                 //base: "px-3 first:rounded-t-medium last:rounded-b-medium rounded-none gap-3 h-12 data-[hover=true]:bg-default-100/80",
@@ -48,7 +48,6 @@ const DashboardMenu = () => {
             <ListboxSection
                 title={"Ogólne"}
                 items={userItems}
-                className="border-red-500 border-1"
             >
                 {(item)=> (
                     <ListboxItem

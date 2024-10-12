@@ -15,9 +15,14 @@ const priceTemplate = z.coerce.number()
     .nullable()
 
 const slugTemplate = z.string()
-    .min(1, { message: "Kurs musi mieć odnośnik" })
+  .min(1, { message: "Kurs musi mieć unikalny odnośnik" }) // minimalna długość
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
+    message: "Odnośnik może zawierać tylko małe litery, cyfry oraz myślniki i nie może zaczynać się ani kończyć myślnikiem",
+  }) // walidacja na dopuszczalne znaki (małe litery, cyfry, myślniki) oraz brak myślnika na początku/końcu
+  .max(100, { message: "Odnośnik nie może przekraczać 100 znaków" }); // maksymalna długość
 
-export const EditSlugSchema = z.object({
+
+export const SlugSchema = z.object({
     slug: slugTemplate
 })
 

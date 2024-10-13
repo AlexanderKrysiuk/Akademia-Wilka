@@ -40,8 +40,8 @@ export async function uploadCourseImage(formData: FormData) {
     const fileName = uuidv4();
     const fullFileName = `${fileName}.png`;
 
-    const dirPath = join('courses', courseId, 'courseimage');
-    const dataPathURL = new URL(`/akademia_wilka/courses/${courseId}/courseimage/${fullFileName}`, fileServer);
+    const dirPath = join('kurs', courseId, 'obrazek');
+    const dataPathURL = new URL(`/akademia_wilka/kurs/${courseId}/obrazek/${fullFileName}`, fileServer);
     const dataPath = dataPathURL.toString();
 
     const client = new ftp.Client();

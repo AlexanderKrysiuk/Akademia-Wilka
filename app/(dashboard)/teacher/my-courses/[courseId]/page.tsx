@@ -20,6 +20,7 @@ import PageLoader from "@/components/page-loader";
 import { Card, CardBody, CardFooter, CardHeader, Progress } from "@nextui-org/react";
 import TitleCard from "@/components/Course-Create/Course/title-card";
 import SlugCard from "@/components/Course-Create/Course/slug-card";
+import ImageCard from "@/components/Course-Create/Course/image-card";
 
 const CourseIdPage = ({
     params
@@ -96,23 +97,26 @@ const CourseIdPage = ({
 
                         </CardFooter>
                     </Card>
-                    <div className="flex"></div>
                     <div className="space-y-[1vh] w-1/2">
-
-                    <TitleCard
-                        courseId={course.id}
-                        title={course.title}
-                        onUpdate={fetchMyCreatedCourse}
+                        <TitleCard
+                            courseId={course.id}
+                            title={course.title}
+                            onUpdate={fetchMyCreatedCourse}
                         />
-                    <SlugCard
-                        courseId={course.id}
-                        slug={course.slug}
-                        onUpdate={fetchMyCreatedCourse}
-                        />
+                        <SlugCard
+                            courseId={course.id}
+                            slug={course.slug}
+                            onUpdate={fetchMyCreatedCourse}
+                         />
+                         <ImageCard 
+                            courseId={course.id} 
+                            imageUrl={course.imageUrl} 
+                            onUpdate={fetchMyCreatedCourse}                         
+                         />
                     </div>
                     {JSON.stringify(course,null,2)}
                 </main>
-            )
+        )
     )
 
     {/* 

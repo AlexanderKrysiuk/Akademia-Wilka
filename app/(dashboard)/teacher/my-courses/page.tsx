@@ -53,7 +53,7 @@ const MyCourses = () => {
                                     />
                                 ) : (
                                     <div className='h-full w-full aspect-video flex items-center justify-center bg-primary/10 rounded-t-lg lg:rounded-t-none lg:rounded-l-lg'>
-                                        <ImageIcon className='h-10 v-10'/>
+                                        <ImageIcon className='h-10 w-10'/>
                                     </div>
                                 )}
                             </div>

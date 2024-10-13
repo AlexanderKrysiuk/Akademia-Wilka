@@ -1,18 +1,31 @@
-on: push
+on:
+  push:
+    branches:
+      - main
 name: Deploy website on push
 jobs:
   web-deploy:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
+      # Pobierz kod z repozytorium
       - name: Get Latest Code
         uses: actions/checkout@v3
 
-      - name: Syn files
+      # Instalacja zależności projektu
+      - name: Install dependencies
+        run: npm install
+
+      # Zbudowanie aplikacji Next.js
+      - name: Build the project
+        run: npm run build
+
+      # Wysyłanie plików na serwer FTP
+      - name: Sync files
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASS }}
           protocol: ${{ secrets.FTP_PROT }}
-          server-dir: public_html/
+          local-dir: .next  # Wysyłaj zbudowaną aplikację (możesz zmodyfikować, aby wysyłać inne foldery jak public lub static)

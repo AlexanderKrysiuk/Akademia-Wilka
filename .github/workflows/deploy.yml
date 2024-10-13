@@ -12,6 +12,13 @@ jobs:
       - name: Get Latest Code
         uses: actions/checkout@v3
 
+      # Instalacja Node.js (ustawienie na Node.js 20)
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'  # Ustaw wersję Node.js na 20.x
+
+
       # Instalacja zależności projektu
       - name: Install dependencies
         run: npm install

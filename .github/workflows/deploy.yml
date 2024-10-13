@@ -10,7 +10,7 @@ jobs:
     steps:
       # Pobierz kod z repozytorium
       - name: Get Latest Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Instalacja Node.js (ustawienie na Node.js 20)
       - name: Set up Node.js

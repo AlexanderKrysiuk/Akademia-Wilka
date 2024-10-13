@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20.x'  # Ustaw wersję Node.js na 20.x
+          node-version: '16.x'  # Ustaw wersję Node.js na 20.x
 
 
       # Instalacja zależności projektu

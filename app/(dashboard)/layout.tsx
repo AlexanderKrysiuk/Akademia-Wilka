@@ -8,9 +8,9 @@ const DashboardLayout = ({
     children: React.ReactNode;
 }) => {
     return (
-        <main>
-            <div className="flex h-full">
-                <div className="hidden md:block md:w-1/5 border-r">
+        <main className="h-full">
+            <div className="flex">
+                <div className="hidden md:block md:w-1/5">
                     
                     <DashboardMenu/>
                     

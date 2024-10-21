@@ -4,13 +4,16 @@ import { useCurrentUser } from "@/hooks/user";
 import { Listbox, ListboxItem, ListboxSection } from "@nextui-org/listbox";
 import { UserRole } from "@prisma/client";
 import { Layout, Rocket } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 const DashboardMenu = () => {
     
     const user = useCurrentUser()
+    const pathname = usePathname()
     if (!user) {
         return null
     }
+
     
     const userItems = [
         {
@@ -33,17 +36,12 @@ const DashboardMenu = () => {
    
 
     return (         
-
         <Listbox
             aria-label="Dashboard Menu"
-            className="px-0 py-0"
-//            className="border-violet-500 border-4 px-0 mx-0"
+            className="px-0 py-0 shadow-sm"
             itemClasses={{
-                //base: "px-3 first:rounded-t-medium last:rounded-b-medium rounded-none gap-3 h-12 data-[hover=true]:bg-default-100/80",
                 base: "w-full flex justify-center rounded-none",
-            }}
-            
-            
+            }}            
             >
             <ListboxSection
                 title={"Ogólne"}
@@ -51,10 +49,11 @@ const DashboardMenu = () => {
             >
                 {(item)=> (
                     <ListboxItem
-                    key={item.key}
-                    href={item.href}
+                        key={item.key}
+                        href={item.href}
                         startContent={<item.icon/>}
-                        >
+                        className={pathname === item.href ? "bg-muted border-r-4 border-primary text-primary" : ""} // Dodanie klasy jeśli ścieżka się zgadza
+                    >
                         {item.label}
                     </ListboxItem>
                 )}
@@ -69,6 +68,7 @@ const DashboardMenu = () => {
                         key={item.key}
                         href={item.href}
                         startContent={<item.icon/>}
+                        className={pathname === item.href ? "bg-muted border-r-4 border-primary text-primary" : ""} // Dodanie klasy jeśli ścieżka się zgadza
                     >
                         {item.label}
                     </ListboxItem>

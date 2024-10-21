@@ -61,12 +61,14 @@ const DashboardPage = () => {
                     </ListboxItem>
                 </Listbox>
             </div>
-        <h1>Welcome, {session?.user?.name}</h1>
+        <h1>Welcome </h1>
+        {/* 
         <button onClick={handleSignOut}>Sign out</button>
         Session
         <pre>{JSON.stringify(session, null, 2)}</pre>
         USER
         <pre>{JSON.stringify(user,null,2)}</pre>
+        */}
         </div>
     );
 };

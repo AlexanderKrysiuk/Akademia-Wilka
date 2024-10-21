@@ -1,3 +1,4 @@
+{/* 
 "use client";
 
 import { useEffect, useState } from "react";
@@ -33,10 +34,10 @@ const ChapterList = ({ course }: ChapterListProps) => {
     };
 
 
-
-
+    
+    
     useEffect(() => {
-
+        
         fetchChapters();
     },[]);
 
@@ -52,11 +53,11 @@ const ChapterList = ({ course }: ChapterListProps) => {
             [chapterID]: count
         }));
     };
-
+    
     return (
         <div>
-            {loading ? (
-                <div className="flex items-center justify-center py-[1vh] px-[1vw]">
+        {loading ? (
+            <div className="flex items-center justify-center py-[1vh] px-[1vw]">
                     <Loader2 className="animate-spin mr-2" />
                     Ładowanie...
                 </div>
@@ -69,18 +70,18 @@ const ChapterList = ({ course }: ChapterListProps) => {
                                     ? "text-primary"
                                     : "text-foreground"
                                 }`}>
-                                    {chapter.title}
+                                {chapter.title}
                                 </div>    
                                 <div className="text-foreground/50">
-                                    {lessonCounts[chapter.id] || 0}
+                                {lessonCounts[chapter.id] || 0}
                                 </div>
                                 <ChevronDown
-                                    onClick={() => toggleExpandChapter(chapter.id)}
-                                    className={`cursor-pointer transition-transform duration-500 transform ${
-                                        expandedChapters.includes(chapter.id)
-                                            ? "rotate-180 text-primary"
-                                            : "rotate-0 text-foreground"
-                                    }`}
+                                onClick={() => toggleExpandChapter(chapter.id)}
+                                className={`cursor-pointer transition-transform duration-500 transform ${
+                                    expandedChapters.includes(chapter.id)
+                                    ? "rotate-180 text-primary"
+                                    : "rotate-0 text-foreground"
+                                }`}
                                 />
                             </Card>
                             <motion.div
@@ -88,27 +89,29 @@ const ChapterList = ({ course }: ChapterListProps) => {
                                 animate={{ height: expandedChapters.includes(chapter.id) ? "auto" : 0, opacity: expandedChapters.includes(chapter.id) ? 1 : 0 }}
                                 transition={{ duration: 0.5 }}
                                 style={{ overflow: 'hidden' }}
-                            >
+                                >
                                 <div className="mb-[1vh]">
-                                    <LessonList
+                                <LessonList
                                         course={course}
                                         chapter={chapter}
                                         onLessonsCount={(count) => handleLessonsCount(chapter.id, count)} // Przekaż callback
-
+                                        
                                         //completedLessons={user ? completedLessonsByChapter[chapter.id] || new Set() : new Set()}
-                                    />
-                                </div>
+                                        />
+                                        </div>
                             </motion.div>
                         </div>
                     ))
                 ) : (
                     <div className="flex items-center justify-start py-[1vh] px-[1vw]">
-                        Brak rozdziałów do wyświetlenia...
+                    Brak rozdziałów do wyświetlenia...
                     </div>
                 )
             )}
-        </div>
-    );
-};
-
-export default ChapterList;
+            </div>
+        );
+    };
+    
+    export default ChapterList;
+    
+*/}

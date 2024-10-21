@@ -63,6 +63,7 @@ export async function uploadCourseImage(formData: FormData) {
         const fileStream = Readable.from(Buffer.from(arrayBuffer));
 
         await client.ensureDir(dirPath);
+        await client.remove(`${dirPath}/${fileName}`);
         await client.uploadFrom(fileStream, fullFileName);
 
         if (course.imageUrl) {

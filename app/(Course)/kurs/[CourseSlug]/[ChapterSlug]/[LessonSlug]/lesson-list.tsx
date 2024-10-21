@@ -1,3 +1,4 @@
+{/* 
 "use client"
 
 import { getPublishedLessonsByChapterID } from "@/actions/course/lesson"
@@ -95,11 +96,10 @@ const LessonList = ({
             {
                 JSON.stringify(completedLessons,null,2)
             }
-            {/* 
-            {JSON.stringify(lessons,null,2)}
-            */}
+            
         </div>
     )
 }
 
 export default LessonList;
+*/}

@@ -1,3 +1,4 @@
+{/*
 "use client"
 
 import { getCourseBySlug } from "@/actions/course/course"
@@ -36,7 +37,6 @@ export default function LessonLayout({
 
     return (
         <div className="flex flex-grow overflow-hidden">
-                {/* Pierwsza kolumna */}
                 <div className="w-1/5 border-r overflow-y-auto min-h-[90vh]">
                     <h6 className="px-[1vw]">Zawartość Kursu</h6>
                     <ChapterList
@@ -44,10 +44,10 @@ export default function LessonLayout({
                     />
                 </div>
 
-                {/* Druga kolumna */}
                 <div className="flex-grow p-4 overflow-y-auto">
                     {children}
                 </div>
             </div>
     )
 }
+*/}

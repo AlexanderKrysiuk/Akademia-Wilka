@@ -1,7 +1,7 @@
 import autoCert from "anchor-pki/auto-cert/integrations/next";
 
 const withAutoCert = autoCert({
-  enabledEnv: "production",
+  enabledEnv: process.env.NODE_ENV,
 });
 
 const nextConfig = {

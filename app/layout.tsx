@@ -11,6 +11,7 @@ import { ToastContainer, Slide } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import stylów
 import { useTheme } from "next-themes";
 import Toaster from "@/components/toaster";
+import { NextUIProvider } from "@nextui-org/system";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -36,7 +37,7 @@ export default async function RootLayout({
               defaultTheme="dark"
               enableSystem
               disableTransitionOnChange
-            >
+              >
               <Header/>
               {children}
               <Toaster/>

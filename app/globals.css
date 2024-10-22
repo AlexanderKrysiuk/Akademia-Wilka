@@ -123,16 +123,4 @@ body,
     line-height: 1.6;
     margin: 0 0 1em;
   }
-
-  /* Stylowanie list */
-  ul, ol {
-    margin: 0 0 1em;
-    padding-left: 1.5em;
-    list-style-position: inside;
-  }
-
-  li {
-    font-size: 1rem;
-    line-height: 1.6;
-  }
 }

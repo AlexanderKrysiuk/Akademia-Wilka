@@ -2,38 +2,65 @@
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useCurrentUser } from '@/hooks/user';
-import Avatar from './avatar';
-import { DropdownMenu, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuContent } from '@/components/ui/dropdown-menu';
 import { LogOutButton } from '@/components/auth/Logout-Button';
 import { RxExit } from "react-icons/rx";
 import { TfiDashboard } from "react-icons/tfi";
-
+import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from '@nextui-org/react';
+import { userItems, teacherItems } from '../dashboard/menu';
+import { usePathname } from 'next/navigation';
+import { UserRole } from '.prisma/client';
+import { LogOut } from 'lucide-react';
 
 const UserButton = () => {
     
     const user = useCurrentUser(); // Użyj hooka do pobrania użytkownika
+    const pathname = usePathname()
 
     if (user) {
         return (
-            <DropdownMenu>
-                <DropdownMenuTrigger>
-                    <Avatar/>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                    <DropdownMenuItem>
-                        <Link href="/kokpit" passHref>
-                            <TfiDashboard className='h-4 w-4 mr-2 flex'/>
-                            Panel Sterowania    
-                        </Link>    
-                    </DropdownMenuItem>       
-                    <LogOutButton>
-                        <DropdownMenuItem>
-                            <RxExit className="h-4 w-4 mr-2 flex"/>
+            <Dropdown className='rounded-none'
+            >
+                <DropdownTrigger>
+                    <Avatar                        
+                        showFallback
+                        src={user.image!}
+                        className='transition-all hover:cursor-pointer hover:ring-2 hover:ring-primary duration-500'
+                    />
+                </DropdownTrigger>
+                <DropdownMenu variant="light">
+                    <DropdownSection title="Ogólne" items={userItems} showDivider className='md:hidden'>
+                        {(item)=>(
+                            <DropdownItem
+                                key={item.key}
+                                href={item.href}
+                                startContent={<item.icon size={16}/>}
+                                className={pathname.startsWith(item.href) ? "bg-muted text-primary rounded-none" : ""} // Dodanie klasy jeśli ścieżka się zgadza
+                            >
+                                {item.label}
+                            </DropdownItem>
+                            )}
+                    </DropdownSection>
+                    <DropdownSection title="Nauczyciel" items={user.role.includes(UserRole.Teacher) ? teacherItems : []} showDivider className='md:hidden'>
+                        {(item)=>(
+                            <DropdownItem
+                                key={item.key}
+                                href={item.href}
+                                startContent={<item.icon size={16}/>}
+                                className={pathname.startsWith(item.href) ? "bg-muted text-primary rounded-none" : ""} // Dodanie klasy jeśli ścieżka się zgadza
+                            >
+                                {item.label}
+                            </DropdownItem>
+                        )}
+                    </DropdownSection>  
+                        <DropdownItem
+                            startContent={<LogOut size={16}/>}
+                            >
+                            <LogOutButton>
                             Wyloguj
-                        </DropdownMenuItem>
                     </LogOutButton>
-                </DropdownMenuContent>
-            </DropdownMenu>
+                        </DropdownItem>
+                </DropdownMenu>
+            </Dropdown>
         );
     }
 

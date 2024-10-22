@@ -67,8 +67,8 @@ const DashboardPage = () => {
         Session
         <pre>{JSON.stringify(session, null, 2)}</pre>
         USER
+    */}
         <pre>{JSON.stringify(user,null,2)}</pre>
-        */}
         </div>
     );
 };

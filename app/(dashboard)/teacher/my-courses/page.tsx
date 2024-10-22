@@ -42,27 +42,32 @@ const MyCourses = () => {
             {courses.length>0 && (
                 courses.map((course) => (
                     <Card className='w-full'>
-                        <div className='lg:flex'>
-                            <div className='lg:w-1/4'>
-                                {course.imageUrl ? (
-                                    <Image
-                                        fill
-                                        className='object-cover lg:rounded-l-lg aspect-video'
-                                        alt={course.title}
-                                        src={course.imageUrl}
-                                    />
-                                ) : (
-                                    <div className='h-full w-full aspect-video flex items-center justify-center bg-primary/10 rounded-t-lg lg:rounded-t-none lg:rounded-l-lg'>
-                                        <ImageIcon className='h-10 w-10'/>
-                                    </div>
-                                )}
-                            </div>
-                            <div className='lg:w-3/4'>
+                        <div className='flex'>
+
+                        
+                        <div className='w-1/3 h-auto'>
+                            {course.imageUrl ? (
+                                <Image
+                                    width={1600}
+                                    height={900}
+                                    className='aspect-video'
+                                    alt={course.title}
+                                    src={course.imageUrl}
+                                />
+                            ) : (
+                                <div className='aspect-video flex items-center justify-center bg-primary/10 rounded-t-lg lg:rounded-t-none lg:rounded-l-lg'>
+                                    <ImageIcon className='h-10 w-10'/>
+                                </div>
+                            )}
+                        </div>
+                        <div className='w-2/3'>
                                 <CardHeader>
                                     <h4>{course.title}</h4>
                                 </CardHeader>
+                            {/*
                                 <CardBody>
                                 </CardBody>
+                            */}
                                 <CardFooter>
                                     <Link href={`/teacher/my-courses/${course.id}`}>
                                         <Button color="primary">
@@ -70,7 +75,7 @@ const MyCourses = () => {
                                         </Button>
                                     </Link>
                                 </CardFooter>
-                            </div>
+                        </div>
                         </div>
                     </Card>
                 ))

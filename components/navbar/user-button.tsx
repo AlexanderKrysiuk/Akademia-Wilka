@@ -18,12 +18,11 @@ const UserButton = () => {
 
     if (user) {
         return (
-            <Dropdown className='rounded-none'
-            >
+            <Dropdown className='rounded-none'>
                 <DropdownTrigger>
                     <Avatar                        
                         showFallback
-                        src={user.image!}
+                        src={user.image ? user.image : undefined}
                         className='transition-all hover:cursor-pointer hover:ring-2 hover:ring-primary duration-500'
                     />
                 </DropdownTrigger>

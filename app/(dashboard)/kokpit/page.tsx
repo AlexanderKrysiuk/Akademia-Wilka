@@ -36,31 +36,6 @@ const DashboardPage = () => {
     
     return (
         <div>
-            {/*
-            {isTeacher ? (
-                <div>
-                    Tak jestem nauczycielem
-                </div>
-            ):(
-                <div>
-
-                Nie jestem nauczycielem
-                </div>
-            )}
-        */}
-            <div className="mb-12">
-                <Listbox
-                    aria-label="Actions"
-                    onAction={(key) => alert(key)}
-                >
-                    <ListboxItem key="new">New file</ListboxItem>
-                    <ListboxItem key="copy">Copy link</ListboxItem>
-                    <ListboxItem key="edit">Edit file</ListboxItem>
-                    <ListboxItem key="delete" className="text-danger" color="danger">
-                        Delete file
-                    </ListboxItem>
-                </Listbox>
-            </div>
         <h1>Welcome </h1>
         {/* 
         <button onClick={handleSignOut}>Sign out</button>

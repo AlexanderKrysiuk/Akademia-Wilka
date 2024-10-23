@@ -15,12 +15,13 @@ import ImageForm from "@/components/dashboard/teacher/courses/image-form"
 import AttachmentForm from "@/components/dashboard/teacher/courses/attachment-form";
 import { motion } from "framer-motion";
 import { CourseSlugForm } from "@/components/dashboard/teacher/courses/course-slug-form";
-import { GetMyCreatedCourse } from "@/actions/course-teacher/course";
+import { GetMyCreatedCourse, unpublishCourse } from "@/actions/course-teacher/course";
 import PageLoader from "@/components/page-loader";
-import { Card, CardBody, CardFooter, CardHeader, Progress } from "@nextui-org/react";
+import { Button, Card, CardBody, CardFooter, CardHeader, Progress } from "@nextui-org/react";
 import TitleCard from "@/components/Course-Create/Course/title-card";
 import SlugCard from "@/components/Course-Create/Course/slug-card";
 import ImageCard from "@/components/Course-Create/Course/image-card";
+import { toast } from "react-toastify";
 
 const CourseIdPage = ({
     params
@@ -28,41 +29,31 @@ const CourseIdPage = ({
     params: { courseId: string }
 }) => {
     const user = useCurrentUser()
-
+    
     const [course, setCourse] = useState<Course>()
     const [loading, setLoading] = useState(true)
     const [courseCreationProgress, setCourseCreationProgress] = useState(0)
-
-    const checkCourseRequireMents = (course: Course): number => {
-        let totalRequirements = 0
-        let fullfilledRequirements = 0
-
-        if (!!course.title) {
-            fullfilledRequirements++
-        }
-        totalRequirements++
-
-        if (!!course.slug) {
-            fullfilledRequirements++
-        }
-        totalRequirements++
-
-        const percentage = (fullfilledRequirements/totalRequirements) * 100
-        return Math.round(percentage)
-    }
+    
+    const requiredFields = course ? [
+        course.title,
+        course.slug,
+        course.imageUrl,
+        course.price
+    ] : []
+    const completedFields = requiredFields.filter(Boolean).length;
 
     async function fetchMyCreatedCourse() {
         try {
             if (!user) return
             const fetchedCourse = await GetMyCreatedCourse(user.id, params.courseId)
             if (!fetchedCourse) return
-            const courseValid = checkCourseRequireMents(fetchedCourse)
-            if (courseValid < 100) {
-                //TODO: set course to unpublished
-            }
-            setCourseCreationProgress(courseValid)
-
+            if (completedFields < requiredFields.length) {
+                await unpublishCourse(fetchedCourse.id)
+                toast.warning("Kurs zmienił status na:szkic, uzupełnij wszystkie pola by go opublikować")
+            }            
             setCourse(fetchedCourse)
+            //const courseValid = checkCourseRequireMents(fetchedCourse)
+
         } catch (error) {
             console.log(error)
         } finally {
@@ -72,51 +63,56 @@ const CourseIdPage = ({
 
     useEffect(()=>{
         fetchMyCreatedCourse()
-    },[user,params])
+    },[params])
 
-    if (loading) {
+    if (loading || !course) {
         return <PageLoader/>
     }
-
+    
     return (
-        course && (
-                <main>
-                    <Card className="mb-[4vh]">
-                        <CardHeader className="flex items-center gap-2">
-                            <Settings/>
-                            <h6>{course?.title}</h6>
-                        </CardHeader>
-                        <CardBody>
-                            <Progress
-                                value={courseCreationProgress}
-                                showValueLabel={true}
-                                color={courseCreationProgress===100 ? "success" : "warning"}
-                            />
-                        </CardBody>
-                        <CardFooter>
-
-                        </CardFooter>
-                    </Card>
-                    <div className="space-y-[1vh] w-1/2">
-                        <TitleCard
-                            courseId={course.id}
-                            title={course.title}
-                            onUpdate={fetchMyCreatedCourse}
-                        />
-                        <SlugCard
-                            courseId={course.id}
-                            slug={course.slug}
-                            onUpdate={fetchMyCreatedCourse}
-                         />
-                         <ImageCard 
-                            courseId={course.id} 
-                            imageUrl={course.imageUrl} 
-                            onUpdate={fetchMyCreatedCourse}                         
-                         />
+        <main>
+            <Card className="mb-[4vh]">
+                <CardHeader className="flex justify-between">
+                    <div className="flex gap-2 items-center">
+                        <Settings/>
+                        <h6>{course.title}</h6>
                     </div>
-                    {JSON.stringify(course,null,2)}
-                </main>
-        )
+                    <div>
+                        <Button>
+                            
+                        </Button>
+                    </div>
+                </CardHeader>
+                <CardBody>
+                    <Progress
+                        label={`(${completedFields}/${requiredFields.length})`}
+                        value={completedFields/requiredFields.length*100}
+                        showValueLabel={true}
+                        color={completedFields/requiredFields.length===1 ? "success" : "warning"}
+                    />
+                </CardBody>
+                <CardFooter>
+                </CardFooter>
+            </Card>
+            <div className="space-y-[1vh] w-1/2">
+                <TitleCard
+                    courseId={course.id}
+                    title={course.title}
+                    onUpdate={fetchMyCreatedCourse}
+                />
+                <SlugCard
+                    courseId={course.id}
+                    slug={course.slug}
+                    onUpdate={fetchMyCreatedCourse}
+                />
+                <ImageCard 
+                    courseId={course.id} 
+                    imageUrl={course.imageUrl} 
+                    onUpdate={fetchMyCreatedCourse}                         
+                />
+            </div>
+            {JSON.stringify(course,null,2)}
+        </main>
     )
 
     {/* 

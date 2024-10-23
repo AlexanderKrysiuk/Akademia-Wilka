@@ -35,14 +35,15 @@ const DashboardMenu = () => {
     return (         
         <Listbox
             aria-label="Dashboard Menu"
-            className="px-0 shadow-sm"
+            className="px-0 border-r-1"
             itemClasses={{
-                base: "w-full flex justify-center rounded-none",
+                base: "w-full flex justify-center rounded-none px-4",
             }}            
             >
             <ListboxSection
                 title={"Ogólne"}
                 items={userItems}
+                showDivider
             >
                 {(item)=> (
                     <ListboxItem

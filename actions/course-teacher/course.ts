@@ -51,3 +51,10 @@ const UpdateCourse = async () => {
 const DeleteCourse = async () => {
 
 }
+
+export async function unpublishCourse (courseId:string) {
+    await prisma.course.update({
+        where: {id: courseId},
+        data: {published: false}
+    })
+}

@@ -3,7 +3,7 @@ import { getCourseById } from "@/actions/course/get";
 import { useCurrentUser } from "@/hooks/user";
 import { Course, Chapter } from "@prisma/client";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState, useTransition } from "react";
 import { Settings } from 'lucide-react';
 import TitleForm from "@/components/dashboard/teacher/courses/title-form";
 import DescriptionForm from "@/components/dashboard/teacher/courses/description-form";
@@ -15,13 +15,14 @@ import ImageForm from "@/components/dashboard/teacher/courses/image-form"
 import AttachmentForm from "@/components/dashboard/teacher/courses/attachment-form";
 import { motion } from "framer-motion";
 import { CourseSlugForm } from "@/components/dashboard/teacher/courses/course-slug-form";
-import { GetMyCreatedCourse, unpublishCourse } from "@/actions/course-teacher/course";
+import { GetMyCreatedCourse, publishCourse, unpublishCourse } from "@/actions/course-teacher/course";
 import PageLoader from "@/components/page-loader";
 import { Button, Card, CardBody, CardFooter, CardHeader, Progress } from "@nextui-org/react";
 import TitleCard from "@/components/Course-Create/Course/title-card";
 import SlugCard from "@/components/Course-Create/Course/slug-card";
 import ImageCard from "@/components/Course-Create/Course/image-card";
 import { toast } from "react-toastify";
+import PublishButton from "@/components/Course-Create/Course/publish-button";
 
 const CourseIdPage = ({
     params
@@ -33,12 +34,12 @@ const CourseIdPage = ({
     const [course, setCourse] = useState<Course>()
     const [loading, setLoading] = useState(true)
     const [courseCreationProgress, setCourseCreationProgress] = useState(0)
+    const [pending, startTransition] = useTransition()
     
     const requiredFields = course ? [
         course.title,
         course.slug,
         course.imageUrl,
-        course.price
     ] : []
     const completedFields = requiredFields.filter(Boolean).length;
 
@@ -47,7 +48,7 @@ const CourseIdPage = ({
             if (!user) return
             const fetchedCourse = await GetMyCreatedCourse(user.id, params.courseId)
             if (!fetchedCourse) return
-            if (completedFields < requiredFields.length) {
+            if (completedFields < requiredFields.length && fetchedCourse.published) {
                 await unpublishCourse(fetchedCourse.id)
                 toast.warning("Kurs zmienił status na:szkic, uzupełnij wszystkie pola by go opublikować")
             }            
@@ -78,9 +79,13 @@ const CourseIdPage = ({
                         <h6>{course.title}</h6>
                     </div>
                     <div>
-                        <Button>
-                            
-                        </Button>
+                        <PublishButton
+                            courseId={course.id}
+                            published={course.published}
+                            onUpdate={fetchMyCreatedCourse}
+                            completedFields={completedFields}
+                            requiredFields={requiredFields.length}
+                        />
                     </div>
                 </CardHeader>
                 <CardBody>

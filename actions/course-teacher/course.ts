@@ -58,3 +58,10 @@ export async function unpublishCourse (courseId:string) {
         data: {published: false}
     })
 }
+
+export async function publishCourse (courseId:string) {
+    await prisma.course.update({
+        where: {id: courseId},
+        data: {published: true}
+    })
+}

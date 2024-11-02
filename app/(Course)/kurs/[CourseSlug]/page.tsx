@@ -35,7 +35,7 @@ const CourseTitlePage = ({
 
   useEffect(() => {
     fetchCourse();
-  }, []);
+  }, [params]);
 
   if (!course) {
     return <div>Ładowanie</div>;

@@ -24,7 +24,7 @@ const SlugCard = ({
     onUpdate: () => void
 }) => {
     const user = useCurrentUser()
-    if (!user || !user.role.includes(UserRole.Teacher || UserRole.Teacher)) return
+    if (!user || !user.role.includes(UserRole.Teacher || UserRole.Admin)) return
 
     const [edit, setEdit] = useState(false)
     const { register, handleSubmit, setError, watch, formState: { errors, isSubmitting }} = useForm<FormFields>({

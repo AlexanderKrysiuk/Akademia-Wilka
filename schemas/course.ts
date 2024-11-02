@@ -38,7 +38,7 @@ export const EditCourseDescriptionSchema = z.object({
     description: descriptionTemplate
 })
 
-export const EditCourseCategorySchema = z.object({
+export const CategorySchema = z.object({
     categoryId: categoryIdTemplate
 })
 

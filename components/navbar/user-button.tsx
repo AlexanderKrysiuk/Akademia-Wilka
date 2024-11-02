@@ -27,7 +27,7 @@ const UserButton = () => {
                     />
                 </DropdownTrigger>
                 <DropdownMenu variant="light">
-                    <DropdownSection title="Ogólne" items={userItems} showDivider className='md:hidden'>
+                    <DropdownSection title="Ogólne" items={userItems} showDivider>
                         {(item)=>(
                             <DropdownItem
                                 key={item.key}
@@ -39,7 +39,7 @@ const UserButton = () => {
                             </DropdownItem>
                             )}
                     </DropdownSection>
-                    <DropdownSection title="Nauczyciel" items={user.role.includes(UserRole.Teacher) ? teacherItems : []} showDivider className='md:hidden'>
+                    <DropdownSection title="Nauczyciel" items={user.role.includes(UserRole.Teacher) ? teacherItems : []} showDivider>
                         {(item)=>(
                             <DropdownItem
                                 key={item.key}

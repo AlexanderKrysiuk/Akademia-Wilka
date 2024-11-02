@@ -20,7 +20,7 @@ export default function Header() {
     ]
 
     return (
-        <Navbar shouldHideOnScroll onMenuOpenChange={setIsMenuOpen} className='flex items-center shadow-md' >
+        <Navbar shouldHideOnScroll onMenuOpenChange={setIsMenuOpen} className='flex items-center shadow-md border-b' >
                 <NavbarMenuToggle
                     aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                     className="md:hidden">

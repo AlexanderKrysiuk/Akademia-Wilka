@@ -34,8 +34,8 @@ const DashboardMenu = () => {
 
     return (         
         <Listbox
-            aria-label="Dashboard Menu"
-            className="px-0 border-r-1"
+            //aria-label="Dashboard Menu"
+            className="px-0 border-r"
             itemClasses={{
                 base: "w-full flex justify-center rounded-none px-4",
             }}            

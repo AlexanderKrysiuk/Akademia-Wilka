@@ -6,13 +6,11 @@ const titleTemplate = z.string()
 const descriptionTemplate = z.string()
     .min(1, { message: "Kurs musi posiadać opis!"})
 
-const categoryIdTemplate = z.string().uuid({ message: "Nieprawidłowy format kategorii!" });
-
-const levelIdTemplate = z.string().uuid({ message: "Nieprawidłowy format poziomu!" })
-
 const priceTemplate = z.coerce.number()
-    .min(0, { message: "Cena nie może być mniejsza niż 0" })
     .nullable()
+    .refine(value => value === 0 || value === null || value >= 10, {
+        message: "Kurs może być darmowy albo jego cena musi wynosić przynajmniej 10 zł"
+    })
 
 const slugTemplate = z.string()
   .min(1, { message: "Kurs musi mieć unikalny odnośnik" }) // minimalna długość
@@ -38,14 +36,6 @@ export const EditCourseDescriptionSchema = z.object({
     description: descriptionTemplate
 })
 
-export const CategorySchema = z.object({
-    categoryId: categoryIdTemplate
-})
-
-export const EditCourseLevelSchema = z.object({
-    levelId: levelIdTemplate
-})
-
-export const EditCoursePriceSchema = z.object({
+export const PriceSchema = z.object({
     price: priceTemplate
 })

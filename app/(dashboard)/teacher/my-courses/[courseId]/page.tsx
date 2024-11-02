@@ -27,6 +27,7 @@ import CategoryCard from "@/components/Course-Create/Course/category-card";
 import { GetCategories } from "@/actions/course-teacher/category";
 import { GetLevels } from "@/actions/course-teacher/level";
 import LevelCard from "@/components/Course-Create/Course/level-card";
+import PriceCard from "@/components/Course-Create/Course/price-card";
 
 const CourseIdPage = ({
     params
@@ -112,7 +113,9 @@ const CourseIdPage = ({
                     <CardFooter>
                     </CardFooter>
                 </Card>
-                <div className="space-y-[1vh] w-1/2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <div className="space-y-[1vh]">
                     <TitleCard
                         courseId={course.id}
                         title={course.title}
@@ -140,6 +143,14 @@ const CourseIdPage = ({
                         levels={levels}
                         onUpdate={fetchMyCreatedCourse}
                     />
+                </div>
+                <div className="space-y-[1vh]">
+                    <PriceCard
+                        courseId={course.id}
+                        price={course.price}
+                        onUpdate={fetchMyCreatedCourse}
+                    />
+                </div>
                 </div>
             </main>
         : 

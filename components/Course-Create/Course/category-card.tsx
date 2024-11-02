@@ -2,7 +2,6 @@
 
 import { GetCategories, UpdateCategory } from "@/actions/course-teacher/category"
 import { useCurrentUser } from "@/hooks/user"
-import { CategorySchema } from "@/schemas/course"
 import { Button, Card, CardBody, CardFooter, CardHeader, Select, SelectItem } from "@nextui-org/react"
 import { Category, UserRole } from "@prisma/client"
 import { error } from "console"

@@ -86,7 +86,7 @@ const CategoryCard = ({
                             isInvalid={errors.root ? true : false}
                             errorMessage={errors.root?.message}
                             isDisabled={isSubmitting}
-                            placeholder={field.value ? field.value.name : (categories.find(cat => cat.id === categoryId)?.name || "Wybierz Kategorię")}
+                            placeholder={field.value ? field.value.name : (categories.find(cat => cat.id === categoryId)?.name || "Wybierz kategorię")}
                             onChange={(event)=>{
                                 const selectedCategory = categories.find(cat => cat.id === event.target.value)
                                 field.onChange(selectedCategory)

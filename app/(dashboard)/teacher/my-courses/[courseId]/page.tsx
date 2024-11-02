@@ -1,7 +1,7 @@
 "use client"
 import { getCourseById } from "@/actions/course/get";
 import { useCurrentUser } from "@/hooks/user";
-import { Course, Chapter, Category, UserRole } from "@prisma/client";
+import { Course, Chapter, Category, UserRole, Level } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { startTransition, useEffect, useState, useTransition } from "react";
 import { Settings } from 'lucide-react';
@@ -25,6 +25,8 @@ import { toast } from "react-toastify";
 import PublishButton from "@/components/Course-Create/Course/publish-button";
 import CategoryCard from "@/components/Course-Create/Course/category-card";
 import { GetCategories } from "@/actions/course-teacher/category";
+import { GetLevels } from "@/actions/course-teacher/level";
+import LevelCard from "@/components/Course-Create/Course/level-card";
 
 const CourseIdPage = ({
     params
@@ -34,6 +36,7 @@ const CourseIdPage = ({
     const user = useCurrentUser()        
     const [course, setCourse] = useState<Course>()
     const [categories, setCategores] = useState<Category[]>([])
+    const [levels, setLevels] = useState<Level[]>([])
     const [loading, setLoading] = useState(true)
     const [courseCreationProgress, setCourseCreationProgress] = useState(0)
     const [pending, startTransition] = useTransition()
@@ -42,7 +45,8 @@ const CourseIdPage = ({
         course.title,
         course.slug,
         course.imageUrl,
-        course.categoryId
+        course.categoryId,
+        course.levelId
     ] : []
     const completedFields = requiredFields.filter(Boolean).length;
 
@@ -64,9 +68,15 @@ const CourseIdPage = ({
         setCategores(fetchedCategories)
     }
 
+    async function fetchLevels() {
+        const fetchedLevels = await GetLevels()
+        setLevels(fetchedLevels)
+    }
+
     useEffect(()=>{
         fetchMyCreatedCourse()
-        fetchCategories()    
+        fetchCategories()
+        fetchLevels()
         setLoading(false)
     },[user, params])
 
@@ -106,20 +116,30 @@ const CourseIdPage = ({
                     <TitleCard
                         courseId={course.id}
                         title={course.title}
-                        onUpdate={fetchMyCreatedCourse} />
+                        onUpdate={fetchMyCreatedCourse}
+                    />
                     <SlugCard
                         courseId={course.id}
                         slug={course.slug}
-                        onUpdate={fetchMyCreatedCourse} />
+                        onUpdate={fetchMyCreatedCourse}
+                    />
                     <ImageCard
                         courseId={course.id}
                         imageUrl={course.imageUrl}
-                        onUpdate={fetchMyCreatedCourse} />
+                        onUpdate={fetchMyCreatedCourse}
+                    />
                     <CategoryCard
                         courseId={course.id}
                         categoryId={course.categoryId}
                         categories={categories}
-                        onUpdate={fetchMyCreatedCourse} />
+                        onUpdate={fetchMyCreatedCourse}
+                    />
+                    <LevelCard
+                        courseId={course.id}
+                        levelId={course.levelId}
+                        levels={levels}
+                        onUpdate={fetchMyCreatedCourse}
+                    />
                 </div>
             </main>
         : 

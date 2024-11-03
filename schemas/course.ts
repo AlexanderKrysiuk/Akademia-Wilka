@@ -9,7 +9,7 @@ const descriptionTemplate = z.string()
 const priceTemplate = z.coerce.number()
     .nullable()
     .refine(value => value === 0 || value === null || value >= 10, {
-        message: "Kurs może być darmowy albo jego cena musi wynosić przynajmniej 10 zł"
+        message: "Kurs może być darmowy albo jego cena musi wynosić przynajmniej 10 PLN"
     })
 
 const slugTemplate = z.string()

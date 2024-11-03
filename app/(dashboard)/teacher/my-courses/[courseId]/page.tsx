@@ -28,6 +28,8 @@ import { GetCategories } from "@/actions/course-teacher/category";
 import { GetLevels } from "@/actions/course-teacher/level";
 import LevelCard from "@/components/Course-Create/Course/level-card";
 import PriceCard from "@/components/Course-Create/Course/price-card";
+import { GetChaptersByCourseId } from "@/actions/chapter-teacher/chapter";
+import ChapterCard from "@/components/Course-Create/Course/chapter-card";
 
 const CourseIdPage = ({
     params
@@ -38,6 +40,7 @@ const CourseIdPage = ({
     const [course, setCourse] = useState<Course>()
     const [categories, setCategores] = useState<Category[]>([])
     const [levels, setLevels] = useState<Level[]>([])
+    const [chapters, setChapters] = useState<Chapter[]>([])
     const [loading, setLoading] = useState(true)
     const [courseCreationProgress, setCourseCreationProgress] = useState(0)
     const [pending, startTransition] = useTransition()
@@ -47,7 +50,8 @@ const CourseIdPage = ({
         course.slug,
         course.imageUrl,
         course.categoryId,
-        course.levelId
+        course.levelId,
+        chapters.some(chapter => chapter.published)
     ] : []
     const completedFields = requiredFields.filter(Boolean).length;
 
@@ -74,10 +78,16 @@ const CourseIdPage = ({
         setLevels(fetchedLevels)
     }
 
+    async function fetchChapters() {
+        const fetchedChapters = await GetChaptersByCourseId(params.courseId)
+        setChapters(fetchedChapters)
+    }
+
     useEffect(()=>{
         fetchMyCreatedCourse()
         fetchCategories()
         fetchLevels()
+        fetchChapters()
         setLoading(false)
     },[user, params])
 
@@ -143,12 +153,18 @@ const CourseIdPage = ({
                         levels={levels}
                         onUpdate={fetchMyCreatedCourse}
                     />
-                </div>
-                <div className="space-y-[1vh]">
                     <PriceCard
                         courseId={course.id}
                         price={course.price}
                         onUpdate={fetchMyCreatedCourse}
+                    />
+                </div>
+                <div className="space-y-[1vh]">
+                    <ChapterCard
+                        courseId={course.id}
+                        chapters={chapters}
+                        onUpdate={fetchMyCreatedCourse}
+                        onChapterCreate={fetchChapters}
                     />
                 </div>
                 </div>

@@ -2,10 +2,9 @@
 
 import "react-image-crop/dist/ReactCrop.css";
 import { useCurrentUser } from "@/hooks/user"
-import { Button, Card, CardBody, CardHeader, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/react"
+import { Button, Card, CardBody, CardHeader, Input, Image, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/react"
 import { UserRole } from "@prisma/client"
 import { ImageIcon, ImagePlus, Images } from "lucide-react"
-import Image from "next/image"
 import { startTransition, useRef, useState } from "react"
 import ReactCrop, { Crop, centerCrop, convertToPixelCrop, makeAspectCrop } from "react-image-crop"
 import { toast } from "react-toastify"

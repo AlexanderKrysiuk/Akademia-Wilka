@@ -43,3 +43,14 @@ export const GetChaptersByCourseId = async (courseId:string) => {
         orderBy: { order: "asc"}
     })
 }
+
+export const reOrderChapters = async (data: { id: string, position: number}[]) => {
+    const updatePromises = data.map(async ({ id, position }) => {
+        return await prisma.chapter.update({
+            where: { id },
+            data: { order: position}
+        })
+
+        await Promise.all(updatePromises)
+    })
+}

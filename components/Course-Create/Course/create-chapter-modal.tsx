@@ -33,7 +33,7 @@ const CreateChapterModal = ({
                     onOpenChange()
                 })
                 .catch((error)=>{
-                    setError("root", {message: error.message})
+                    setError("slug", {message: error.message})
                     toast.error(error.message)
                 })
         })        

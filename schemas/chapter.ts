@@ -16,6 +16,14 @@ export const CreateChapterSchema = z.object({
     title: titleTemplate,
     slug: slugTemplate,
 })
+
+export const EditChapterTitleSchema = z.object({
+    title: titleTemplate
+})
+
+export const EditChapterSlugSchema = z.object({
+    slug: slugTemplate
+})
   
 
 export const EditChapterSchema = z.object({

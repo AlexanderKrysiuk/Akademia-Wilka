@@ -163,8 +163,7 @@ const CourseIdPage = ({
                     <ChapterCard
                         courseId={course.id}
                         chapters={chapters}
-                        onUpdate={fetchMyCreatedCourse}
-                        onChapterCreate={fetchChapters}
+                        onUpdate={fetchChapters}
                     />
                 </div>
                 </div>

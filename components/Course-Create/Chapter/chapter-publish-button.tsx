@@ -1,37 +1,33 @@
 "use client"
 
-import { publishCourse, unpublishCourse } from "@/actions/course-teacher/course"
-import { useCurrentUser } from "@/hooks/user"
-import { Button } from "@nextui-org/button"
-import { UserRole } from "@prisma/client"
-import { useState } from "react"
+import { publishChapter, unpublishChapter } from "@/actions/chapter-teacher/chapter"
+import { Button } from "@nextui-org/react"
+import { useState, useTransition } from "react"
 import { toast } from "react-toastify"
 
-const PublishButton = ({
-    courseId,
+const PublishChapterButton = ({
+    chapterId,
     published,
     onUpdate,
     completedFields,
-    requiredFields,
+    requiredFields
 } : {
-    courseId: string,
+    chapterId: string,
     published: boolean,
     onUpdate: () => void,
     completedFields: number,
     requiredFields: number
 }) => {
-    const user = useCurrentUser()
     const [submitting, setSubmitting] = useState(false)
-    if (!user || !user.role.includes(UserRole.Teacher || UserRole.Admin)) return
 
     const onSubmit = () => {
         setSubmitting(true)
         try {
             if (published === false) {
-                publishCourse(courseId)
-                toast.success("Opublikowano kurs")
+                publishChapter(chapterId)
+                toast.success("Opublikowano rozdział")
             } else if (published === true) {
-                unpublishCourse(courseId)
+                unpublishChapter(chapterId)
                 toast.info("Zmieniono na szkic")
             } else {
                 toast.error("Wystąpił nieoczekiwany błąd")
@@ -43,7 +39,7 @@ const PublishButton = ({
             onUpdate()
         }
     }
-
+    
     return (
         <Button
             size="sm"
@@ -52,9 +48,9 @@ const PublishButton = ({
             color={completedFields < requiredFields ? "warning" : "success"}
             isLoading={submitting}
             onClick={onSubmit}
-        >
+        >   
             {published ? "Zmień na szkic" : "Opublikuj"}
         </Button>
     )
 }
-export default PublishButton;
+export default PublishChapterButton

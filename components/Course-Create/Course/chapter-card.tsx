@@ -1,24 +1,24 @@
 "use client"
 
-import { Accordion, AccordionItem, Button, Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
+import { Button, Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
 import { Chapter } from "@prisma/client";
-import { Car, Scroll, SquarePen, SquarePlus } from "lucide-react";
-import CreateChapterModal from "./create-chapter-modal";
+import { Eye, EyeOff, Scroll, SquarePen } from "lucide-react";
 import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
 import { startTransition, useEffect, useState } from "react";
 import { reOrderChapters } from "@/actions/chapter-teacher/chapter";
 import { toast } from "react-toastify";
+import CreateChapterModal from "./create-chapter-modal";
+import DeleteChapterModal from "../Chapter/delete-chapter-modal";
+import Link from "next/link";
 
 const ChapterCard = ({
     courseId,
     chapters : initialChapters,
     onUpdate,
-    onChapterCreate
 } : {
     courseId: string,
     chapters: Chapter[],
     onUpdate: () => void,
-    onChapterCreate: () => void
 }) => {
     const [chapters, setChapters] = useState<Chapter[]>(initialChapters);
 
@@ -58,11 +58,11 @@ const ChapterCard = ({
     }
     return (
         <Card>
-            <CardHeader className="flex w-full justify-between">
+            <CardHeader className="flex w-full justify-between flex-col md:flex-row">
                 <div>Rozdziały kursu</div>
                 <CreateChapterModal
                     courseId={courseId}
-                    onUpdate={onChapterCreate}
+                    onUpdate={onUpdate}
                 />
             </CardHeader>
             <CardBody>
@@ -83,21 +83,26 @@ const ChapterCard = ({
                                                 <Card>
                                                     <CardHeader className="gap-x-[1vw]">
                                                         <div {...provided.dragHandleProps} className="hover:text-primary transition duration-300">
-                                                            <Scroll/>
+                                                            <Scroll/>                                                            
                                                         </div>
                                                         <div className="truncate w-full">
                                                             {chapter.title}
                                                         </div>
-                                                        <div>
+                                                        <div className="text-sm">
                                                             {chapter.published ? (
-                                                                "Opublikowano"
+                                                                <Eye/>
                                                             ) : (
-                                                                "Szkic"
+                                                                <EyeOff/>
                                                             )}
                                                         </div>
-                                                        <div className="flex items-center hover:text-primary transition duration-300">
+                                                        <Link href={`./${courseId}/${chapter.id}`} className="flex items-center hover:text-primary transition duration-300">
                                                             <SquarePen/>
-                                                        </div>
+                                                        </Link>
+                                                        <DeleteChapterModal
+                                                            chapter={chapter}
+                                                            courseId={courseId}
+                                                            onUpdate={onUpdate}
+                                                        />
 
                                                     </CardHeader>
                                                 </Card>
@@ -111,8 +116,6 @@ const ChapterCard = ({
                     </Droppable>
                 </DragDropContext>
             </CardBody>
-            <Divider/>
-            {JSON.stringify(chapters, null,2)}
         </Card>
     );
 }

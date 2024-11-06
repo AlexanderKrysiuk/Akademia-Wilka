@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma"
 import { CreateLessonSchema } from "@/schemas/lesson"
-import { z } from "zod"
+import { promise, z } from "zod"
 
 export const CreateLesson = async (fields: z.infer<typeof CreateLessonSchema>, chapterId:string) => {
     
@@ -28,4 +28,14 @@ export const GetLessonsByChapterId = async (chapterId:string) => {
         where: {chapterId: chapterId},
         orderBy: {order: "asc"}
     })
+}
+
+export const reOrderLessons = async (data: { id:string, position:number}[]) => {
+    const updatePromises = data.map(async({id,position})=>{
+        return await prisma.lesson.update({
+            where: {id},
+            data: { order: position}
+        })
+    })
+    await Promise.all(updatePromises)
 }

@@ -83,8 +83,8 @@ export const reOrderChapters = async (data: { id: string, position: number}[]) =
             data: { order: position}
         })
 
-        await Promise.all(updatePromises)
     })
+    await Promise.all(updatePromises)
 }
 
 export const DeleteChapterById = async (courseId:string, chapterId:string) => {

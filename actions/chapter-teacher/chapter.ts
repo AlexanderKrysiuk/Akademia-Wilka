@@ -54,8 +54,10 @@ export const GetChapterById = async (chapterId:string) => {
 export const GetChapterBySlug = async (chapterSlug:string, courseId:string) => {
     return await prisma.chapter.findUnique({
         where: {
-            slug: chapterSlug, 
-            id: courseId
+            courseId_slug: {
+                courseId: courseId,
+                slug: chapterSlug
+            }
         }
     })
 }

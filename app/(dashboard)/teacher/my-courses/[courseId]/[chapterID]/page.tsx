@@ -1,14 +1,16 @@
 "use client"
 
 import { GetChapterById, unpublishChapter } from "@/actions/chapter-teacher/chapter";
+import { GetLessonsByChapterId } from "@/actions/lesson-teacher/lesson";
 import PublishChapterButton from "@/components/Course-Create/Chapter/chapter-publish-button";
 import ChapterSlugCard from "@/components/Course-Create/Chapter/chapter-slug-card";
 import ChapterTitleCard from "@/components/Course-Create/Chapter/chapter-title-card";
 import DeleteChapterModal from "@/components/Course-Create/Chapter/delete-chapter-modal";
+import LessonsCard from "@/components/Course-Create/Chapter/lessons-card";
 import PageLoader from "@/components/page-loader";
 import { useCurrentUser } from "@/hooks/user";
 import { Button, Card, CardBody, CardHeader, Progress } from "@nextui-org/react";
-import { Chapter } from "@prisma/client";
+import { Chapter, Lesson } from "@prisma/client";
 import { LogOut, Settings } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -25,11 +27,13 @@ const ChapterIdPage = ({
     const router = useRouter()
 
     const [chapter, setChapter] = useState<Chapter>()
+    const [lessons, setLessons] = useState<Lesson[]>([])
     const [loading, setLoading] = useState(true)
 
     const requiredFields = chapter ? [
         chapter.title,
         chapter.slug,
+        lessons.some(lesson => lesson.published)
     ] : []
     const completedFields = requiredFields.filter(Boolean).length;
 
@@ -39,12 +43,18 @@ const ChapterIdPage = ({
         setChapter(fetchedChapter)
     }
 
+    async function fetchLessons() {
+        const fetchedLessons = await GetLessonsByChapterId(params.chapterId)
+        setLessons(fetchedLessons)
+    }
+
     useEffect(()=>{
         fetchChapter()
         if (completedFields < requiredFields.length && chapter?.published) {
             unpublishChapter(chapter.id)
             toast.warning("Rozdział zmienił status na:szkic, uzupełnij wszystkie pola by go opublikować")
         }
+        fetchLessons()
         setLoading(false)
     },[user, params])
 
@@ -100,10 +110,13 @@ const ChapterIdPage = ({
                         onUpdate={fetchChapter}
                     />
                 </div>
-                <div>
-                    <Card>
-                        Lekcje
-                    </Card>
+                <div className="space-y-[1vh]">
+                    <LessonsCard
+                        chapterId={chapter.id}
+                        lessons={lessons}
+                        onUpdate={fetchLessons}
+                    />
+                    {JSON.stringify(lessons,null,2)}
                 </div>
             </div>
         </main> 

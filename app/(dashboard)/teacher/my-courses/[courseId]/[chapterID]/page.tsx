@@ -113,10 +113,10 @@ const ChapterIdPage = ({
                 <div className="space-y-[1vh]">
                     <LessonsCard
                         chapterId={chapter.id}
+                        courseId={chapter.courseId}
                         lessons={lessons}
                         onUpdate={fetchLessons}
                     />
-                    {JSON.stringify(lessons,null,2)}
                 </div>
             </div>
         </main> 

@@ -87,6 +87,17 @@ export const reOrderChapters = async (data: { id: string, position: number}[]) =
     await Promise.all(updatePromises)
 }
 
+export const ReorderChaptersByCourseId = async (courseId:string) => {
+    const chapters = await GetChaptersByCourseId(courseId)
+
+    for (let i = 0 ; i < chapters.length ; i++ ) {
+        await prisma.chapter.update({
+            where: { id: chapters[i].id },
+            data: { order: i }
+        })
+    }
+}
+
 export const DeleteChapterById = async (courseId:string, chapterId:string) => {
     const dirPath = `course-${courseId}/chapter-${chapterId}`
 
@@ -105,7 +116,10 @@ export const DeleteChapterById = async (courseId:string, chapterId:string) => {
 
     client.close()
 
-    return await prisma.chapter.delete({
+    await prisma.chapter.delete({
         where: { id: chapterId }
     })
+
+    await ReorderChaptersByCourseId(courseId)
+    return
 }

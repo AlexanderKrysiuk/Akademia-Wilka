@@ -1,6 +1,6 @@
 "use client"
 
-import { Card, CardBody, CardHeader } from "@nextui-org/react"
+import { Card, CardBody, CardHeader, Divider } from "@nextui-org/react"
 import { Lesson } from "@prisma/client"
 import { startTransition, useEffect, useState } from "react"
 import CreateLessonModal from "./create-lesson-modal"
@@ -9,12 +9,15 @@ import { Eye, EyeOff, Scroll, SquarePen } from "lucide-react"
 import Link from "next/link"
 import { reOrderLessons } from "@/actions/lesson-teacher/lesson"
 import { toast } from "react-toastify"
+import DeleteLessonModal from "../Lesson/delete-lesson-modal"
 
 const LessonsCard = ({
+    courseId,
     chapterId,
     lessons: initialLessons,
     onUpdate,
 } : {
+    courseId: string,
     chapterId: string,
     lessons: Lesson[],
     onUpdate: () => void
@@ -93,9 +96,15 @@ const LessonsCard = ({
                                                                 <EyeOff/>
                                                             )}
                                                         </div>
-                                                        <Link href={`./${chapterId}`} className="flex items-center hover:text-primary transition duration:300">
+                                                        <Link href={`./${chapterId}/${lesson.id}`} className="flex items-center hover:text-primary transition duration:300">
                                                             <SquarePen/>
                                                         </Link>
+                                                        <DeleteLessonModal
+                                                            courseId={courseId}
+                                                            chapterId={chapterId}
+                                                            lesson={lesson}
+                                                            onUpdate={onUpdate}
+                                                        />
                                                     </CardHeader>
                                                 </Card>
                                             </div>

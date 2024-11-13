@@ -44,7 +44,7 @@ const CreateLessonModal = ({
         <main>
             <Button
                 color="primary"
-                variant="light"
+                variant="bordered"
                 onClick={()=>{
                     setValue("title","")
                     onOpen()

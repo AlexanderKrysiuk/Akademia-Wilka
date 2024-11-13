@@ -7,13 +7,11 @@ import { Trash } from "lucide-react"
 import { useTransition } from "react"
 import { toast } from "react-toastify"
 
-const DeleteChapterModal = ({
+const ChapterDeleteModal = ({
     chapter,
-    courseId,
     onUpdate
 } : {
     chapter: Chapter
-    courseId:string,
     onUpdate: () => void
 }) => {
     const { isOpen, onOpen, onOpenChange} = useDisclosure()
@@ -21,7 +19,7 @@ const DeleteChapterModal = ({
 
     const confirmDelete = async () => {
         startTransition(async()=>{
-            DeleteChapterById(courseId, chapter.id)
+            DeleteChapterById(chapter.courseId, chapter.id)
             .then((data)=>{
                 toast.success("Pomyślnie usunięto rozdział")
                 onUpdate()
@@ -80,4 +78,4 @@ const DeleteChapterModal = ({
         </main>
     )
 }
-export default DeleteChapterModal
+export default ChapterDeleteModal

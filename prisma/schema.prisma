@@ -173,8 +173,7 @@ model Lesson {
   type      LessonType
   order     Int
   content   String?     @db.Text
-
-  mediaUrls String[]
+  mediaURLs String[]
   mediaDuration Int[]
 
   published Boolean     @default(false)

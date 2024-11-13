@@ -29,7 +29,7 @@ import { GetLevels } from "@/actions/course-teacher/level";
 import LevelCard from "@/components/Course-Create/Course/level-card";
 import PriceCard from "@/components/Course-Create/Course/price-card";
 import { GetChaptersByCourseId } from "@/actions/chapter-teacher/chapter";
-import ChapterCard from "@/components/Course-Create/Course/chapter-card";
+import ChapterList from "@/components/Course-Create/Chapter/chapter-list";
 
 const CourseIdPage = ({
     params
@@ -110,7 +110,8 @@ const CourseIdPage = ({
                                 published={course.published}
                                 onUpdate={fetchMyCreatedCourse}
                                 completedFields={completedFields}
-                                requiredFields={requiredFields.length} />
+                                requiredFields={requiredFields.length} 
+                            />
                         </div>
                     </CardHeader>
                     <CardBody>
@@ -118,54 +119,54 @@ const CourseIdPage = ({
                             label={`(${completedFields}/${requiredFields.length})`}
                             value={completedFields / requiredFields.length * 100}
                             showValueLabel={true}
-                            color={completedFields / requiredFields.length === 1 ? "success" : "warning"} />
+                            color={completedFields / requiredFields.length === 1 ? "success" : "warning"} 
+                        />
                     </CardBody>
                     <CardFooter>
                     </CardFooter>
                 </Card>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                <div className="space-y-[1vh]">
-                    <TitleCard
-                        courseId={course.id}
-                        title={course.title}
-                        onUpdate={fetchMyCreatedCourse}
-                    />
-                    <SlugCard
-                        courseId={course.id}
-                        slug={course.slug}
-                        onUpdate={fetchMyCreatedCourse}
-                    />
-                    <ImageCard
-                        courseId={course.id}
-                        imageUrl={course.imageUrl}
-                        onUpdate={fetchMyCreatedCourse}
-                    />
-                    <CategoryCard
-                        courseId={course.id}
-                        categoryId={course.categoryId}
-                        categories={categories}
-                        onUpdate={fetchMyCreatedCourse}
-                    />
-                    <LevelCard
-                        courseId={course.id}
-                        levelId={course.levelId}
-                        levels={levels}
-                        onUpdate={fetchMyCreatedCourse}
-                    />
-                    <PriceCard
-                        courseId={course.id}
-                        price={course.price}
-                        onUpdate={fetchMyCreatedCourse}
-                    />
-                </div>
-                <div className="space-y-[1vh]">
-                    <ChapterCard
-                        courseId={course.id}
-                        chapters={chapters}
-                        onUpdate={fetchChapters}
-                    />
-                </div>
+                    <div className="space-y-[1vh]">
+                        <TitleCard
+                            courseId={course.id}
+                            title={course.title}
+                            onUpdate={fetchMyCreatedCourse}
+                        />
+                        <SlugCard
+                            courseId={course.id}
+                            slug={course.slug}
+                            onUpdate={fetchMyCreatedCourse}
+                        />
+                        <ImageCard
+                            courseId={course.id}
+                            imageUrl={course.imageUrl}
+                            onUpdate={fetchMyCreatedCourse}
+                        />
+                        <CategoryCard
+                            courseId={course.id}
+                            categoryId={course.categoryId}
+                            categories={categories}
+                            onUpdate={fetchMyCreatedCourse}
+                        />
+                        <LevelCard
+                            courseId={course.id}
+                            levelId={course.levelId}
+                            levels={levels}
+                            onUpdate={fetchMyCreatedCourse}
+                        />
+                        <PriceCard
+                            courseId={course.id}
+                            price={course.price}
+                            onUpdate={fetchMyCreatedCourse}
+                        />
+                    </div>
+                    <div className="space-y-[1vh]">
+                        <ChapterList
+                            courseId={course.id}
+                            chapters={chapters}
+                            onUpdate={fetchChapters}
+                        />
+                    </div>
                 </div>
             </main>
         : 

@@ -1,9 +1,10 @@
 "use client"
 
 import { GetLessonById } from "@/actions/lesson-teacher/lesson";
-import DeleteLessonModal from "@/components/Course-Create/Lesson/delete-lesson-modal";
+import DeleteLessonModal from "@/components/Course-Create/Lesson/lesson-delete-modal";
 import PublishLessonButton from "@/components/Course-Create/Lesson/lesson-publish-button";
 import LessonTitleCard from "@/components/Course-Create/Lesson/lesson-title-card";
+import LessonVideoCard from "@/components/Course-Create/Lesson/lesson-video-card";
 import PageLoader from "@/components/page-loader";
 import { useCurrentUser } from "@/hooks/user";
 import { Card, CardBody, CardHeader } from "@nextui-org/card";
@@ -81,10 +82,18 @@ const LessonIdPage = ({
                     </CardBody>
                 </Card>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-[1h]">
+                    <div className="space-y-[1vh]">
                         <LessonTitleCard
                             lessonId={lesson.id}
                             title={lesson.title}
+                            onUpdate={fetchLesson}
+                        />
+                    </div>
+                    <div className="space-y-[1vh]">
+                        <LessonVideoCard
+                            courseId={params.courseId}
+                            chapterId={params.chapterId}
+                            lesson={lesson}
                             onUpdate={fetchLesson}
                         />
                     </div>

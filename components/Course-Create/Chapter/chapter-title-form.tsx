@@ -11,7 +11,7 @@ import { z } from "zod";
 
 type FormFields = z.infer<typeof EditChapterTitleSchema>
 
-const ChapterTitleCard = ({
+const ChapterTitleForm = ({
     chapterId,
     title,
     onUpdate
@@ -40,29 +40,27 @@ const ChapterTitleCard = ({
     }
 
     return ( 
-        <Card>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <CardBody>
-                    <Input {...register("title")}
-                        label="Tytuł"
-                        labelPlacement="outside"
-                        type="text"
-                        placeholder="Aerodynamika"
-                        isRequired
-                        isClearable
-                        disabled={isSubmitting}
-                        variant="bordered"
-                        isInvalid={errors.title ? true : false}
-                        errorMessage={errors.title?.message}
-                    />
-                </CardBody>
-                <CardFooter>
-                    <Button type="submit" color="primary" disabled={isSubmitting} isLoading={isSubmitting}>
-                        {isSubmitting ? "Przetwarzanie..." : "Zmień tytuł"}
-                    </Button>
-                </CardFooter>
-            </form>
-        </Card>
+        <form onSubmit={handleSubmit(onSubmit)}>
+            <CardBody>
+                <Input {...register("title")}
+                    label="Tytuł"
+                    labelPlacement="outside"
+                    type="text"
+                    placeholder="Aerodynamika"
+                    isRequired
+                    isClearable
+                    disabled={isSubmitting}
+                    variant="bordered"
+                    isInvalid={errors.title ? true : false}
+                    errorMessage={errors.title?.message}
+                />
+            </CardBody>
+            <CardFooter>
+                <Button type="submit" color="primary" disabled={isSubmitting} isLoading={isSubmitting}>
+                    {isSubmitting ? "Przetwarzanie..." : "Zmień tytuł"}
+                </Button>
+            </CardFooter>
+        </form>
      );
 }
-export default ChapterTitleCard;
+export default ChapterTitleForm;

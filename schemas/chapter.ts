@@ -1,4 +1,3 @@
-import { getChapterBySlug } from '@/actions/course/chapter'
 import * as z from 'zod'
 
 const titleTemplate = z.string()
@@ -13,8 +12,7 @@ const slugTemplate = z.string()
   
 
 export const CreateChapterSchema = z.object({
-    title: titleTemplate,
-    slug: slugTemplate,
+    title: titleTemplate
 })
 
 export const EditChapterTitleSchema = z.object({

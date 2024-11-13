@@ -6,20 +6,6 @@ import { CreateChapterSchema } from "@/schemas/chapter"
 import { z } from "zod"
 
 export async function CreateChapter (fields: z.infer<typeof CreateChapterSchema>, courseId:string) {
-    const validatedData = CreateChapterSchema.parse(fields)
-    const { title, slug } = validatedData 
-
-    const existingChapter = await prisma.chapter.findUnique({
-        where: {
-            courseId_slug: {
-                courseId: courseId,
-                slug: slug
-            }
-        }
-    })
-    if (existingChapter) {
-        throw new Error("Podany odnośnik jest już zajęty w tym kursie")
-    }
 
     const lastChapter = await prisma.chapter.findFirst({
         where: {courseId : courseId},
@@ -31,8 +17,7 @@ export async function CreateChapter (fields: z.infer<typeof CreateChapterSchema>
     return await prisma.chapter.create({
         data: {
             courseId: courseId,
-            title: title,
-            slug: slug,
+            title: fields.title,
             order: newOrder
         }
     })
@@ -99,7 +84,7 @@ export const ReorderChaptersByCourseId = async (courseId:string) => {
 }
 
 export const DeleteChapterById = async (courseId:string, chapterId:string) => {
-    const dirPath = `course-${courseId}/chapter-${chapterId}`
+    const dirPath = `courses/course-${courseId}/chapter-${chapterId}`
 
     const client = new ftp.Client()
     client.ftp.verbose = true

@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { GetMyCreatedCourses } from '@/actions/course-teacher/course';
 import PageLoader from '@/components/page-loader';
 import { Button, Card, CardBody, CardFooter, CardHeader, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react';
-import CreateCourseModal from '@/components/Course-Create/Course/CreateCourseModal';
+import CreateCourseModal from '@/components/Course-Create/Course/create-course-modal';
 
 const MyCourses = () => {    
     const user = useCurrentUser()

@@ -33,7 +33,7 @@ const CreateChapterModal = ({
                     onOpenChange()
                 })
                 .catch((error)=>{
-                    setError("slug", {message: error.message})
+                    setError("title", {message: error.message})
                     toast.error(error.message)
                 })
         })        
@@ -45,10 +45,9 @@ const CreateChapterModal = ({
                 color="primary"
                 variant="light"
                 onClick={()=>{
-                    setValue("title", "")
-                    setValue("slug", "")
                     onOpen()
-                }}
+                    setValue("title", "")}
+                }
             >
                 <SquarePlus/>
                 Dodaj nowy rozdział
@@ -69,6 +68,19 @@ const CreateChapterModal = ({
                             <ModalHeader>Dodaj nowy rozdział</ModalHeader>
                             <form onSubmit={handleSubmit(onSubmit)}>
                                 <ModalBody>
+                                    <Input {...register("title")}
+                                        label="Tytuł"
+                                        labelPlacement="outside"
+                                        type="text"
+                                        placeholder="Aerodynamika"
+                                        isRequired
+                                        isClearable
+                                        isDisabled={isSubmitting}
+                                        variant="bordered"
+                                        isInvalid={errors.title ? true : false}
+                                        errorMessage={errors.title?.message}
+                                    />
+                                    {/*
                                     <Input {...register("title")}
                                         label="Tytuł"
                                         labelPlacement="outside"
@@ -106,6 +118,7 @@ const CreateChapterModal = ({
                                         isInvalid={errors.slug ? true : false}
                                         errorMessage={errors.slug?.message}
                                     />
+                                        */}
                                 </ModalBody>
                                 <ModalFooter>
                                     <Button 

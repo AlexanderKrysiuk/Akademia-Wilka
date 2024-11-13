@@ -8,7 +8,7 @@ export async function uploadCourseImage(dataURL: string, courseId: string) {
     if (!dataURL || !courseId) throw new Error("Brak wymaganych danych")
 
     const fileName = `${courseId}.png`
-    const dirPath = `course-image`
+    const dirPath = `courses/course-${courseId}/image`
     const fileServer = process.env.FTP_ADDRES
 
     const client = new ftp.Client()

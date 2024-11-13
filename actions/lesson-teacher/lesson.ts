@@ -33,7 +33,7 @@ export const GetLessonsByChapterId = async (chapterId:string) => {
 
 export const GetLessonById = async (lessonId:string) => {
     return await prisma.lesson.findUnique({
-        where: {id: lessonId}
+        where: {id: lessonId},
     })
 }
 
@@ -59,7 +59,7 @@ export const ReorderLessonsByChapterId = async (chapterId:string) => {
 }
 
 export const DeleteLessonById = async (courseId:string, chapterId:string, lessonId:string) => {
-    const dirPath = `course-${courseId}/chapter-${chapterId}/lesson-${lessonId}`
+    const dirPath = `courses/course-${courseId}/chapter-${chapterId}/lesson-${lessonId}`
 
     const client = new ftp.Client()
     client.ftp.verbose = true

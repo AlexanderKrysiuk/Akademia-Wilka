@@ -3,10 +3,10 @@
 import { GetChapterById, unpublishChapter } from "@/actions/chapter-teacher/chapter";
 import { GetLessonsByChapterId } from "@/actions/lesson-teacher/lesson";
 import PublishChapterButton from "@/components/Course-Create/Chapter/chapter-publish-button";
-import ChapterSlugCard from "@/components/Course-Create/Chapter/chapter-slug-card";
-import ChapterTitleCard from "@/components/Course-Create/Chapter/chapter-title-card";
-import DeleteChapterModal from "@/components/Course-Create/Chapter/delete-chapter-modal";
-import LessonsCard from "@/components/Course-Create/Chapter/lessons-card";
+import ChapterSlugCard from "@/components/Course-Create/Chapter/chapter-slug-form";
+import ChapterTitleCard from "@/components/Course-Create/Chapter/chapter-title-form";
+import DeleteChapterModal from "@/components/Course-Create/Chapter/chapter-delete-modal";
+import LessonsCard from "@/components/Course-Create/Lesson/lessons-card";
 import PageLoader from "@/components/page-loader";
 import { useCurrentUser } from "@/hooks/user";
 import { Button, Card, CardBody, CardHeader, Progress } from "@nextui-org/react";
@@ -75,7 +75,6 @@ const ChapterIdPage = ({
                     <div className="flex gap-2 items-center">
                         <DeleteChapterModal
                             chapter={chapter}
-                            courseId={params.courseId}
                             onUpdate={()=>{router.push("./")}}
                         />
                         <PublishChapterButton

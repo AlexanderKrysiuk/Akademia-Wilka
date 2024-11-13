@@ -1,109 +1,103 @@
 "use client"
 
-import { Button, Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
-import { Chapter } from "@prisma/client";
-import { Eye, EyeOff, Scroll, SquarePen } from "lucide-react";
-import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
-import { startTransition, useEffect, useState } from "react";
-import { reOrderChapters } from "@/actions/chapter-teacher/chapter";
-import { toast } from "react-toastify";
-import CreateChapterModal from "./create-chapter-modal";
-import DeleteChapterModal from "../Chapter/delete-chapter-modal";
-import Link from "next/link";
+import { Card, CardBody, CardFooter, CardHeader, Divider } from "@nextui-org/react"
+import { Lesson } from "@prisma/client"
+import { startTransition, useEffect, useState } from "react"
+import CreateLessonModal from "./lesson-create-modal"
+import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd"
+import { Eye, EyeOff, Scroll, SquarePen } from "lucide-react"
+import Link from "next/link"
+import { reOrderLessons } from "@/actions/lesson-teacher/lesson"
+import { toast } from "react-toastify"
+import DeleteLessonModal from "./lesson-delete-modal"
 
-const ChapterCard = ({
+const LessonsCard = ({
     courseId,
-    chapters : initialChapters,
+    chapterId,
+    lessons: initialLessons,
     onUpdate,
 } : {
     courseId: string,
-    chapters: Chapter[],
-    onUpdate: () => void,
+    chapterId: string,
+    lessons: Lesson[],
+    onUpdate: () => void
 }) => {
-    const [chapters, setChapters] = useState<Chapter[]>(initialChapters);
+    const [lessons, setLessons] = useState<Lesson[]>(initialLessons)
 
-    useEffect(() => {
-        // Aktualizacja stanu, gdy `initialChapters` się zmienia
-        setChapters(initialChapters);
-    }, [initialChapters]);
+    useEffect(()=>{
+        setLessons(initialLessons)
+    }, [initialLessons])
 
     const onDragEnd = (result: DropResult) => {
-        if (!result.destination) return
+        if(!result.destination) return
 
-        const items = Array.from(chapters);
+        const items = Array.from(lessons)
         const [reorderedItems] = items.splice(result.source.index, 1)
         items.splice(result.destination.index, 0, reorderedItems)
 
         const startIndex = Math.min(result.source.index, result.destination.index)
         const endIndex = Math.max(result.source.index, result.destination.index)
 
-        const updatedChapters = items.slice(startIndex, endIndex + 1);
+        const updatedLessons = items.slice(startIndex, endIndex + 1);
 
-        setChapters(items)
+        setLessons(items)
 
-        const bulkUpdateData = updatedChapters.map((chapter) => ({
-            id: chapter.id,
-            position: items.findIndex((item) => item.id === chapter.id)
+        const bulkUpdateData = updatedLessons.map((lesson)=>({
+            id: lesson.id,
+            position: items.findIndex((item) => item.id === lesson.id)
         }))
 
         startTransition(()=>{
-            reOrderChapters(bulkUpdateData)
+            reOrderLessons(bulkUpdateData)
             .then((data)=>{
-                toast.success("Zmieniono kolejność rozdziałów")
+                toast.success("Zmieniono kolejność lekcji")
             })
             .catch((error)=>{
                 toast.error(error.message)
             })
         })
     }
+
     return (
-        <Card>
-            <CardHeader className="flex w-full justify-between flex-col md:flex-row">
-                <div>Rozdziały kursu</div>
-                <CreateChapterModal
-                    courseId={courseId}
-                    onUpdate={onUpdate}
-                />
-            </CardHeader>
+        <main>
             <CardBody>
                 <DragDropContext onDragEnd={onDragEnd}>
-                    <Droppable droppableId="chapters">
+                    <Droppable droppableId="lessons">
                         {(provided) => (
                             <div {...provided.droppableProps} ref={provided.innerRef}>
-                                {chapters.map((chapter,index) =>(
-                                    <Draggable key={chapter.id} draggableId={chapter.id} index={index}>
-                                        {(provided) => (
+                                {lessons.map((lesson,index)=>(
+                                    <Draggable key={lesson.id} draggableId={lesson.id} index={index}>
+                                        {(provided)=>(
                                             <div
                                                 ref={provided.innerRef}
                                                 {...provided.draggableProps}
                                                 style={provided.draggableProps.style as React.CSSProperties}
                                                 className="mb-1"
                                             >
-
                                                 <Card>
                                                     <CardHeader className="gap-x-[1vw]">
                                                         <div {...provided.dragHandleProps} className="hover:text-primary transition duration-300">
-                                                            <Scroll/>                                                            
+                                                            <Scroll/>
                                                         </div>
                                                         <div className="truncate w-full">
-                                                            {chapter.title}
+                                                            {lesson.title}
                                                         </div>
-                                                        <div className="text-sm">
-                                                            {chapter.published ? (
+                                                        <div>
+                                                            {lesson.published ? (
                                                                 <Eye/>
                                                             ) : (
                                                                 <EyeOff/>
                                                             )}
                                                         </div>
-                                                        <Link href={`./${courseId}/${chapter.id}`} className="flex items-center hover:text-primary transition duration-300">
+                                                        <Link href={`./${chapterId}/${lesson.id}`} className="flex items-center hover:text-primary transition duration:300">
                                                             <SquarePen/>
                                                         </Link>
-                                                        <DeleteChapterModal
-                                                            chapter={chapter}
+                                                        <DeleteLessonModal
                                                             courseId={courseId}
+                                                            chapterId={chapterId}
+                                                            lesson={lesson}
                                                             onUpdate={onUpdate}
                                                         />
-
                                                     </CardHeader>
                                                 </Card>
                                             </div>
@@ -116,8 +110,13 @@ const ChapterCard = ({
                     </Droppable>
                 </DragDropContext>
             </CardBody>
-        </Card>
-    );
+            <CardFooter>
+                <CreateLessonModal
+                    chapterId={chapterId}
+                    onUpdate={onUpdate}
+                />
+            </CardFooter>
+        </main>
+    )
 }
- 
-export default ChapterCard;
+export default LessonsCard;

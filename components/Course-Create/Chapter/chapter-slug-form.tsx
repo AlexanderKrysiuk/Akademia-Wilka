@@ -12,7 +12,7 @@ import { z } from "zod";
 
 type FormFields = z.infer<typeof EditChapterSlugSchema>
 
-const ChapterSlugCard = ({
+const ChapterSlugForm = ({
     courseId,
     chapterId,
     slug,
@@ -43,29 +43,27 @@ const ChapterSlugCard = ({
     }
 
     return ( 
-        <Card>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <CardBody>
-                    <Input {...register("slug")}
-                        label="Unikalny odnośnik"
-                        labelPlacement="outside"
-                        type="text"
-                        placeholder="aerodynamika"
-                        isRequired
-                        isClearable
-                        disabled={isSubmitting}
-                        variant="bordered"
-                        isInvalid={errors.slug ? true : false}
-                        errorMessage={errors.slug?.message}
-                    />
-                </CardBody>
-                <CardFooter>
-                    <Button type="submit" color="primary" disabled={isSubmitting} isLoading={isSubmitting}>
-                        {isSubmitting ? "Przetwarzanie..." : "Zmień odnośnik"}
-                    </Button>
-                </CardFooter>
-            </form>
-        </Card>
+        <form onSubmit={handleSubmit(onSubmit)}>
+            <CardBody>
+                <Input {...register("slug")}
+                    label="Unikalny odnośnik"
+                    labelPlacement="outside"
+                    type="text"
+                    placeholder="aerodynamika"
+                    isRequired
+                    isClearable
+                    disabled={isSubmitting}
+                    variant="bordered"
+                    isInvalid={errors.slug ? true : false}
+                    errorMessage={errors.slug?.message}
+                />
+            </CardBody>
+            <CardFooter>
+                <Button type="submit" color="primary" disabled={isSubmitting} isLoading={isSubmitting}>
+                    {isSubmitting ? "Przetwarzanie..." : "Zmień odnośnik"}
+                </Button>
+            </CardFooter>
+        </form>
      );
 }
-export default ChapterSlugCard;
+export default ChapterSlugForm;

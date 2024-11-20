@@ -1,7 +1,7 @@
 "use client"
 
 import { uploadLessonVideo } from "@/actions/lesson-teacher/lesson-video"
-import { Button, Card, CardBody, CardHeader } from "@nextui-org/react"
+import { Button, Card, CardBody, CardFooter, CardHeader } from "@nextui-org/react"
 import { Lesson } from "@prisma/client"
 import { useRef } from "react"
 import { toast } from "react-toastify"
@@ -45,7 +45,7 @@ const LessonVideoCard = ({
     }
 
     return (
-        <Card>
+        <main>
             <CardHeader className="flex items-center justify-between">
                 <span>Video</span>
                 <input
@@ -55,9 +55,6 @@ const LessonVideoCard = ({
                     style={{ display: "none" }}
                     onChange={handleVideoUpload}
                 />
-                <Button variant="light" size="sm" color="primary" onClick={()=>fileInputRef.current?.click()}>
-                    {lesson.mediaURLs.length > 0 ? "Zmień video" : "Dodaj video"}
-                </Button>
             </CardHeader>
             <CardBody>
                 {lesson.mediaURLs.length > 0 ? (
@@ -65,12 +62,18 @@ const LessonVideoCard = ({
                         <source src={lesson.mediaURLs[0]} type="video/mp4"/>
                     </video>
                 ) : (
-                    <div>
+                    <div className="w-full flex justify-center">
                         Brak video
                     </div>
                 )}
             </CardBody>
-        </Card>
+            <CardFooter>
+                <Button color="primary" onClick={()=>fileInputRef.current?.click()}>
+                    {lesson.mediaURLs.length > 0 ? "Zmień video" : "Dodaj video"}
+                </Button>
+
+            </CardFooter>
+        </main>
     )
 }
 export default LessonVideoCard

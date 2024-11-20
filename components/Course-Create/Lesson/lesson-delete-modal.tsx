@@ -2,20 +2,18 @@
 
 import { DeleteLessonById } from "@/actions/lesson-teacher/lesson"
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/react"
-import { Lesson } from "@prisma/client"
+import { Chapter, Lesson } from "@prisma/client"
 import { Trash } from "lucide-react"
 import { useTransition } from "react"
 import { toast } from "react-toastify"
 
-const DeleteLessonModal = ({
+const LessonDeleteModal = ({
     lesson,
-    courseId,
-    chapterId,
+    chapter,
     onUpdate
 } : {
     lesson: Lesson,
-    courseId: string,
-    chapterId: string,
+    chapter: Chapter,
     onUpdate: () => void
 }) => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure()
@@ -23,7 +21,7 @@ const DeleteLessonModal = ({
 
     const confirmDelete = async () => {
         startTransition(async()=>{
-            await DeleteLessonById(courseId, chapterId, lesson.id)
+            await DeleteLessonById(chapter.courseId, chapter.id, lesson.id)
             .then((data)=>{
                 toast.success("Pomyślnie usunięto lekcje")
                 onUpdate()
@@ -81,4 +79,4 @@ const DeleteLessonModal = ({
         </main>
     )
 }
-export default DeleteLessonModal
+export default LessonDeleteModal

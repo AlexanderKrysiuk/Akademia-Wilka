@@ -20,7 +20,7 @@ const LessonTitleCard = ({
     title: string
     onUpdate: () => void
 }) => {
-    const { register, handleSubmit, setError, formState: { errors, isSubmitting }} = useForm<FormFields>({
+    const { register, handleSubmit, setError, watch, formState: { errors, isSubmitting }} = useForm<FormFields>({
         defaultValues: {title},
         resolver: zodResolver(EditLessonTitleSchema)
     })
@@ -40,34 +40,32 @@ const LessonTitleCard = ({
     }
 
     return (
-        <Card>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <CardBody>
-                    <Input {...register("title")}
-                        label="Tytuł"
-                        labelPlacement="outside"
-                        type="text"
-                        placeholder="Teoria względności"
-                        isRequired
-                        isClearable
-                        isDisabled={isSubmitting}
-                        variant="bordered"
-                        isInvalid={errors.title ? true : false}
-                        errorMessage={errors.title?.message}
-                    />
-                </CardBody>
-                <CardFooter>
-                    <Button
-                        type="submit"
-                        color="primary"
-                        disabled={isSubmitting}
-                        isLoading={isSubmitting}
-                    >
-                        {isSubmitting ? "Przetwarzanie..." : "Zmień tytuł"}
-                    </Button>
-                </CardFooter>
-            </form>
-        </Card>
+        <form onSubmit={handleSubmit(onSubmit)}>
+            <CardBody>
+                <Input {...register("title")}
+                    label="Tytuł"
+                    labelPlacement="outside"
+                    type="text"
+                    placeholder="Teoria względności"
+                    isRequired
+                    isClearable
+                    isDisabled={isSubmitting}
+                    variant="bordered"
+                    isInvalid={errors.title ? true : false}
+                    errorMessage={errors.title?.message}
+                />
+            </CardBody>
+            <CardFooter>
+                <Button
+                    type="submit"
+                    color="primary"
+                    isDisabled={isSubmitting || watch("title") === title}
+                    isLoading={isSubmitting}
+                >
+                    {isSubmitting ? "Przetwarzanie..." : "Zmień tytuł"}
+                </Button>
+            </CardFooter>
+        </form>
     )
 }
 export default LessonTitleCard

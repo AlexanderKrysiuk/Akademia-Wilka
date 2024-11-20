@@ -6,7 +6,7 @@ import PublishChapterButton from "@/components/Course-Create/Chapter/chapter-pub
 import ChapterSlugCard from "@/components/Course-Create/Chapter/chapter-slug-form";
 import ChapterTitleCard from "@/components/Course-Create/Chapter/chapter-title-form";
 import DeleteChapterModal from "@/components/Course-Create/Chapter/chapter-delete-modal";
-import LessonsCard from "@/components/Course-Create/Lesson/lessons-card";
+import LessonsCard from "@/components/Course-Create/Lesson/lessons-list";
 import PageLoader from "@/components/page-loader";
 import { useCurrentUser } from "@/hooks/user";
 import { Button, Card, CardBody, CardHeader, Progress } from "@nextui-org/react";

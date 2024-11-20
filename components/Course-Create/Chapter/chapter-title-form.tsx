@@ -20,7 +20,7 @@ const ChapterTitleForm = ({
     title:string
     onUpdate: () => void
 }) => {   
-    const { register, handleSubmit, setError, formState: { errors, isSubmitting }} = useForm<FormFields>({
+    const { register, handleSubmit, setError, watch, formState: { errors, isSubmitting }} = useForm<FormFields>({
         defaultValues: {title}, 
         resolver: zodResolver(EditChapterTitleSchema)
     })
@@ -56,7 +56,12 @@ const ChapterTitleForm = ({
                 />
             </CardBody>
             <CardFooter>
-                <Button type="submit" color="primary" disabled={isSubmitting} isLoading={isSubmitting}>
+                <Button 
+                    type="submit" 
+                    color="primary" 
+                    isDisabled={isSubmitting || watch("title") === title} 
+                    isLoading={isSubmitting}
+                >
                     {isSubmitting ? "Przetwarzanie..." : "Zmień tytuł"}
                 </Button>
             </CardFooter>

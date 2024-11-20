@@ -12,39 +12,33 @@ import ChapterDeleteModal from "./chapter-delete-modal"
 import PublishChapterButton from "./chapter-publish-button"
 import ChapterTitleForm from "./chapter-title-form"
 import ChapterSlugForm from "./chapter-slug-form"
-import LessonsCard from "../Lesson/lessons-card"
+import LessonsList from "../Lesson/lessons-list"
 
 const ChapterEditModal = ({
     chapter,
-    onUpdate
+    requiredFields,
+    lessons,
+    onUpdate,
+    onLessonUpdate,
 } : {
     chapter: Chapter,
+    requiredFields: (string | boolean | null)[]
+    lessons: Lesson[]
     onUpdate: () => void
+    onLessonUpdate: () => void
 }) => {
-    const [lessons, setLessons] = useState<Lesson[]>([])
     const [loading, setLoading] = useState(true)
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
-    const requiredFields = [
-        chapter.title,
-        chapter.slug,
-        lessons.some(lesson => lesson.published)
-    ]
     const completedFields = requiredFields.filter(Boolean).length;
-
-    async function fetchLessons() {
-        const fetchedLessons = await GetLessonsByChapterId(chapter.id)
-        setLessons(fetchedLessons)
-    }
 
     useEffect(()=>{
         if (completedFields < requiredFields.length && chapter.published) {
             unpublishChapter(chapter.id)
             toast.warning("Rozdział zmienił status na:szkic, uzupełnij wszystkie pola by go opublikować")
         }
-        fetchLessons()
         setLoading(false)
-    },[chapter])
+    },[chapter.id])
 
     if (loading) return <PageLoader/>
 
@@ -59,7 +53,7 @@ const ChapterEditModal = ({
                 onOpenChange={onOpenChange}
                 placement="center"
                 size="5xl"
-                scrollBehavior="outside"
+                scrollBehavior="inside"
                 backdrop="opaque"
                 classNames={{
                     backdrop: "bg-gradient-to-t from-foreground/100 to-foreground/10 backdrop-opacity-20"
@@ -76,7 +70,10 @@ const ChapterEditModal = ({
                                 <div className="flex gap-2 items-center">
                                     <ChapterDeleteModal
                                         chapter={chapter}
-                                        onUpdate={onUpdate}
+                                        onUpdate={()=>{
+                                            onUpdate()
+                                            onClose()
+                                        }}
                                     />
                                     <PublishChapterButton
                                         chapterId={chapter.id}
@@ -102,28 +99,36 @@ const ChapterEditModal = ({
                                     title={chapter.title}
                                     onUpdate={onUpdate}
                                 />
-                            </ModalBody>
+                            
                             <Divider/>
-                            <ModalBody>
+                            
                                 <ChapterSlugForm
                                     courseId={chapter.courseId}
                                     chapterId={chapter.id}
                                     slug={chapter.slug}
                                     onUpdate={onUpdate}
                                 />
-                            </ModalBody>
+                        
+                            {/*
                             <Divider/>
                             <ModalHeader>
                                 Lekcje rozdziału
                             </ModalHeader>
+                            
                             <ModalBody>
-                                <LessonsCard
-                                    chapterId={chapter.id}
-                                    courseId={chapter.courseId}
-                                    lessons={lessons}
+                                <LessonsList
+                                    chapter={chapter}
                                     onUpdate={fetchLessons}
                                 />
                             </ModalBody>
+                    */}
+                            <Divider/>
+                                <LessonsList
+                                    chapter={chapter}
+                                    lessons={lessons}
+                                    onUpdate={onUpdate}
+                                />
+                                    </ModalBody>
                             <Divider/>
                             <ModalFooter>
                                 <Button

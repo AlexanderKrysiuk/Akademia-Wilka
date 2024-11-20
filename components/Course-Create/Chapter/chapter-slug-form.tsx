@@ -5,9 +5,10 @@ import { UpdateChapterTitle } from "@/actions/chapter-teacher/chapter-title";
 import { EditChapterSlugSchema } from "@/schemas/chapter";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Card, CardBody, CardFooter, Input } from "@nextui-org/react";
-import { startTransition } from "react";
+import { startTransition, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { formatSlug } from "@/lib/slug";
 import { z } from "zod";
 
 type FormFields = z.infer<typeof EditChapterSlugSchema>
@@ -23,8 +24,8 @@ const ChapterSlugForm = ({
     slug:string | null
     onUpdate: () => void
 }) => {   
-    const { register, handleSubmit, setError, setValue, formState: { errors, isSubmitting }} = useForm<FormFields>({
-        defaultValues: slug ? {slug} : undefined, 
+    const { register, handleSubmit, setError, setValue, watch, formState: { errors, isSubmitting }} = useForm<FormFields>({
+        defaultValues: {slug: slug || undefined}, 
         resolver: zodResolver(EditChapterSlugSchema)
     })
 
@@ -41,7 +42,6 @@ const ChapterSlugForm = ({
             })
         })
     }
-
     return ( 
         <form onSubmit={handleSubmit(onSubmit)}>
             <CardBody>
@@ -56,10 +56,16 @@ const ChapterSlugForm = ({
                     variant="bordered"
                     isInvalid={errors.slug ? true : false}
                     errorMessage={errors.slug?.message}
+                    value={watch("slug")}
+                    onValueChange={(value)=>{setValue("slug", formatSlug(value))}}
                 />
             </CardBody>
             <CardFooter>
-                <Button type="submit" color="primary" disabled={isSubmitting} isLoading={isSubmitting}>
+                <Button 
+                    type="submit" 
+                    color="primary" 
+                    isDisabled={isSubmitting || watch("slug") === slug} 
+                    isLoading={isSubmitting}>
                     {isSubmitting ? "Przetwarzanie..." : "Zmień odnośnik"}
                 </Button>
             </CardFooter>

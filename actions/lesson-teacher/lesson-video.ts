@@ -9,6 +9,7 @@ export async function uploadLessonVideo(formdata: FormData) {
     const courseId = formdata.get("courseId") as string
     const chapterId = formdata.get("chapterId") as string
     const lessonId = formdata.get("lessonId") as string
+    const duration = formdata.get("duration") as string
 
     if (!videoFile || !courseId || !chapterId || !lessonId) throw new Error ("Brak wymaganych danych")
 
@@ -43,7 +44,8 @@ export async function uploadLessonVideo(formdata: FormData) {
     await prisma.lesson.update({
         where: {id: lessonId},
         data: {
-            mediaURLs: [uploadedVideoUrl]
+            mediaURLs: [uploadedVideoUrl],
+            mediaDuration: [parseInt(duration)]
         }
     })
 

@@ -1,42 +1,34 @@
 "use client"
 
 import "react-image-crop/dist/ReactCrop.css";
-import { useCurrentUser } from "@/hooks/user"
-import { Button, Card, CardBody, CardHeader, Input, Image, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/react"
-import { UserRole } from "@prisma/client"
-import { ImageIcon, ImagePlus, Images } from "lucide-react"
-import { startTransition, useRef, useState } from "react"
+import { UploadLessonVideoImage } from "@/actions/lesson-teacher/lesson-video-image"
+import { CardBody, CardHeader, useDisclosure, Image, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, CardFooter } from "@nextui-org/react"
+import { Chapter, Lesson } from "@prisma/client"
+import { ImageIcon } from "lucide-react"
+import React, { startTransition, useRef, useState } from "react"
 import ReactCrop, { Crop, centerCrop, convertToPixelCrop, makeAspectCrop } from "react-image-crop"
 import { toast } from "react-toastify"
-import { uploadCourseImage } from "@/actions/course-teacher/image";
-
 
 const MAX_IMAGE_SIZE = 4 * 1024 * 1024
 const MIN_DIMENSION = 100
 const ASPECT_RATIO = 16/9
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif']
 
-const ImageCard = ({
-    courseId,
-    imageUrl,
+const LessonVideoImageForm = ({
+    chapter,
+    lesson,
     onUpdate
 } : {
-    courseId: string
-    imageUrl: string | null
+    chapter: Chapter,
+    lesson: Lesson,
     onUpdate: () => void
 }) => {
-    const user = useCurrentUser()
-
-    if (!user || !user.role.includes(UserRole.Teacher || UserRole.Admin)) return
-
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
-
     const imgRef = useRef<HTMLImageElement>(null)
-    const previewCanvasRef = useRef<HTMLCanvasElement>(null) 
+    const previewCanvasRef = useRef<HTMLCanvasElement>(null)
     const [uploading, setUploading] = useState(false)
-    const [selectedImage, setSelectedImage] = useState<File | null>(null)
     const [crop, setCrop] = useState<Crop>()
-    const [imgSrc,setImgSrc] = useState<string>()
+    const [imgSrc, setImgSrc] = useState<string>()
 
     const fileInputRef = useRef<HTMLInputElement | null>(null)
 
@@ -48,8 +40,8 @@ const ImageCard = ({
             return
         }
 
-        const reader = new FileReader();
-        reader.addEventListener("load", ()=> {
+        const reader = new FileReader()
+        reader.addEventListener("load", ()=>{
             const imageUrl = reader.result?.toString()
             setImgSrc(imageUrl)
             onOpen()
@@ -69,8 +61,8 @@ const ImageCard = ({
         const crop = makeAspectCrop(
             {
                 unit: "%",
-                width: cropWidthInPercent,
-            }, 
+                width: cropWidthInPercent
+            },
             ASPECT_RATIO,
             width,
             height
@@ -88,7 +80,6 @@ const ImageCard = ({
         if (!ctx) {
             throw new Error("Brak kontekstu")
         }
-
         const pixelRatio = window.devicePixelRatio
         const scaleX = image.naturalWidth / image.width
         const scaleY = image.naturalHeight / image.height
@@ -98,7 +89,7 @@ const ImageCard = ({
 
         ctx.scale(pixelRatio, pixelRatio);
         ctx.imageSmoothingQuality = "high"
-        ctx.save();
+        ctx.save()
 
         const cropX = crop.x * scaleX
         const cropY = crop.y * scaleY
@@ -115,7 +106,6 @@ const ImageCard = ({
             image.naturalWidth,
             image.naturalHeight
         )
-
         ctx.restore()
     }
 
@@ -130,11 +120,11 @@ const ImageCard = ({
         const dataURL = previewCanvasRef.current.toDataURL()
 
         startTransition(async ()=>{
-            await uploadCourseImage(dataURL, courseId)
+            await UploadLessonVideoImage(dataURL, chapter.courseId, chapter.id, lesson.id)
                 .then(()=>{
                     toast.success("Obrazek przesłany pomyślnie!");
                     onOpenChange()
-                    onUpdate();
+                    onUpdate()
                 })
                 .catch((error)=>{
                     toast.error(error.message)
@@ -147,54 +137,55 @@ const ImageCard = ({
 
     return (
         <main>
-        <Card>
             <CardHeader className="flex justify-between">
-                <h6>Obrazek</h6>
+                Obrazek wyróżniający
                 <input
                     ref={fileInputRef}
                     type="file"
                     accept="image/*"
                     onChange={onSelectFile}
-                    style={{ display: "none" }}
+                    style={{display: "none"}}
                 />
-                <Button variant="light" color="primary" onClick={() => fileInputRef.current?.click()} startContent={imageUrl ? <Images size={16}/> : <ImagePlus size={16}/>}>
-                    {imageUrl ? "Zmień obraz" : "Dodaj obraz"}
-                </Button>
-    
             </CardHeader>
             <CardBody>
-                {imageUrl ? (
+                {lesson.videoImageURL ? (
                     <Image
                         width={160*3}
                         height={90*3}
                         className="max-h-fit w-auto"
-                        alt={"Obrazek kursu"}
-                        src={imageUrl}
+                        alt={"Obrazek lekcji"}
+                        src={lesson.videoImageURL}
                     />
                 ) : (
-                    <div className="h-full w-full aspect-video flex items-center justify-center bg-primary/10 ">
+                    <div className="h-auto w-full aspect-video flex items-center justify-center bg-primary/10">
                         <ImageIcon className="h-10 w-10"/>
                     </div>
                 )}
             </CardBody>
-        </Card>
-        <Modal 
-            isOpen={isOpen}
-            onOpenChange={onOpenChange}
-            backdrop="opaque"
-            size="4xl"
-            classNames={{
-                backdrop: "bg-gradient-to-t from-foreground/100 to-foreground/10 backdrop-opacity-20"
-            }}>
-            
-            <ModalContent>
-                {(onClose) => (
-                    <>
-                        <ModalHeader>
-                            Przytnij obraz
-                        </ModalHeader>
-                        <ModalBody className="flex items-center justify-center">
-                                {imgSrc && (   
+            <CardFooter>
+                <Button color="primary" onClick={()=> fileInputRef.current?.click()}>
+                    {lesson.videoImageURL ? "Zmień obraz" : "Dodaj obraz"}
+                </Button>
+            </CardFooter>
+            <Modal
+                isOpen={isOpen}
+                onOpenChange={onOpenChange}
+                backdrop="opaque"
+                scrollBehavior="outside"
+                placement="center"
+                size="4xl"
+                classNames={{
+                    backdrop: "bg-gradient-to-t from-foreground/100 to-foreground/10 backdrop-opacity-20"
+                }}
+            >
+                <ModalContent>
+                    {(onClose)=>(
+                        <>
+                            <ModalHeader>
+                                Przytnij obraz
+                            </ModalHeader>
+                            <ModalBody>
+                                {imgSrc && (
                                     <ReactCrop
                                         crop={crop}
                                         keepSelection
@@ -203,51 +194,41 @@ const ImageCard = ({
                                         onChange={
                                             (pixelCrop, percentCrop)=>{setCrop(percentCrop)}
                                         }
+                                        className="flex"
                                     >
-                                        <img
-                                            src={imgSrc}
-                                            alt="Upload"
-                                            className="max-h-fit"
-                                            onLoad={onImageLoad}
-                                            ref={imgRef}
-                                        />
-                                        {/*
                                         <Image
-                                        //    ref={imgRef}
-                                        //    width={1600}
-                                        //    height={900}
-                                        //    className="max-h-fit w-auto"
-                                        //    src={imgSrc} 
-                                        //    alt={"Crop"}
-                                        //    onLoad={onImageLoad}                                           
+                                            ref={imgRef}
+                                            width={1600}
+                                            height={900}
+                                            className="max-h-fit w-auto"
+                                            src={imgSrc}
+                                            alt={"Crop"}
+                                            onLoad={onImageLoad}
                                         />
-                                        */}
                                     </ReactCrop>
                                 )}
-                        </ModalBody>
-                        <ModalFooter className="flex justify-between items-center">
-                            Możesz dostosować obraz, powiększając go lub pomniejszając i przeciągając do żądanej pozycji.
-                            <Button type="submit" color="primary" onClick={handleUpload} isDisabled={uploading} isLoading={uploading}>
-                                {uploading ? "Przesyłanie..." : "Przytnij i prześlij"}
-                            </Button>
-                        </ModalFooter>
-                        {crop && (
-                            <canvas
-                                ref={previewCanvasRef}
-                                style={{
-                                    display: "none",
-                                    border: "1px solid black",
-                                    objectFit: "contain",
-                                    width: "160",
-                                    height: "90"
-                                }}
-                            />
-                        )}
-                    </>
-                )}
-            </ModalContent>
-        </Modal>
+                            </ModalBody>
+                            <ModalFooter className="flex justify-between items-center">
+                                Możesz dostosować obraz, powiększając go lub pomniejszając i przeciągając do żądanej pozycji.
+                                <Button type="submit" color="primary" onClick={handleUpload} isDisabled={uploading} isLoading={uploading}>
+                                    {uploading ? "Przesyłanie..." : "Przytnij i prześlij"}
+                                </Button>
+                            </ModalFooter>
+                            {crop && (
+                                <canvas
+                                    ref={previewCanvasRef}
+                                    style={{
+                                        display: "none"
+                                    }}
+                                >
+                                </canvas>
+                            )}
+                        </>
+                    )}
+                </ModalContent>
+                
+            </Modal>
         </main>
     )
 }
-export default ImageCard
+export default LessonVideoImageForm

@@ -175,6 +175,7 @@ model Lesson {
   content   String?     @db.Text
   mediaURLs String[]
   mediaDuration Int[]
+  videoImageURL String?
 
   published Boolean     @default(false)
   free      Boolean     @default(false)

@@ -12,6 +12,7 @@ import 'react-toastify/dist/ReactToastify.css'; // Import stylów
 import { useTheme } from "next-themes";
 import Toaster from "@/components/toaster";
 import { NextUIProvider } from "@nextui-org/system";
+import "react-image-crop/dist/ReactCrop.css";
 
 
 const inter = Inter({ subsets: ["latin"] });

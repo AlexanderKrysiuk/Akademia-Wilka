@@ -2,22 +2,22 @@ import { prisma } from "@/lib/prisma"
 import { LessonType } from "@prisma/client";
 
 export const getCompletedLessonsCountByCourseID = async (courseID:string, userID:string) => {
-    return await prisma.userProgress.count({
-        where: {
-            userId: userID,
-            lesson: {
-                chapter: {
-                    courseId: courseID,
-                    published: true
-                },
-                published: true,
-                type: {
-                    not: LessonType.Subchapter
-                }
-            },
-            completed: true
-        }
-    })
+    //return await prisma.userProgress.count({
+    //    where: {
+    //        userId: userID,
+    //        lesson: {
+    //            chapter: {
+    //                courseId: courseID,
+    //                published: true
+    //            },
+    //            published: true,
+    //            type: {
+    //                not: LessonType.Subchapter
+    //            }
+    //        },
+    //        completed: true
+    //    }
+    //})
 }
 
 export const getCompletedLessonsByChapterID = async (chapterID:string, userID:string) => {
@@ -113,20 +113,20 @@ export const getProgress = async (
             })
             const publishedLessonsIDs = publishedLessons.map((lesson) => lesson.id)
 
-            const completedLessons = await prisma.userProgress.count({
-                where: {
-                    userId: userID,
-                    lessonId: {
-                        in: publishedLessonsIDs
-                    },
-                    completed: true
-                }
-            })
+            //const completedLessons = await prisma.userProgress.count({
+            //    where: {
+            //        userId: userID,
+            //        lessonId: {
+            //            in: publishedLessonsIDs
+            //        },
+            //        completed: true
+            //    }
+            //})
 
-            const progressPercentage = (completedLessons / publishedLessonsIDs.length) * 100;
+            //const progressPercentage = (completedLessons / publishedLessonsIDs.length) * 100;
 
-            return progressPercentage;
-
+            //return progressPercentage;
+            return 0;
         } catch (error) {
             return 0;
         }

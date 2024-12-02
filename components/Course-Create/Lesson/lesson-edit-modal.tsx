@@ -11,6 +11,8 @@ import PublishLessonButton from "./lesson-publish-button"
 import LessonTitleCard from "./lesson-title-card"
 import LessonSlugForm from "./lesson-slug-form"
 import LessonVideoCard from "./lesson-video-card"
+import LessonVideoImageForm from "./lesson-video-image-form"
+import LessonFreeForm from "./lesson-free-form"
 
 const LessonEditModal = ({
     chapter,
@@ -105,7 +107,12 @@ const LessonEditModal = ({
                                 lesson={lesson}
                                 onUpdate={onUpdate}
                             />
-                        </>
+                            <Divider/>
+                            <LessonFreeForm
+                                lesson={lesson}
+                                onUpdate={onUpdate}
+                            />
+                        </>                        
                     )}
                     {lesson.type === LessonType.Video && (
                         <>
@@ -113,6 +120,12 @@ const LessonEditModal = ({
                             <LessonVideoCard
                                 courseId={chapter.courseId}
                                 chapterId={chapter.id}
+                                lesson={lesson}
+                                onUpdate={onUpdate}
+                            />
+                            <Divider/>
+                            <LessonVideoImageForm
+                                chapter={chapter}
                                 lesson={lesson}
                                 onUpdate={onUpdate}
                             />

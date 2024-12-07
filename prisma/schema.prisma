@@ -1,6 +1,12 @@
+
+//datasource db {
+//  provider = "postgresql"
+//  url      = env("DATABASE_URL")
+//}
+
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL_PRODUCTION")
 }
 
 generator client {
@@ -173,8 +179,8 @@ model Lesson {
   type      LessonType
   order     Int
   content   String?     @db.Text
-  mediaURLs String[]
-  mediaDuration Int[]
+  mediaURLs Json
+  mediaDuration Json
   videoImageURL String?
 
   published Boolean     @default(false)

@@ -3,7 +3,7 @@
 import { getUserById } from "@/data/user"
 import { isTeacher } from "@/lib/permissions"
 import { prisma } from "@/lib/prisma"
-import { EditSlugSchema } from "@/schemas/course"
+import { EditCourseSlugSchema } from "@/schemas/course"
 import * as z from 'zod'
 import { getCourseById } from "./get"
 
@@ -83,8 +83,8 @@ export const getCourseBySlug = async (slug:string) => {
     })
 }
 
-export const updateCourseSlug = async (values: z.infer<typeof EditSlugSchema>, userID: string, courseID: string) => {
-    const validatedFields = EditSlugSchema.safeParse(values)
+export const updateCourseSlug = async (values: z.infer<typeof EditCourseSlugSchema>, userID: string, courseID: string) => {
+    const validatedFields = EditCourseSlugSchema.safeParse(values)
 
     if (!validatedFields.success){
         throw Error("Podano nieprawidłowe pola!")

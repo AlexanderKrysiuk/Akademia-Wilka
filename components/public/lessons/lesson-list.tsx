@@ -1,3 +1,4 @@
+{/*
 "use client"
 
 import { getPublishedLessonsByChapterID, getPublishedLessonsByCourseID } from "@/actions/course/lesson"
@@ -85,3 +86,4 @@ const LessonList = ({
 }
 
 export default LessonList
+*/}

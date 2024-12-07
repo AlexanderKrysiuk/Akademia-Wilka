@@ -2,7 +2,7 @@
 
 import { UpdateCourseSlug } from "@/actions/course-teacher/slug"
 import { useCurrentUser } from "@/hooks/user"
-import { SlugSchema } from "@/schemas/course"
+import { EditCourseSlugSchema } from "@/schemas/course"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, Card, CardBody, CardFooter, CardHeader, Input } from "@nextui-org/react"
 import { UserRole } from "@prisma/client"
@@ -12,7 +12,7 @@ import { SubmitHandler, useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 import { z } from "zod"
 
-type FormFields = z.infer<typeof SlugSchema>
+type FormFields = z.infer<typeof EditCourseSlugSchema>
 
 const SlugCard = ({
     courseId,
@@ -29,7 +29,7 @@ const SlugCard = ({
     const [edit, setEdit] = useState(false)
     const { register, handleSubmit, setError, watch, formState: { errors, isSubmitting }} = useForm<FormFields>({
         defaultValues: slug? {slug} : undefined,
-        resolver: zodResolver(SlugSchema)
+        resolver: zodResolver(EditCourseSlugSchema)
     })
 
     const onSubmit: SubmitHandler<FormFields> = async (data) => {

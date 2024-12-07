@@ -1,3 +1,4 @@
+{/*
 // pages/kurs/[CourseSlug].tsx
 "use client";
 
@@ -85,7 +86,7 @@ const CourseTitlePage = ({
               <CourseActionButton courseSlug={course.slug} courseId={course.id} />
             </CardContent>
           </Card>
-          {/* StripeEmbeddedCheckout nowy komponent */}
+          StripeEmbeddedCheckout nowy komponent
           <Card>
             <StripeEmbeddedCheckout courseId={course.id} />
           </Card>
@@ -96,3 +97,4 @@ const CourseTitlePage = ({
 };
 
 export default CourseTitlePage;
+*/}

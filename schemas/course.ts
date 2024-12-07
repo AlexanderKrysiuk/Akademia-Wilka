@@ -20,7 +20,7 @@ const slugTemplate = z.string()
   .max(100, { message: "Odnośnik nie może przekraczać 100 znaków" }); // maksymalna długość
 
 
-export const SlugSchema = z.object({
+export const EditCourseSlugSchema = z.object({
     slug: slugTemplate
 })
 

@@ -1,3 +1,4 @@
+{/*
 "use client"
 
 import { getLessonsCountByCourseID } from "@/actions/course/lesson";
@@ -73,7 +74,6 @@ const CourseUserProgress = ({
 export default CourseUserProgress;
 
 
-{/* 
 import { getLessonsCountByCourseID } from "@/actions/course/lesson";
 import { getCompletedLessonsCountByCourseID } from "@/actions/course/progress";
 import { findPurchase } from "@/actions/course/purchase";

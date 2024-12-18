@@ -7,7 +7,7 @@ import { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd";
 import { Card, CardBody, CardHeader } from "@nextui-org/card";
 import { Chapter, Lesson } from "@prisma/client";
 import { ChevronUp, Eye, EyeOff, Scroll } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import ChapterEditModal from "./chapter-edit-modal";
 import ChapterDeleteModal from "./chapter-delete-modal";
@@ -34,19 +34,21 @@ const ChapterCard = ({
     ]
     const completedFields = requiredFields.filter(Boolean).length
 
-    async function fetchLessons() {
-        const fetchedLessons = await GetLessonsByChapterId(chapter.id)
-        setLessons(fetchedLessons)
-    }
+    const fetchLessons = useCallback(async () => {
+        const fetchedLessons = await GetLessonsByChapterId(chapter.id);
+        setLessons(fetchedLessons);
+    }, [chapter.id]);
+    
 
-    useEffect(()=>{
+    useEffect(() => {
         if (completedFields < requiredFields.length && chapter.published) {
-            unpublishChapter(chapter.id)
-            toast.warning("Rozdział zmienił status na:szkic, uzupełnij wszystkie pola by go opublikować")
+            unpublishChapter(chapter.id);
+            toast.warning("Rozdział zmienił status na: szkic, uzupełnij wszystkie pola by go opublikować");
         }
-        fetchLessons()
-        setLoading(false)
-    },[chapter.id])
+        fetchLessons();
+        setLoading(false);
+    }, [chapter.id, chapter.published, completedFields, requiredFields.length, fetchLessons]);
+    
 
     if (loading) return <PageLoader/>
 

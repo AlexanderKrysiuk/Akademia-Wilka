@@ -6,7 +6,7 @@ import PageLoader from "@/components/page-loader"
 import { Button, Divider, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Progress, useDisclosure } from "@nextui-org/react"
 import { Chapter, Lesson } from "@prisma/client"
 import { Settings, SquarePen } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { toast } from "react-toastify"
 import ChapterDeleteModal from "./chapter-delete-modal"
 import PublishChapterButton from "./chapter-publish-button"
@@ -28,19 +28,20 @@ const ChapterEditModal = ({
     onLessonUpdate: () => void
 }) => {
     const [loading, setLoading] = useState(true)
-    const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
-    const completedFields = requiredFields.filter(Boolean).length;
+    // Memoize requiredFields to avoid unnecessary recalculations
+    const completedFields = useMemo(() => requiredFields.filter(Boolean).length, [requiredFields])
 
-    useEffect(()=>{
+    useEffect(() => {
         if (completedFields < requiredFields.length && chapter.published) {
             unpublishChapter(chapter.id)
             toast.warning("Rozdział zmienił status na:szkic, uzupełnij wszystkie pola by go opublikować")
         }
         setLoading(false)
-    },[chapter.id])
+    }, [chapter.id, chapter.published, completedFields, requiredFields.length])
 
-    if (loading) return <PageLoader/>
+    if (loading) return <PageLoader />
 
     return (
         <main>
@@ -60,17 +61,17 @@ const ChapterEditModal = ({
                 }}
             >
                 <ModalContent>
-                    {(onClose)=>(
+                    {(onClose) => (
                         <>
                             <ModalHeader className="flex justify-between mt-8">
                                 <div className="flex gap-2 items-center">
-                                    <Settings/>
+                                    <Settings />
                                     Rozdział: {chapter.title}
                                 </div>
                                 <div className="flex gap-2 items-center">
                                     <ChapterDeleteModal
                                         chapter={chapter}
-                                        onUpdate={()=>{
+                                        onUpdate={() => {
                                             onUpdate()
                                             onClose()
                                         }}
@@ -87,49 +88,36 @@ const ChapterEditModal = ({
                             <ModalHeader>
                                 <Progress
                                     label={`(${completedFields}/${requiredFields.length})`}
-                                    value={completedFields / requiredFields.length * 100}
+                                    value={(completedFields / requiredFields.length) * 100}
                                     showValueLabel={true}
-                                    color={completedFields / requiredFields.length === 1 ? "success" : "warning" }
-                                    />
+                                    color={completedFields / requiredFields.length === 1 ? "success" : "warning"}
+                                />
                             </ModalHeader>
-                            <Divider/>
+                            <Divider />
                             <ModalBody>
                                 <ChapterTitleForm
                                     chapterId={chapter.id}
                                     title={chapter.title}
                                     onUpdate={onUpdate}
                                 />
-                            
-                            <Divider/>
-                            
+
+                                <Divider />
+
                                 <ChapterSlugForm
                                     courseId={chapter.courseId}
                                     chapterId={chapter.id}
                                     slug={chapter.slug}
                                     onUpdate={onUpdate}
                                 />
-                        
-                            {/*
-                            <Divider/>
-                            <ModalHeader>
-                                Lekcje rozdziału
-                            </ModalHeader>
-                            
-                            <ModalBody>
-                                <LessonsList
-                                    chapter={chapter}
-                                    onUpdate={fetchLessons}
-                                />
-                            </ModalBody>
-                    */}
-                            <Divider/>
+
+                                <Divider />
                                 <LessonsList
                                     chapter={chapter}
                                     lessons={lessons}
                                     onUpdate={onUpdate}
                                 />
-                                    </ModalBody>
-                            <Divider/>
+                            </ModalBody>
+                            <Divider />
                             <ModalFooter>
                                 <Button
                                     color="primary"

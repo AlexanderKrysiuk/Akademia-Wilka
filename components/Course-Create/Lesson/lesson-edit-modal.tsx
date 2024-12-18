@@ -28,13 +28,13 @@ const LessonEditModal = ({
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
     const completedFields = requiredFields.filter(Boolean).length
 
-    useEffect(()=>{
+    useEffect(() => {
         if (completedFields < requiredFields.length && lesson.published) {
             unpublishLesson(lesson.id)
-            toast.warning("Rozdział zmienił status na:szkic, uzupełnij wszystkie pola by go opublikować")
+            toast.warning("Rozdział zmienił status na: szkic, uzupełnij wszystkie pola, by go opublikować")
         }
-        
-    },[lesson.published])
+    }, [completedFields, requiredFields.length, lesson.published, lesson.id])
+    
 
     return (
         <main>

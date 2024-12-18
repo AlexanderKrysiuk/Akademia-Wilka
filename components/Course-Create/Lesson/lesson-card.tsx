@@ -1,5 +1,3 @@
-"use client"
-
 import { unpublishLesson } from "@/actions/lesson-teacher/lesson"
 import { DraggableProvidedDragHandleProps } from "@hello-pangea/dnd"
 import { Card, CardHeader } from "@nextui-org/react"
@@ -21,20 +19,20 @@ const LessonCard = ({
     dragHandleProps: DraggableProvidedDragHandleProps | null
     onUpdate: () => void
 }) => {
+    // Check if mediaURLs is an array before checking its length
     const requiredFields = [
         lesson.title,
-        ...(lesson.type !== LessonType.Subchapter ? [lesson.slug] : []), // Dodaj slug tylko dla innych typów
-        ...(lesson.type === LessonType.Video && lesson.mediaURLs.length === 0 ? [false] : []) // Dodaj `false` dla braku URL w wideo
+        ...(lesson.type !== LessonType.Subchapter ? [lesson.slug] : []), // Add slug for other types
+        ...(lesson.type === LessonType.Video && Array.isArray(lesson.mediaURLs) && lesson.mediaURLs.length === 0 ? [false] : []) // Check if it's an array
     ]
     const completedFields = requiredFields.filter(Boolean).length
 
-    useEffect(()=>{
+    useEffect(() => {
         if (completedFields < requiredFields.length && lesson.published) {
             unpublishLesson(lesson.id)
-            toast.warning("Leckja zmieniła status na:szkic, uzupełnij wszystkie pola by go opublikować")
+            toast.warning("Lekcja zmieniła status na szkic, uzupełnij wszystkie pola, aby ją opublikować.")
         }
-        
-    },[lesson.id])
+    }, [completedFields, requiredFields.length, lesson.published, lesson.id]) // Added dependencies
 
     return (
         <Card>

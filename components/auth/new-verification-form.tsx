@@ -2,9 +2,9 @@
 
 import { checkVerificationToken, setFirstPassword } from "@/actions/auth/new-verification";
 import { useSearchParams } from "next/navigation";
-import { startTransition, useEffect, useState } from "react";
+import { startTransition, useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { CheckCircle, Eye, EyeOff, Loader, Loader2, LucideLoader2, ShieldEllipsis, TriangleAlert } from "lucide-react";
+import { CheckCircle, Eye, EyeOff, Loader2, TriangleAlert } from "lucide-react";
 import { Button, Input } from "@nextui-org/react";
 import { NewPasswordSchema } from "@/schemas/user";
 import { z } from 'zod'
@@ -29,7 +29,6 @@ const NewVerificationForm = () => {
     }
 
     const onSubmit: SubmitHandler<FormFields> = async (data) => {
-        //await new Promise ((resolve)=> setTimeout(resolve, 5000))
         startTransition(async()=>{
             setFirstPassword(data, token)
             .then(()=>{
@@ -43,7 +42,7 @@ const NewVerificationForm = () => {
         })
     }
 
-    const verifyToken = async () => {
+    const verifyToken = useCallback(async () => {
         try {
             const email = await checkVerificationToken(token)
             setEmail(email)
@@ -57,11 +56,11 @@ const NewVerificationForm = () => {
                 setResult({success: false, message: "Wystąpił nieznany błąd" })
             }
         }
-    }
-    
+    }, [token]);
+
     useEffect(()=>{
         verifyToken()
-    },[token])
+    },[verifyToken])
     
     return ( 
         !result ? (
@@ -143,51 +142,3 @@ const NewVerificationForm = () => {
 }
  
 export default NewVerificationForm;
-
-
-{/* 
-"use client"
-import { useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
-import RenderResultMessage from "@/components/render-result-message";
-import { BeatLoader } from "react-spinners"
-import { NewVerification } from "@/actions/auth/new-verification";
-
-const NewVerificationForm = () => {
-    const [result, setResult] = useState<{ success: boolean, message: string} | null>(null)
-    
-    const searchParams = useSearchParams();
-    const token = searchParams.get("token");
-
-    const onSubmit = useCallback(() => {
-        if (result) return;
-        if(!token) {
-            setResult({ success: false, message: "Nie znaleziono tokenu!" })
-            return
-        };
-        NewVerification(token)
-        .then((data) => {
-            setResult({ success: data.success, message: data.message })
-        })
-    }, [token, result])
-    
-    useEffect(()=> {
-        onSubmit();
-    }, [onSubmit])
-    
-    return ( 
-        <div className="flex items-center justify-center">
-            <div>
-            {!result ? (
-                    <BeatLoader/>
-                ) : (
-                    RenderResultMessage(result)
-                )}
-            </div>
-        </div>
-    );
-}
-
- 
-export default NewVerificationForm;
-*/}

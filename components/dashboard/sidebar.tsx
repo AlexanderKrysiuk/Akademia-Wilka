@@ -1,10 +1,13 @@
-import SidebarRoutes from "./sidebar-routes";
+"use client"
+
+import { Listbox, ListboxItem } from "@nextui-org/react";
+
+import { userItems } from "@/components/Dashboard/menu";
 
 const SideBar = () => {
     return ( 
-            <div className="shadow-sm w-full h-full min-h-[90vh]">
-                <SidebarRoutes/> 
-            </div>
+        "Hello World"
+        
      );
 }
  

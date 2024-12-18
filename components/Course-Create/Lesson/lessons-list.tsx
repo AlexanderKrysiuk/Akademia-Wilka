@@ -27,7 +27,7 @@ const LessonsList = ({
 
     useEffect(()=>{
         setLessons(initialLessons)
-    },[initialLessons])
+    }, [initialLessons]) // Dodano `initialLessons` do zależności
 
     const onDragEnd = (result: DropResult) => {
         if(!result.destination) return
@@ -42,7 +42,6 @@ const LessonsList = ({
         const updatedLessons = items.slice(startIndex, endIndex + 1);
 
         setLessons(items)
-        //lessons = items
 
         const bulkUpdateData = updatedLessons.map((lesson)=>({
             id: lesson.id,
@@ -76,19 +75,6 @@ const LessonsList = ({
                                                     {...provided.draggableProps}
                                                     style={provided.draggableProps.style as React.CSSProperties}
                                                     className="mb-1"
-                                                    /*
-                                                    style={{
-                                                        ...provided.draggableProps.style,
-                                                        transform: snapshot.isDragging
-                                                          ? provided.draggableProps.style?.transform
-                                                          : "translate(0, 0)", // Zapewnia brak przesunięć
-                                                        transition: snapshot.isDragging
-                                                          ? "none" // Usunięcie animacji podczas przeciągania
-                                                          : provided.draggableProps.style?.transition,
-                                                        zIndex: snapshot.isDragging ? 1000 : "auto", // Przeciągany element na wierzchu
-                                                        userSelect: "none", // Zapobiega zaznaczaniu tekstu
-                                                      }}
-                                                      */
                                                 >
                                                     <LessonCard
                                                         chapter={chapter}
@@ -96,34 +82,6 @@ const LessonsList = ({
                                                         dragHandleProps={provided.dragHandleProps}
                                                         onUpdate={onUpdate}
                                                     />
-                                                    {/*
-                                                    <Card>
-                                                        <CardHeader className="gap-x-[1vw]">
-                                                            <div {...provided.dragHandleProps} className="hover:text-primary transition duration-300">
-                                                                <Scroll/>
-                                                            </div>
-                                                            <div className="truncate w-full">
-                                                                {lesson.title}
-                                                            </div>
-                                                            <div>
-                                                                {lesson.published ? (
-                                                                    <Eye/>
-                                                                ) : (
-                                                                    <EyeOff/>
-                                                                )}
-                                                            </div>
-                                                            <Link href={`./${chapter.id}/${lesson.id}`} className="flex items-center hover:text-primary transition duration:300">
-                                                                <SquarePen/>
-                                                            </Link>
-                                                            <DeleteLessonModal
-                                                                courseId={chapter.courseId}
-                                                                chapterId={chapter.id}
-                                                                lesson={lesson}
-                                                                onUpdate={onUpdate}
-                                                            />
-                                                        </CardHeader>
-                                                    </Card>
-                                                            */}
                                                 </div>
                                             )}
                                         </Draggable>

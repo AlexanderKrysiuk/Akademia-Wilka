@@ -19,31 +19,31 @@ const CreateCourseModal = () => {
     const user = useCurrentUser()
     const router = useRouter()
 
-    if (!user || !user.role.includes(UserRole.Teacher || UserRole.Admin)) return null
-
+    // Always call the hooks, even if the user is unauthorized
     const { isOpen, onOpen, onOpenChange } = useDisclosure()
     const { register, handleSubmit, setError, formState: { errors, isSubmitting }} = useForm<FormFields>({ resolver: zodResolver(CreateCourseSchema)})
 
+    if (!user || !user.role.includes(UserRole.Teacher || UserRole.Admin)) return null
+
     const onSubmit: SubmitHandler<FormFields> = async (data) => {
         startTransition(async ()=>{
-            CreateCourse(data,user.id)
-                .then((courseId)=>{
+            CreateCourse(data, user.id)
+                .then((courseId) => {
                     toast.success("Kurs został utworzony!")
                     onOpenChange()
-                    router.push(`/teacher/my-courses/${courseId}`); 
-
+                    router.push(`/teacher/my-courses/${courseId}`);
                 })
-                .catch((error)=>{
-                    setError("title" , {message: error.message})
+                .catch((error) => {
+                    setError("title", { message: error.message })
                     toast.error(error.message)
                 })
         })
     }
 
-    return ( 
+    return (
         <main>
             <Button color='primary' onPress={onOpen}>
-                <SquarePlus/>
+                <SquarePlus />
                 Utwórz nowy kurs
             </Button>
             <Modal 
@@ -82,7 +82,7 @@ const CreateCourseModal = () => {
                                     <Button type="submit" color="primary" disabled={isSubmitting} isLoading={isSubmitting}>
                                         {isSubmitting ? "Dodawanie..." : "Utwórz"}
                                     </Button>
-                            </ModalFooter>                        
+                                </ModalFooter>                        
                             </form>
                         </>
                     )}
@@ -91,5 +91,5 @@ const CreateCourseModal = () => {
         </main>
     );
 }
- 
+
 export default CreateCourseModal;

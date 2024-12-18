@@ -6,9 +6,7 @@ import Image from 'next/image'
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem} from "@nextui-org/react";
 import { useState } from 'react';
 import { usePathname } from 'next/navigation'; // Importujemy hook do pobierania aktualnej ścieżki
-import DashboardMenu from '../dashboard/menu';
 import { useCurrentUser } from '@/hooks/user';
-import { userItems } from '../dashboard/menu';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)

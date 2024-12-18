@@ -31,19 +31,19 @@ export default async function RootLayout({
   return (
     <SessionProvider session={session}>
       <html lang="en">
-        <body className={`${inter.className} h-full`}>
-          <main className="h-full">
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="dark"
-              enableSystem
-              disableTransitionOnChange
-              >
-              <Header/>
+        <body>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Header/>
+            <main className="h-full">
               {children}
               <Toaster/>
-            </ThemeProvider>
-          </main>
+            </main>
+          </ThemeProvider>
         </body>
       </html>
     </SessionProvider>

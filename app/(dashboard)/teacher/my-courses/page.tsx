@@ -1,7 +1,7 @@
 "use client";
 import { ImageIcon } from 'lucide-react';
 import { useCurrentUser,  } from '@/hooks/user';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Course, UserRole } from '@prisma/client';
 import Image from "next/image";
 import Link from 'next/link';
@@ -15,21 +15,22 @@ const MyCourses = () => {
     const [courses, setCourses] = useState<Course[]>([])
     const [loading, setLoading] = useState(true)
 
-    async function fetchMyCreatedCourses() {
+    const fetchMyCreatedCourses = useCallback(async () => {
         try {
-            if (!user || !user.role.includes(UserRole.Teacher || UserRole.Admin)) return
-            const fetchedCourses = await GetMyCreatedCourses(user.id)
-            setCourses(fetchedCourses)
+            if (!user || !user.role.includes(UserRole.Teacher || UserRole.Admin)) return;
+            const fetchedCourses = await GetMyCreatedCourses(user.id);
+            setCourses(fetchedCourses);
         } catch (error) {
-            console.log(error)
+            console.log(error);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    }, [user]);
+    
 
     useEffect(()=>{
         fetchMyCreatedCourses()
-    },[user])
+    },[user, fetchMyCreatedCourses])
 
     if (loading) {
         return <PageLoader/>
@@ -39,48 +40,42 @@ const MyCourses = () => {
         <main className='space-y-[4vh]'>
             <CreateCourseModal/>
             
-            {courses.length>0 && (
-                courses.map((course) => (
-                    <Card className='w-full'>
-                        <div className='flex'>
+            {courses.length > 0 && (
+    courses.map((course) => (
+        <Card key={course.id} className='w-full'>
+            <div className='flex'>
+                <div className='w-1/3 h-auto'>
+                    {course.imageUrl ? (
+                        <Image
+                            width={1600}
+                            height={900}
+                            className='aspect-video'
+                            alt={course.title}
+                            src={course.imageUrl}
+                        />
+                    ) : (
+                        <div className='aspect-video flex items-center justify-center bg-primary/10 rounded-t-lg lg:rounded-t-none lg:rounded-l-lg'>
+                            <ImageIcon className='h-10 w-10'/>
+                        </div>
+                    )}
+                </div>
+                <div className='w-2/3'>
+                    <CardHeader>
+                        <h4>{course.title}</h4>
+                    </CardHeader>
+                    <CardFooter>
+                        <Link href={`/teacher/my-courses/${course.id}`}>
+                            <Button color="primary">
+                                Edytuj
+                            </Button>
+                        </Link>
+                    </CardFooter>
+                </div>
+            </div>
+        </Card>
+    ))
+)}
 
-                        
-                        <div className='w-1/3 h-auto'>
-                            {course.imageUrl ? (
-                                <Image
-                                    width={1600}
-                                    height={900}
-                                    className='aspect-video'
-                                    alt={course.title}
-                                    src={course.imageUrl}
-                                />
-                            ) : (
-                                <div className='aspect-video flex items-center justify-center bg-primary/10 rounded-t-lg lg:rounded-t-none lg:rounded-l-lg'>
-                                    <ImageIcon className='h-10 w-10'/>
-                                </div>
-                            )}
-                        </div>
-                        <div className='w-2/3'>
-                                <CardHeader>
-                                    <h4>{course.title}</h4>
-                                </CardHeader>
-                            {/*
-                                <CardBody>
-                                </CardBody>
-                            */}
-                                <CardFooter>
-                                    <Link href={`/teacher/my-courses/${course.id}`}>
-                                        <Button color="primary">
-                                            Edytuj
-                                        </Button>
-                                    </Link>
-                                </CardFooter>
-                        </div>
-                        </div>
-                    </Card>
-                ))
-                
-            )}
             
             
             {/*{JSON.stringify(user,null,2)}

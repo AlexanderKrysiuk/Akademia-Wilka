@@ -1,20 +1,8 @@
 "use client"
-import { getCourseById } from "@/actions/course/get";
 import { useCurrentUser } from "@/hooks/user";
 import { Course, Chapter, Category, UserRole, Level } from "@prisma/client";
-import { useRouter } from "next/navigation";
-import { startTransition, useEffect, useState, useTransition } from "react";
+import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
 import { Settings } from 'lucide-react';
-import TitleForm from "@/components/dashboard/teacher/courses/title-form";
-import DescriptionForm from "@/components/dashboard/teacher/courses/description-form";
-import CategoryForm from "@/components/dashboard/teacher/courses/category-form";
-import LevelForm from "@/components/dashboard/teacher/courses/level-form";
-import PriceForm from "@/components/dashboard/teacher/courses/price-form";
-import ChapterForm from "@/components/dashboard/teacher/courses/chapter-form";
-import ImageForm from "@/components/dashboard/teacher/courses/image-form"
-import AttachmentForm from "@/components/dashboard/teacher/courses/attachment-form";
-import { motion } from "framer-motion";
-import { CourseSlugForm } from "@/components/dashboard/teacher/courses/course-slug-form";
 import { GetMyCreatedCourse, unpublishCourse } from "@/actions/course-teacher/course";
 import PageLoader from "@/components/page-loader";
 import { Button, Card, CardBody, CardFooter, CardHeader, Progress } from "@nextui-org/react";
@@ -31,65 +19,68 @@ import PriceCard from "@/components/Course-Create/Course/price-card";
 import { GetChaptersByCourseId } from "@/actions/chapter-teacher/chapter";
 import ChapterList from "@/components/Course-Create/Chapter/chapter-list";
 
+
 const CourseIdPage = ({
     params
 }: {
     params: { courseId: string }
 }) => {
-    const user = useCurrentUser()        
-    const [course, setCourse] = useState<Course>()
-    const [categories, setCategores] = useState<Category[]>([])
-    const [levels, setLevels] = useState<Level[]>([])
-    const [chapters, setChapters] = useState<Chapter[]>([])
-    const [loading, setLoading] = useState(true)
-    const [courseCreationProgress, setCourseCreationProgress] = useState(0)
-    const [pending, startTransition] = useTransition()
+    const user = useCurrentUser();        
+    const [course, setCourse] = useState<Course>();
+    const [categories, setCategores] = useState<Category[]>([]);
+    const [levels, setLevels] = useState<Level[]>([]);
+    const [chapters, setChapters] = useState<Chapter[]>([]);
+    const [loading, setLoading] = useState(true);
     
-    const requiredFields = course ? [
-        course.title,
-        course.slug,
-        course.imageUrl,
-        course.categoryId,
-        course.levelId,
-        chapters.some(chapter => chapter.published)
-    ] : []
+    const requiredFields = useMemo(() => (
+        course ? [
+            course.title,
+            course.slug,
+            course.imageUrl,
+            course.categoryId,
+            course.levelId,
+            chapters.some(chapter => chapter.published)
+        ] : []
+    ), [course, chapters]);
     const completedFields = requiredFields.filter(Boolean).length;
 
-    async function fetchMyCreatedCourse() {
-            if (!user) return
-            const fetchedCourse = await GetMyCreatedCourse(user.id, params.courseId)
-            
-            if (fetchedCourse.ownerId !== user.id && !user.role.includes(UserRole.Admin)) return
+    const fetchMyCreatedCourse = useCallback(async () => {
+        if (!user) return;
+        const fetchedCourse = await GetMyCreatedCourse(user.id, params.courseId);
+        
+        if (fetchedCourse.ownerId !== user.id && !user.role.includes(UserRole.Admin)) return;
 
-            if (completedFields < requiredFields.length && fetchedCourse.published) {
-                await unpublishCourse(fetchedCourse.id)
-                toast.warning("Kurs zmienił status na:szkic, uzupełnij wszystkie pola by go opublikować")
-            }            
-            setCourse(fetchedCourse)
-    }
+        if (completedFields < requiredFields.length && fetchedCourse.published) {
+            await unpublishCourse(fetchedCourse.id);
+            toast.warning("Kurs zmienił status na:szkic, uzupełnij wszystkie pola by go opublikować");
+        }            
+        setCourse(fetchedCourse);
+    }, [user, params.courseId, completedFields, requiredFields]);
 
-    async function fetchCategories() {
-        const fetchedCategories = await GetCategories()
-        setCategores(fetchedCategories)
-    }
+    const fetchCategories = useCallback(async () => {
+        const fetchedCategories = await GetCategories();
+        setCategores(fetchedCategories);
+    }, []);
 
-    async function fetchLevels() {
-        const fetchedLevels = await GetLevels()
-        setLevels(fetchedLevels)
-    }
+    const fetchLevels = useCallback(async () => {
+        const fetchedLevels = await GetLevels();
+        setLevels(fetchedLevels);
+    }, []);
 
-    async function fetchChapters() {
-        const fetchedChapters = await GetChaptersByCourseId(params.courseId)
-        setChapters(fetchedChapters)
-    }
+    const fetchChapters = useCallback(async () => {
+        const fetchedChapters = await GetChaptersByCourseId(params.courseId);
+        setChapters(fetchedChapters);
+    }, [params.courseId]);
 
-    useEffect(()=>{
-        fetchMyCreatedCourse()
-        fetchCategories()
-        fetchLevels()
-        fetchChapters()
-        setLoading(false)
-    },[user, params])
+    useEffect(() => {
+        const loadData = async () => {
+            await Promise.all([fetchMyCreatedCourse(), fetchCategories(), fetchLevels(), fetchChapters()]);
+            setLoading(false);
+        };
+
+        loadData();
+    }, [user, params, fetchMyCreatedCourse, fetchCategories, fetchLevels, fetchChapters]);
+
 
     if (loading) {
         return <PageLoader/>

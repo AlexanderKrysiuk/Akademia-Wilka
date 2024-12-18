@@ -1,26 +1,26 @@
 "use client"
 
-import { checkPasswordResetToken, setAnotherPassword } from "@/actions/auth/new-password";
-import { NewPasswordSchema } from "@/schemas/user";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Input } from "@nextui-org/react";
-import { CheckCircle, Eye, EyeOff, Loader2, TriangleAlert } from "lucide-react";
-import Link from "next/link";
+import { checkVerificationToken, setFirstPassword } from "@/actions/auth/new-verification";
 import { useSearchParams } from "next/navigation";
-import { startTransition, useEffect, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { startTransition, useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { z } from "zod";
+import { CheckCircle, Eye, EyeOff, Loader2, TriangleAlert } from "lucide-react";
+import { Button, Input } from "@nextui-org/react";
+import { NewPasswordSchema } from "@/schemas/user";
+import { z } from 'zod'
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SubmitHandler, useForm } from "react-hook-form";
+import Link from "next/link";
 
-type FormFields = z.infer<typeof NewPasswordSchema>
+type FormFields = z.infer<typeof NewPasswordSchema>;
 
-const NewPasswordForm = () => {
+const NewVerificationForm = () => {
     const searchParams = useSearchParams()
     const token = searchParams.get("token")
-    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormFields>({ resolver: zodResolver(NewPasswordSchema) })
+    const { register, handleSubmit, setError, setValue, formState: { errors, isSubmitting } } = useForm<FormFields>({ resolver: zodResolver(NewPasswordSchema)})
     const [result, setResult] = useState<{success: boolean, message: string} | null>()
     const [passwordVisible, setPasswordVisible] = useState(false)
-    const [resetPasswordCompleted, setResetPasswordCompleted] = useState(false)
+    const [verificationCompleted, setVerificationCompleted] = useState(false)
     const [email, setEmail] = useState<string>()
 
     if (!token) {
@@ -30,25 +30,25 @@ const NewPasswordForm = () => {
 
     const onSubmit: SubmitHandler<FormFields> = async (data) => {
         startTransition(async()=>{
-            setAnotherPassword(data, token)
+            setFirstPassword(data, token)
             .then(()=>{
                 toast.success("Nadano nowe hasło!")
-                setResult({success: true, message: "Zmiana hasła przebiegła pomyślnie"})
-                setResetPasswordCompleted(true)
+                setResult({success: true, message: "Weryfikacja przebiegła pomyślnie"})
+                setVerificationCompleted(true)
             })
             .catch((error)=>{
-                setResult({ success: false, message: error.message})
+                setResult({ success:false, message: error.message})
             })
         })
     }
 
-    const verifyToken = async () => {
+    const verifyToken = useCallback(async () => {
         try {
-            const email = await checkPasswordResetToken(token)
+            const email = await checkVerificationToken(token)
             setEmail(email)
             setResult({success: true, message: "Weryfikacja przeszła pomyślnie!, możesz ustawić nowe hasło!"})
         } catch(error) {
-            if (error instanceof Error) {
+            if (error instanceof Error){
                 toast.error(error.message)
                 setResult({success: false, message: error.message})
             } else {
@@ -56,19 +56,19 @@ const NewPasswordForm = () => {
                 setResult({success: false, message: "Wystąpił nieznany błąd" })
             }
         }
-    }
+    }, [token]);
 
     useEffect(()=>{
         verifyToken()
-    },[token])
-
-    return (
+    },[verifyToken])
+    
+    return ( 
         !result ? (
             <div className="w-full flex flex-col items-center justify-center">
                 <Loader2 className="animate-spin text-primary"/>
                 Weryfikacja tokenu...
             </div>
-        ) : result.success ? (
+        ): result.success ? (
             <form onSubmit={handleSubmit(onSubmit)}>
                 <Input
                     label="E-mail"
@@ -76,8 +76,8 @@ const NewPasswordForm = () => {
                     isRequired
                     value={email}
                     variant="bordered"
-                    isDisabled
-                    autoComplete="emaik"
+                    isDisabled // E-mail jest tylko do odczytu
+                    autoComplete="email"
                     className="max-w-xs mb-10"
                 />
                 <Input
@@ -90,7 +90,7 @@ const NewPasswordForm = () => {
                             {passwordVisible ? <Eye/> : <EyeOff/>}
                         </Button>
                     }
-                    type={passwordVisible ? "text" : "password"}
+                    type={passwordVisible ? "text" : "password" }
                     isRequired
                     variant="bordered"
                     isInvalid={errors.password ? true : false}
@@ -116,98 +116,29 @@ const NewPasswordForm = () => {
                     autoComplete="new-password"
                     className="max-w-xs mb-4"
                 />
-                {resetPasswordCompleted &&
+                {verificationCompleted && 
                     <div className="text-primary w-full flex items-center text-sm gap-2 justify-center mb-4">
                         <CheckCircle/>
                         {result.message}
                     </div>
-                }
-                <Button type={resetPasswordCompleted ? "button" : "submit"} color="primary" fullWidth disabled={isSubmitting || resetPasswordCompleted} isLoading={isSubmitting}>
-                    {resetPasswordCompleted ? (
+                } 
+                <Button type={verificationCompleted ? "button" : "submit"} color="primary" fullWidth disabled={isSubmitting} isLoading={isSubmitting} className="space-y-0">
+                    {verificationCompleted ? (
                         <Link href="/api/start">
                             Przejdź do logowania
                         </Link>
-                    ) : (
-                        isSubmitting ? "Przetwarzanie..." : "Ustaw nowe hasło"
+                    ): (
+                        isSubmitting ? "Przetwarzanie..." : "Ustaw hasło" 
                     )}
                 </Button>
             </form>
         ) : (
             <div className="text-red-500 w-full flex items-center text-sm gap-2 justify-center mb-4">
-            <TriangleAlert/>
+                <TriangleAlert/>
                 {result.message}
             </div>
-        )
-    )
+        ) 
+    );
 }
-export default NewPasswordForm;
-
-{/* 
-import { NewPasswordSchema } from "@/schemas/user";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import * as z from 'zod'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import RenderResultMessage from "../render-result-message";
-import { useSearchParams } from "next/navigation";
-import { newPassword } from "@/actions/auth/new-password";
-
-
-const NewPasswordForm = () => {
-    const searchParams = useSearchParams()
-    const token = searchParams.get("token")
-    
-    const [result, setResult] = useState<{ success: boolean, message: string} | null>(null)
-    const [isPending, startTransition] = useTransition()
-    
-    const form = useForm<z.infer<typeof NewPasswordSchema>>({
-        resolver: zodResolver(NewPasswordSchema)
-    })
-
-    const onSubmit = (values: z.infer<typeof NewPasswordSchema>) => {
-        setResult(null)
-        startTransition(()=> {
-            newPassword(values, token)
-            .then((data) => {
-                setResult({ success: data.success, message: data.message })
-            })
-        })
-    }
-    
-    return ( 
-        <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-[1vh]">
-        <FormField
-        control={form.control}
-        name="password"
-        render={({ field }) => (
-            <FormItem>
-            <FormLabel>Nowe hasło</FormLabel>
-            <FormControl>
-            <Input
-            {...field}
-            disabled={isPending}
-            placeholder="********"
-            type="password"
-            />
-            </FormControl>
-            <FormMessage/>
-            </FormItem>
-        )}
-        />
-        <div className="flex justify-center space-y-[1vh]">
-        <Button type="submit" disabled={isPending}>
-        Zmień hasło
-        </Button>
-        </div>
-                {RenderResultMessage(result)}
-                </form>
-                </Form>
-            );
-        }
-        
-        export default NewPasswordForm;
-    */}
+ 
+export default NewVerificationForm;

@@ -31,7 +31,7 @@ export default async function RootLayout({
   return (
     <SessionProvider session={session}>
       <html lang="en">
-        <body>
+        <body className="max-h-full">
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"
@@ -39,7 +39,7 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <Header/>
-            <main className="h-full">
+            <main className="max-h-full">
               {children}
               <Toaster/>
             </main>

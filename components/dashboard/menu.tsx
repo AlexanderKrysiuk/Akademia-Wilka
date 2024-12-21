@@ -16,7 +16,7 @@ export const teacherItems = [
     {
         key: 'my-courses',
         label: 'Moje kursy',
-        href: '/my-courses',
+        href: '/teacher/my-courses',
         icon: Rocket
     },
 ];

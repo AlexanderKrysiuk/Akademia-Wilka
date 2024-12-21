@@ -9,6 +9,7 @@ import { GetMyCreatedCourses } from '@/actions/course-teacher/course';
 import PageLoader from '@/components/page-loader';
 import { Button, Card, CardBody, CardFooter, CardHeader, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react';
 import CreateCourseModal from '@/components/Course-Create/Course/create-course-modal';
+import { prisma } from "@/lib/prisma"
 
 const MyCourses = () => {    
     const user = useCurrentUser()
@@ -37,104 +38,44 @@ const MyCourses = () => {
     }
 
     return ( 
-        <main className='space-y-[4vh]'>
+        <main className='space-y-4 grid grid-d w-full'>
             <CreateCourseModal/>
-            
-            {courses.length > 0 && (
-    courses.map((course) => (
-        <Card key={course.id} className='w-full'>
-            <div className='flex'>
-                <div className='w-1/3 h-auto'>
-                    {course.imageUrl ? (
-                        <Image
-                            width={1600}
-                            height={900}
-                            className='aspect-video'
-                            alt={course.title}
-                            src={course.imageUrl}
-                        />
-                    ) : (
-                        <div className='aspect-video flex items-center justify-center bg-primary/10 rounded-t-lg lg:rounded-t-none lg:rounded-l-lg'>
-                            <ImageIcon className='h-10 w-10'/>
-                        </div>
-                    )}
-                </div>
-                <div className='w-2/3'>
-                    <CardHeader>
-                        <h4>{course.title}</h4>
-                    </CardHeader>
-                    <CardFooter>
-                        <Link href={`/teacher/my-courses/${course.id}`}>
-                            <Button color="primary">
-                                Edytuj
-                            </Button>
-                        </Link>
-                    </CardFooter>
-                </div>
-            </div>
-        </Card>
-    ))
-)}
-
-            
-            
-            {/*{JSON.stringify(user,null,2)}
-            {JSON.stringify(courses,null,2)}*/}
-        {/* 
-            <div className='space-y-[1vh]'>
-            {courses.length>0 ? (
-                courses.map((course) => (
-                    <Card>
-                        <div className='grid grid-cols-3'>
-                            <div className='relative aspect-video object-cover rounded-l-lg'>
-                                {course.imageUrl ? (
-                                    <div className='relative aspect-video'>
-                                        <Image
-                                            fill
-                                            className='object-cover rounded-lg'
-                                            alt={course.title}
-                                            src={course.imageUrl}
-                                        />
-                                    </div>
-                                ):(
-                                    <div className='h-full flex items-center justify-center bg-primary/10 rounded-l-lg'>
-                                        <ImageIcon className='h-[5vh] w-[5vh]'/>
-                                    </div>
-                                )}
-                            </div>
-                            <div className='col-span-2'>
-                                <CardHeader>
-                                    <CardTitle>
-                                        {course.title}
-                                    </CardTitle>
-                                </CardHeader>
-
-                                <Separator/>
-                                
-                                <CardFooter className='py-[1vh]'>
+            {courses.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xxl:grid-cols-5 gap-4">
+                    {courses.map((course)=>(
+                        <Card key={course.id}>
+                            {course.imageUrl ? (
+                                <Image
+                                    width={1600}
+                                    height={900}
+                                    className='aspect-video'
+                                    alt={course.title}
+                                    src={course.imageUrl}
+                                />
+                            ) : (
+                                <div className='aspect-video flex items-center justify-center bg-primary/10 rounded-b-none'>
+                                    <ImageIcon className='h-10 w-10'/>
+                                </div>
+                            )}
+                            <CardHeader>
+                                {course.title}
+                            </CardHeader>
+                            <CardFooter>
                                 <Link href={`/teacher/my-courses/${course.id}`}>
-                                    <Button className='gap-x-[1vw]'>
-                                        <SquarePen/> Edytuj
+                                    <Button color="primary">
+                                        Edytuj
                                     </Button>
                                 </Link>
-                                </CardFooter>
-                            </div>
-                        </div>
-                    </Card>
-                ))
-            ):(
-                <div>
-                    Brak kursów
+                            </CardFooter>
+                        </Card>
+                    ))}
+                </div>
+            ) : (
+                <div className='w-full justify-center flex'>
+                    Brak kursów do wyświetlenia
                 </div>
             )}
-            </div>
-            <Button className='flex gap-x-[1vw]' onClick={() => router.push("/teacher/my-courses/create")}>
-                <SquarePlus/>
-                Stwórz nowy kurs
-            </Button>
-        */}
         </main>
-
     );
 }
  

@@ -77,7 +77,7 @@ const CourseIdPage = ({
 
     useEffect(()=>{
         fetchCourseData()
-    }, [user, params.courseId])
+    }, [fetchCourseData])
 
     {/*
     const fetchMyCreatedCourse = useCallback(async () => {

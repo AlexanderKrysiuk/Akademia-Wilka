@@ -1,3 +1,4 @@
+{/*
 "use client"
 
 import { getPublishedChaptersByCourseID } from "@/actions/course/chapter"
@@ -7,7 +8,7 @@ import { Chapter } from "@prisma/client"
 import { motion } from "framer-motion"
 import { ChevronDown, ChevronUp, Loader2 } from "lucide-react"
 import { useEffect, useState } from "react"
-import LessonList from "../lessons/lesson-list"
+//import LessonList from "../lessons/lesson-list"
 
 interface ChapterListProps {
     course: {
@@ -32,7 +33,7 @@ const ChapterList = ({
 
     useEffect(()=> {
         fetchChapters();
-    },[])
+    },[fetchChapters])
 
     const toggleExpandChapter = (chapterID:string) => {
         setExpandedChapters(prev => 
@@ -56,7 +57,7 @@ const ChapterList = ({
             ):(
                 chapters.length > 0 ? (
                     <CardContent className="my-[2vh]">
-                    {chapters.map((chapter) => (
+                    {chapters.map((chapter, index) => (
                         <Card className="my-[2vh] py-0">
                             <div className={`px-[2vw] flex justify-between items-center transition-colors duration-300 ${
                             expandedChapters.includes(chapter.id) 
@@ -80,13 +81,14 @@ const ChapterList = ({
                                 style={{ overflow: 'hidden' }}
                             >
                                 <div className="bg-background px-[2vw] rounded-b-md flex items-center">
-                                    <LessonList
+                                    
+                                    {/*<LessonList
                                         course={course}
                                         chapter={chapter}
-                                    />
+                                />
                                 </div>
                             </motion.div>
-                                {/* 
+                                
                                 {expandedChapters.includes(chapter.id) ? 
                                     <ChevronUp
                                         onClick={() => toggleExpandChapter(chapter.id)}
@@ -98,7 +100,7 @@ const ChapterList = ({
                                         className="cursor-pointer text-primary"
                                     />
                                 }
-                                */}
+                                
                         </Card>
                     ))}
                     </CardContent>
@@ -113,3 +115,4 @@ const ChapterList = ({
 }
  
 export default ChapterList;
+*/}

@@ -11,6 +11,10 @@ export async function LoginVerification (data: z.infer<typeof LoginSchema>) {
     const { email, password } = data;
 
     const user = await getUserByEmail(email.toLowerCase())
+
+    if (!user) {
+        throw new Error("Nie znaleziono użytkownika!")
+    }
     
     if (!user || !user.emailVerified) {
         const verificationToken = await generateVerificationToken(user.email)

@@ -196,7 +196,7 @@ const LessonVideoImageForm = ({
                                         }
                                         className="flex"
                                     >
-                                        <img
+                                        <Image
                                             ref={imgRef}
                                             width={1600}
                                             height={900}

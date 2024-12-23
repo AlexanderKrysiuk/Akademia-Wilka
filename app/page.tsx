@@ -1,6 +1,5 @@
 "use client"
 import { auth, signOut } from '@/auth';
-import AuthButtonServer from '@/components/auth/authbutton.server';
 import { Button } from '@/components/ui/button';
 import { useCurrentUser } from '@/hooks/user';
 import { useSession } from 'next-auth/react';

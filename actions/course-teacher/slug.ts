@@ -1,21 +1,18 @@
 "use server"
 
-import { getUserById, getUserRolesByUserID } from "@/data/user"
 import { EditCourseSlugSchema } from "@/schemas/course"
-import { UserRole } from "@prisma/client"
 import { z } from "zod"
-import { getCourseById } from "../course/get"
 import { prisma } from "@/lib/prisma"
-import { getCourseBySlug } from "../course/course"
+import { GetCourseById, GetCourseBySlug } from "./course"
 
 export const UpdateCourseSlug = async (fields: z.infer<typeof EditCourseSlugSchema>, courseId:string) => {
 
-    const existingSlug = await getCourseBySlug(fields.slug)
+    const existingSlug = await GetCourseBySlug(fields.slug)
     if (existingSlug) {
         throw new Error ("Podany odnośnik jest już zajęty")
     }
 
-    const course = await getCourseById(courseId)
+    const course = await GetCourseById(courseId)
     if (!course) {
         throw new Error ("Nie znaleziono kursu")
     } 

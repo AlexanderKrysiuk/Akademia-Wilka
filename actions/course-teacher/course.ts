@@ -23,6 +23,18 @@ export const CreateCourse = async (fields: z.infer<typeof CreateCourseSchema>, u
     return course.id
 }
 
+export const GetCourseBySlug = async (slug:string) => {
+    return await prisma.course.findUnique({
+        where: { slug: slug }
+    })
+}
+
+export const GetCourseById = async (courseId:string) => {
+    return await prisma.course.findUnique({
+        where: { id: courseId}
+    })
+}
+
 export const GetMyCreatedCourses = async (userId:string) => {
     const roles = await getUserRolesByUserID(userId)
     if (!roles.includes(UserRole.Teacher || UserRole.Admin)) {

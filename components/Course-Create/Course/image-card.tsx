@@ -202,7 +202,9 @@ const ImageCard = ({
                                         onChange={(pixelCrop, percentCrop) => { setCrop(percentCrop); }}
                                         className="max-h-[69vh] w-auto"
                                     >
-                                        <img
+                                        <Image
+                                            width={1600}
+                                            height={900}
                                             src={imgSrc}
                                             alt="Upload"
                                             onLoad={onImageLoad}

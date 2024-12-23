@@ -36,18 +36,11 @@ export const GetMyCreatedCourses = async (userId:string) => {
 export const GetMyCreatedCourse = async (userId:string, courseId:string) => {
     const roles = await getUserRolesByUserID(userId)
     const course = await prisma.course.findUnique({
-        where: { id: courseId },
-        include: {
-            chapters: {
-                orderBy: {
-                    order: "asc"
-                }
-            }
-        }
+        where: { id: courseId }
     })
-    if (course?.ownerId !== userId || !roles.includes(UserRole.Teacher || UserRole.Admin)) {
-        throw new Error("Brak uprawnień")
-    } 
+    if (!course || (course.ownerId !== userId && !roles.includes(UserRole.Admin))) {
+        throw new Error("Brak uprawnień");
+    }
     return course
 }
 

@@ -22,11 +22,11 @@ import ChapterList from "@/components/Course-Create/Chapter/chapter-list";
 
 const CourseIdPage = ({
     params
-}: {
+} : {
     params: { courseId: string }
 }) => {
     const user = useCurrentUser();        
-    const [course, setCourse] = useState<Course>();
+    const [course, setCourse] = useState<Course | null>(null);
     const [categories, setCategores] = useState<Category[]>([]);
     const [levels, setLevels] = useState<Level[]>([]);
     const [chapters, setChapters] = useState<Chapter[]>([]);
@@ -44,6 +44,42 @@ const CourseIdPage = ({
     ), [course, chapters]);
     const completedFields = requiredFields.filter(Boolean).length;
 
+    const fetchCourseData = useCallback(async () => {
+        if(!user) return
+
+        setLoading(true)
+        try {
+            const [fetchedCourse, fetchedChapters, fetchedCategories, fetchedLevels] = await Promise.all([
+                GetMyCreatedCourse(user.id, params.courseId),
+                GetChaptersByCourseId(params.courseId),
+                GetCategories(),
+                GetLevels()
+            ])
+            if (fetchedCourse.ownerId !== user.id && !user.role.includes(UserRole.Admin)) {
+                return
+            }
+            if (completedFields < requiredFields.length && fetchedCourse.published) {
+                await unpublishCourse(fetchedCourse.id)
+                toast.warning(
+                    "Kurs zmienił status na: szkic. Uzupełnij wszystkie pola, by go opublikować."
+                );
+            }
+                setCourse(fetchedCourse)
+                setChapters(fetchedChapters)
+                setCategores(fetchedCategories)
+                setLevels(fetchedLevels)
+        } catch(error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            setLoading(false)
+        }
+    }, [user, params.courseId, completedFields, requiredFields])
+
+    useEffect(()=>{
+        fetchCourseData()
+    }, [user, params.courseId])
+
+    {/*
     const fetchMyCreatedCourse = useCallback(async () => {
         if (!user) return;
         const fetchedCourse = await GetMyCreatedCourse(user.id, params.courseId);
@@ -56,22 +92,30 @@ const CourseIdPage = ({
         }            
         setCourse(fetchedCourse);
     }, [user, params.courseId, completedFields, requiredFields]);
+    */}
 
+    {/*
     const fetchCategories = useCallback(async () => {
         const fetchedCategories = await GetCategories();
         setCategores(fetchedCategories);
     }, []);
+    */}
 
+    {/*
     const fetchLevels = useCallback(async () => {
         const fetchedLevels = await GetLevels();
         setLevels(fetchedLevels);
     }, []);
+    */}
 
+{/*
     const fetchChapters = useCallback(async () => {
         const fetchedChapters = await GetChaptersByCourseId(params.courseId);
         setChapters(fetchedChapters);
     }, [params.courseId]);
+*/}
 
+{/*
     useEffect(() => {
         const loadData = async () => {
             await Promise.all([fetchMyCreatedCourse(), fetchCategories(), fetchLevels(), fetchChapters()]);
@@ -80,12 +124,90 @@ const CourseIdPage = ({
 
         loadData();
     }, [user, params, fetchMyCreatedCourse, fetchCategories, fetchLevels, fetchChapters]);
-
+*/}
 
     if (loading) {
         return <PageLoader/>
     }
+
+    if (!course) {
+        return <div> Brak danych o kursie </div>
+    }
+
+    return (
+        <main className="w-full">
+            <Card className="mb-4">
+                <CardHeader className="w-full justify-between">
+                    <div className="flex">
+                        <Settings/>
+                        {course.title}
+                    </div>
+                    <div>
+                        <PublishButton
+                            courseId={course.id}
+                            published={course.published}
+                            onUpdate={fetchCourseData}
+                            completedFields={completedFields}
+                            requiredFields={requiredFields.length}
+                        />
+                    </div>
+                </CardHeader>
+                <CardBody>
+                    <Progress
+                        label={`(${completedFields}/${requiredFields.length})`}
+                        value={completedFields / requiredFields.length * 100}
+                        showValueLabel={true}
+                        color={completedFields / requiredFields.length === 1 ? "success" : "warning"} 
+                    />
+                </CardBody>
+            </Card>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-4">
+                    <TitleCard
+                        courseId={course.id}
+                        title={course.title}
+                        onUpdate={fetchCourseData}
+                    />
+                    <SlugCard
+                        courseId={course.id}
+                        slug={course.slug}
+                        onUpdate={fetchCourseData}
+                    />
+                    <ImageCard
+                        courseId={course.id}
+                        imageUrl={course.imageUrl}
+                        onUpdate={fetchCourseData}
+                    />
+                    <CategoryCard
+                        courseId={course.id}
+                        categoryId={course.categoryId}
+                        categories={categories}
+                        onUpdate={fetchCourseData}
+                    />
+                    <LevelCard
+                        courseId={course.id}
+                        levelId={course.levelId}
+                        levels={levels}
+                        onUpdate={fetchCourseData}
+                    />
+                    <PriceCard
+                        courseId={course.id}
+                        price={course.price}
+                        onUpdate={fetchCourseData}
+                    />
+                </div>
+                <div>
+                    <ChapterList
+                        courseId={course.id}
+                        chapters={chapters}
+                        onUpdate={fetchCourseData}
+                    />
+                </div>
+            </div>
+        </main>
+    )
     
+    {/*
     return (
         course ? 
             <main className="mb-12">
@@ -165,6 +287,7 @@ const CourseIdPage = ({
             </div>
             //{JSON.stringify(course,null,2)}
     )
+*/}
 
     {/* 
     const user = useCurrentUser();

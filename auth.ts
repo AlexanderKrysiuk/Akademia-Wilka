@@ -31,12 +31,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         
         const user = await getUserByEmail(email)
         
-        if (!user || !user.email || !user.password) {
+        if (!user) {
           throw new Error("Nie znaleziono użytkownika!")
         }
         
-        if (!user.emailVerified) {
-          throw new Error("Konto nie zostało zweryfikowane!")
+        if (!user.emailVerified || !user.password) {
+          await sendNewVerificationEmail(user.email)
+          throw new Error("Konto nie zostało zweryfikowane! Wysłano e-mail weryfikacyjny")
         }
         
         const matched = await compare(password, user.password)

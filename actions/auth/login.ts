@@ -11,12 +11,8 @@ export async function LoginVerification (data: z.infer<typeof LoginSchema>) {
     const { email, password } = data;
 
     const user = await getUserByEmail(email.toLowerCase())
-
-    if (!user || !user.email || !user.password) {
-        throw new Error("Nie znaleziono użytkownika!")
-    }
-
-    if (!user.emailVerified) {
+    
+    if (!user || !user.emailVerified) {
         const verificationToken = await generateVerificationToken(user.email)
         await sendVerificationEmail(
             verificationToken.email,
@@ -24,6 +20,11 @@ export async function LoginVerification (data: z.infer<typeof LoginSchema>) {
         )
         throw new Error("Konto nie zostało zweryfikowane! Wysłano email weryfikacyjny!")
     }
+
+    if (!user || !user.email || !user.password) {
+        throw new Error("Nie znaleziono użytkownika!")
+    }
+
 }
  
 export default LoginVerification;

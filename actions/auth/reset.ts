@@ -5,6 +5,7 @@ import { getUserByEmail } from "@/data/user";
 import { sendPasswordResetEmail } from "@/lib/nodemailer";
 import { ResetSchema } from "@/schemas/user";
 import * as z from 'zod'
+import { sendNewVerificationEmail } from "./new-verification";
 
 export async function reset (data: z.infer<typeof ResetSchema>) {
     const { email } = data;
@@ -13,6 +14,12 @@ export async function reset (data: z.infer<typeof ResetSchema>) {
     if (!existingUser) {
         throw new Error("Nie znaleziono użytkownika")
     }
+
+    if (!existingUser.emailVerified || !existingUser.password) {
+        await sendNewVerificationEmail(existingUser.email)
+        throw new Error("Konto nie zostało zweryfikowane! Wysłano e-mail weryfikacyjny")
+    }
+      
 
     const passwordResetToken = await generatePasswordResetToken(email.toLowerCase())
     await sendPasswordResetEmail(

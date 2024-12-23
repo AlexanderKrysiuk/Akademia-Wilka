@@ -30,22 +30,23 @@ export async function uploadLessonVideo(formdata: FormData) {
     await client.ensureDir(dirPath);
 
     const list = await client.list('/');
-    console.log("Root directory contents:", list);
+    //console.log("Root directory contents:", list);
     const lessonDirList = await client.list(`course-${courseId}/chapter-${chapterId}/lesson-${lessonId}`);
-    console.log("Chapter directory contents:", lessonDirList);
+    //console.log("Chapter directory contents:", lessonDirList);
 
-    console.log("CHECK")
+    //console.log("CHECK")
     const buffer = Buffer.from(await videoFile.arrayBuffer())
     await client.uploadFrom(Readable.from(buffer), fileName)
-    console.log("PASSED")
+    //console.log("PASSED")
 
     const uploadedVideoUrl = `${fileServer}/${dirPath}/${fileName}`
+
+    const newMedia = [{ url: uploadedVideoUrl, duration: parseInt(duration) }]
 
     await prisma.lesson.update({
         where: {id: lessonId},
         data: {
-            mediaURLs: [uploadedVideoUrl],
-            mediaDuration: [parseInt(duration)]
+            media: JSON.stringify(newMedia),
         }
     })
 

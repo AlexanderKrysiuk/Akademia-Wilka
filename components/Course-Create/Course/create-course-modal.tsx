@@ -15,7 +15,11 @@ import { z } from "zod";
 
 type FormFields = z.infer<typeof CreateCourseSchema>
 
-const CreateCourseModal = () => {
+const CreateCourseModal = ({
+    onUpdate
+} : {
+    onUpdate: () => void
+}) => {
     const user = useCurrentUser()
     const router = useRouter()
 
@@ -30,12 +34,14 @@ const CreateCourseModal = () => {
             CreateCourse(data, user.id)
                 .then((courseId) => {
                     toast.success("Kurs został utworzony!")
-                    onOpenChange()
-                    router.push(`/teacher/my-courses/${courseId}`);
                 })
                 .catch((error) => {
                     setError("title", { message: error.message })
                     toast.error(error.message)
+                })
+                .finally(()=>{
+                    onUpdate()
+                    onOpenChange()
                 })
         })
     }

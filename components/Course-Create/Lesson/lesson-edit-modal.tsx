@@ -35,13 +35,12 @@ const LessonEditModal = ({
         }
     }, [completedFields, requiredFields.length, lesson.published, lesson.id])
     
-
     return (
         <main>
             <SquarePen
                 className="hover:text-primary transition duration-300 cursor-pointer"
                 onClick={onOpen}
-            />
+                />
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
@@ -52,46 +51,47 @@ const LessonEditModal = ({
                 classNames={{
                     backdrop: "bg-gradient-to-t from-foreground/100 to-foreground/10 backdrop-opacity-20"
                 }}
-            >
+                >
                 <ModalContent>
     {(onClose) => {
         const handleClose = () => {
             onUpdate(); // Wywołaj onUpdate
             onClose();  // Zamknij modal
         };
-
+        
         return (
             <>
-                <ModalHeader className="flex justify-between mt-8">
-                    <div className="flex gap-2 items-center">
-                        <Settings />
-                        Lekcja: {lesson.title}
+                
+                <ModalHeader className="mt-8 grid-flow-row grid gap-y-4">
+                    <div className="justify-between flex w-full">
+                        <div className="flex gap-2 items-center">
+                            <Settings />
+                            Lekcja: {lesson.title}
+                        </div>
+                        <div className="flex gap-2 items-center">
+                            <LessonDeleteModal
+                                lesson={lesson}
+                                chapter={chapter}
+                                onUpdate={() => {
+                                    onUpdate();
+                                    onClose();
+                                }}
+                            />
+                            <PublishLessonButton
+                                lessonId={lesson.id}
+                                published={lesson.published}
+                                onUpdate={()=>{}}
+                                completedFields={completedFields}
+                                requiredFields={requiredFields.length}
+                            />
+                        </div>
                     </div>
-                    <div className="flex gap-2 items-center">
-                        <LessonDeleteModal
-                            lesson={lesson}
-                            chapter={chapter}
-                            onUpdate={() => {
-                                onUpdate();
-                                onClose();
-                            }}
-                        />
-                        <PublishLessonButton
-                            lessonId={lesson.id}
-                            published={lesson.published}
-                            onUpdate={()=>{}}
-                            completedFields={completedFields}
-                            requiredFields={requiredFields.length}
-                        />
-                    </div>
-                </ModalHeader>
-                <ModalHeader>
                     <Progress
                         label={`(${completedFields}/${requiredFields.length})`}
                         value={(completedFields / requiredFields.length) * 100}
                         showValueLabel
                         color={completedFields / requiredFields.length === 1 ? "success" : "warning"}
-                    />
+                        />
                 </ModalHeader>
                 <Divider />
                 <ModalBody>
@@ -99,14 +99,14 @@ const LessonEditModal = ({
                         lessonId={lesson.id}
                         title={lesson.title}
                         onUpdate={onUpdate}
-                    />
+                        />
                     {lesson.type !== LessonType.Subchapter && (
                         <>
                             <Divider />
                             <LessonSlugForm
                                 lesson={lesson}
                                 onUpdate={onUpdate}
-                            />
+                                />
                             <Divider/>
                             <LessonFreeForm
                                 lesson={lesson}
@@ -122,7 +122,7 @@ const LessonEditModal = ({
                                 chapterId={chapter.id}
                                 lesson={lesson}
                                 onUpdate={onUpdate}
-                            />
+                            />    
                             <Divider/>
                             <LessonVideoImageForm
                                 chapter={chapter}

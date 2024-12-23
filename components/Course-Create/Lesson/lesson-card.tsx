@@ -23,7 +23,7 @@ const LessonCard = ({
     const requiredFields = [
         lesson.title,
         ...(lesson.type !== LessonType.Subchapter ? [lesson.slug] : []), // Add slug for other types
-        ...(lesson.type === LessonType.Video && Array.isArray(lesson.mediaURLs) && lesson.mediaURLs.length === 0 ? [false] : []) // Check if it's an array
+        ...(lesson.type === LessonType.Video && Array.isArray(lesson.media) && lesson.media.length === 0 ? [false] : []) // Check if it's an array
     ]
     const completedFields = requiredFields.filter(Boolean).length
 

@@ -39,7 +39,9 @@ const MyCourses = () => {
 
     return ( 
         <main className='space-y-4 grid grid-d w-full'>
-            <CreateCourseModal/>
+            <CreateCourseModal
+                onUpdate={fetchMyCreatedCourses}
+            />
             {courses.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xxl:grid-cols-5 gap-4">
                     {courses.map((course)=>(

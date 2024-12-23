@@ -148,13 +148,13 @@ const LessonVideoImageForm = ({
                 />
             </CardHeader>
             <CardBody>
-                {lesson.videoImageURL ? (
+                {lesson.ImageURL ? (
                     <Image
                         width={160*3}
                         height={90*3}
                         className="max-h-fit w-auto"
                         alt={"Obrazek lekcji"}
-                        src={lesson.videoImageURL}
+                        src={lesson.ImageURL}
                     />
                 ) : (
                     <div className="h-auto w-full aspect-video flex items-center justify-center bg-primary/10">
@@ -164,7 +164,7 @@ const LessonVideoImageForm = ({
             </CardBody>
             <CardFooter>
                 <Button color="primary" onClick={()=> fileInputRef.current?.click()}>
-                    {lesson.videoImageURL ? "Zmień obraz" : "Dodaj obraz"}
+                    {lesson.ImageURL ? "Zmień obraz" : "Dodaj obraz"}
                 </Button>
             </CardFooter>
             <Modal
@@ -196,7 +196,7 @@ const LessonVideoImageForm = ({
                                         }
                                         className="flex"
                                     >
-                                        <Image
+                                        <img
                                             ref={imgRef}
                                             width={1600}
                                             height={900}

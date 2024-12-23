@@ -47,7 +47,7 @@ const CourseIdPage = ({
     const fetchCourseData = useCallback(async () => {
         if(!user) return
 
-        setLoading(true)
+        //setLoading(true)
         try {
             const [fetchedCourse, fetchedChapters, fetchedCategories, fetchedLevels] = await Promise.all([
                 GetMyCreatedCourse(user.id, params.courseId),

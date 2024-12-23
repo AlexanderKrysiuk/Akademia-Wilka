@@ -179,9 +179,8 @@ model Lesson {
   type      LessonType
   order     Int
   content   String?     @db.Text
-  mediaURLs Json
-  mediaDuration Json
-  videoImageURL String?
+  media     Json?
+  ImageURL String?
 
   published Boolean     @default(false)
   free      Boolean     @default(false)

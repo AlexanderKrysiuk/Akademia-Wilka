@@ -59,28 +59,60 @@ export const ReorderLessonsByChapterId = async (chapterId:string) => {
 }
 
 export const DeleteLessonById = async (courseId:string, chapterId:string, lessonId:string) => {
-    const dirPath = `courses/course-${courseId}/chapter-${chapterId}/lesson-${lessonId}`
+    const dirPath = `/courses/course-${courseId}/chapter-${chapterId}/lesson-${lessonId}`
 
     const client = new ftp.Client()
     client.ftp.verbose = true
 
-    await client.access({
-        host: process.env.FTP_HOST,
-        user: process.env.FTP_USER,
-        password: process.env.FTP_PASS,
-        secure: false
-    })
+    try {
+        await client.access({
+            host: process.env.FTP_HOST,
+            user: process.env.FTP_USER,
+            password: process.env.FTP_PASS,
+            secure: false
+        })
 
-    const folderExist = await client.size(dirPath).catch(()=>null)
-    if (folderExist) await client.removeDir(dirPath)
+        const list = await client.list(`/courses/course-${courseId}/chapter-${chapterId}/lesson-${lessonId}`);
+        console.log("Root directory contents:", list);
+        
+        // Sprawdzanie czy folder istnieje
+        const folderExist = await client.list(dirPath).catch(() => null)
+        if (folderExist) {
+            console.log(`Folder istnieje: ${dirPath}`)
+  
+            // Lista plików w folderze przed usunięciem
+            const files = await client.list(dirPath)
+            console.log(`Pliki w folderze: ${files.map(file => file.name).join(', ')}`)
+  
+            // Usuwanie plików z folderu
+            for (const file of files) {
+                await client.remove(`${dirPath}/${file.name}`)
+                console.log(`Usunięto plik: ${file.name}`)
+            }
+  
+            // Usuwanie folderu
+            await client.removeDir(dirPath)
+            console.log(`Usunięto folder: ${dirPath}`)
+        } else {
+            console.log(`Folder nie istnieje: ${dirPath}`)
+        }
+    } catch (error) {
+        console.error("Błąd podczas usuwania plików z FTP:", error)
+    } finally {
+        client.close()
+    }
 
-    client.close()
-    
-    await prisma.lesson.delete({
-        where: {id: lessonId}
-    })
+    //Usuwanie rekordu w bazie danych
+    try {
+        await prisma.lesson.delete({
+            where: { id: lessonId }
+        })
+        console.log(`Lekcja o ID ${lessonId} została usunięta z bazy danych.`)
+    } catch (error) {
+        console.error("Błąd podczas usuwania lekcji z bazy danych:", error)
+    }
 
-    await ReorderLessonsByChapterId(chapterId)
+    //await ReorderLessonsByChapterId(chapterId)
     return
 }
 

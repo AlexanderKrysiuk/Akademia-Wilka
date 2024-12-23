@@ -10,6 +10,7 @@ import { startTransition, useRef, useState } from "react";
 import ReactCrop, { Crop, centerCrop, convertToPixelCrop, makeAspectCrop } from "react-image-crop";
 import { toast } from "react-toastify";
 import { uploadCourseImage } from "@/actions/course-teacher/image";
+import { number } from "zod";
 
 const MAX_IMAGE_SIZE = 4 * 1024 * 1024;
 const MIN_DIMENSION = 100;
@@ -201,7 +202,7 @@ const ImageCard = ({
                                         onChange={(pixelCrop, percentCrop) => { setCrop(percentCrop); }}
                                         className="max-h-[69vh] w-auto"
                                     >
-                                        <Image
+                                        <img
                                             src={imgSrc}
                                             alt="Upload"
                                             onLoad={onImageLoad}

@@ -30,7 +30,7 @@ export async function UploadLessonVideoImage(dataURL: string, courseId:string, c
     const uploadedImageUrl = `${fileServer}/${dirPath}/${fileName}`
     await prisma.lesson.update({
         where: {id: lessonId},
-        data: {videoImageURL: uploadedImageUrl}
+        data: {ImageURL: uploadedImageUrl}
     })
     client.close()
 }

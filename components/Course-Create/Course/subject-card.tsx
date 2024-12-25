@@ -1,45 +1,45 @@
 "use client"
 
-import { UpdateCourseLevel } from "@/actions/course-teacher/level"
-import { LevelNames } from "@/lib/enums"
+import { UpdateCourseSubject } from "@/actions/course-teacher/subject"
+import { SubjectNames } from "@/lib/enums"
 import { Button, Card, CardBody, CardFooter, Select, SelectItem } from "@nextui-org/react"
-import { Level } from "@prisma/client"
+import { Subject } from "@prisma/client"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 
 type FormFields = {
-    level: Level,
+    subject: Subject,
     courseId: string,
     userId: string
 }
 
-const LevelCard = ({
+const SubjectCard = ({
     courseId,
     userId,
-    level,
+    subject,
     onUpdate
 } : {
     courseId: string,
     userId: string,
-    level: Level | null,
+    subject: Subject | null,
     onUpdate: () => void
 }) => {
 
     const { control, handleSubmit, watch, setError, formState: { errors, isSubmitting } } = useForm<FormFields>({
         defaultValues: { 
-            level: level ?? undefined ,
+            subject: subject ?? undefined ,
             userId, 
             courseId }
     });
 
     const onSubmit: SubmitHandler<FormFields> = async (data) => {
         try {
-            const result = await UpdateCourseLevel(data.level, data.userId, data.courseId)
+            const result = await UpdateCourseSubject(data.subject, data.userId, data.courseId)
             toast.success(result)
             onUpdate()
         } catch(error) {
-            console.error("Error updating course level:", error);  // Logowanie błędu
-            const errorMessage = error instanceof Error ? error.message : "Nie udało się zaktualizować poziomu"
+            console.error("Error updating course subject:", error);  // Logowanie błędu
+            const errorMessage = error instanceof Error ? error.message : "Nie udało się zaktualizować przedmiotu"
             setError("root", {message: errorMessage})
             toast.error(errorMessage)
         }
@@ -50,26 +50,26 @@ const LevelCard = ({
             <form onSubmit={handleSubmit(onSubmit)}>
                 <CardBody>
                     <Controller
-                        name="level"
+                        name="subject"
                         control={control}
                         render={({ field }) => (
                             <Select
-                            label="Poziom"
+                            label="Przedmiot"
                             labelPlacement="outside"
                             isRequired
                             variant="bordered"
                             isInvalid={errors.root ? true : false}
                             errorMessage={errors.root?.message}
                             isDisabled={isSubmitting}
-                            placeholder={field.value ? LevelNames[field.value] : "Wybierz poziom"}
+                            placeholder={field.value ? SubjectNames[field.value] : "Wybierz przedmiot"}
                             onChange={(event)=>{
-                                const selectedCategory = event.target.value as Level;
-                                field.onChange(selectedCategory)
+                                const selectedSubject = event.target.value as Subject;
+                                field.onChange(selectedSubject)
                             }}
                             >   
-                                {Object.values(Level).map((level) => (
-                                    <SelectItem key={level} value={level}>
-                                        {LevelNames[level]}
+                                {Object.values(Subject).map((subject) => (
+                                    <SelectItem key={subject} value={subject}>
+                                        {SubjectNames[subject]}
                                     </SelectItem>
                                 ))}
                         </Select>
@@ -80,14 +80,14 @@ const LevelCard = ({
                     <Button 
                         type="submit" 
                         color="primary"
-                        isDisabled={!watch("level") || watch("level") === level || isSubmitting}
+                        isDisabled={!watch("subject") || watch("subject") === subject || isSubmitting}
                         isLoading={isSubmitting}
                     >
-                        {isSubmitting ? "Przetwarzanie..." : "Zmień poziom"}
+                        {isSubmitting ? "Przetwarzanie..." : "Zmień przedmiot"}
                     </Button>
                 </CardFooter>
             </form>
         </Card>
     )
 }
-export default LevelCard
+export default SubjectCard

@@ -1,13 +1,7 @@
-
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
-
-//datasource db {
-//  provider = "mysql"
-//  url      = env("DATABASE_URL_PRODUCTION")
-//}
 
 generator client {
   provider = "prisma-client-js"
@@ -116,11 +110,9 @@ model Course {
   price       Float?
   published   Boolean @default(false)
 
-  categoryId  String?
-  category    Category? @relation(fields: [categoryId], references: [id])
-
-  levelId     String?
-  level       Level?  @relation(fields: [levelId], references: [id])
+  category    Category?
+  level       Level?
+  subject     Subject?
 
   chapters    Chapter[]
   purchases   Purchase[]
@@ -128,19 +120,23 @@ model Course {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([categoryId])
+  @@index([category])
 }
 
-model Category {
-  id      String   @id @default(uuid())
-  name    String   @unique
-  courses Course[]
+enum Category {
+  Exam
+  Course
 }
 
-model Level {
-  id      String   @id @default(uuid())
-  name    String   @unique
-  courses Course[]
+enum Subject {
+  Mathematics
+}
+
+enum Level {
+  ElementarySchool
+  GeneralHighSchool
+  AdvancedHighSchool
+  University
 }
 
 model Attachment {

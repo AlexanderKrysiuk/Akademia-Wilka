@@ -1,44 +1,50 @@
 "use client"
 
-import { GetCategories, UpdateCategory } from "@/actions/course-teacher/category"
-import { useCurrentUser } from "@/hooks/user"
+import { UpdateCourseCategory } from "@/actions/course-teacher/category"
+import { CategoryNames } from "@/lib/enums"
 import { Button, Card, CardBody, CardFooter, CardHeader, Select, SelectItem } from "@nextui-org/react"
-import { Category, UserRole } from "@prisma/client"
-import { error } from "console"
-import { Pen, PenOff } from "lucide-react"
-import { startTransition, useEffect, useState } from "react"
+import { Category } from "@prisma/client"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 import { z } from "zod"
 
 type FormFields = {
-    category: Category
+    category: Category,
+    courseId: string,
+    userId: string
 }
 
 const CategoryCard = ({
     courseId,
-    categoryId,
-    categories,
+    userId,
+    category,
     onUpdate
 } : {
     courseId: string,
-    categoryId: string | null,
-    categories: Category[],
+    userId: string,
+    category: Category | null,
     onUpdate: () => void
 }) => {
 
-    const [edit, setEdit] = useState(false)
     const { control, handleSubmit, watch, setError, formState: { errors, isSubmitting } } = useForm<FormFields>({
-        defaultValues: { category: categories.find(cat => cat.id === categoryId)}
+        defaultValues: { 
+            category: category ?? undefined ,
+            userId, 
+            courseId }
     });
-    //const [selectedCategoryId, setSelectedCategoryId] = useState<string | undefined>(categoryId)
-
-// Znajdujemy nazwę kategorii na podstawie selectedCategoryId
-    const selectedCategory = categoryId 
-        ? categories.find(cat => cat.id === categoryId) 
-        : undefined
 
     const onSubmit: SubmitHandler<FormFields> = async (data) => {
+        try {
+            const result = await UpdateCourseCategory(data.category, data.userId, data.courseId)
+            toast.success(result)
+            onUpdate()
+        } catch(error) {
+            console.error("Error updating course category:", error);  // Logowanie błędu
+            const errorMessage = error instanceof Error ? error.message : "Nie udało się zaktualizować kategorii"
+            setError("root", {message: errorMessage})
+            toast.error(errorMessage)
+        }
+        {/*
         startTransition(async ()=>{
             await UpdateCategory(courseId, data.category.id)
                 .then(()=>{
@@ -50,6 +56,7 @@ const CategoryCard = ({
                     toast.error(error.message)
                 })
         })
+        */}
     }
 
     return (
@@ -85,17 +92,17 @@ const CategoryCard = ({
                             isInvalid={errors.root ? true : false}
                             errorMessage={errors.root?.message}
                             isDisabled={isSubmitting}
-                            placeholder={field.value ? field.value.name : (categories.find(cat => cat.id === categoryId)?.name || "Wybierz kategorię")}
+                            placeholder={field.value ? CategoryNames[field.value] : "Wybierz kategorię"}
                             onChange={(event)=>{
-                                const selectedCategory = categories.find(cat => cat.id === event.target.value)
+                                const selectedCategory = event.target.value as Category;
                                 field.onChange(selectedCategory)
                             }}
-                            >
-                            {categories.map((category) => (
-                                <SelectItem key={category.id} value={category.id}>
-                                    {category.name}
-                                </SelectItem>
-                            ))}
+                            >   
+                                {Object.values(Category).map((category) => (
+                                    <SelectItem key={category} value={category}>
+                                        {CategoryNames[category]}
+                                    </SelectItem>
+                                ))}
                         </Select>
                         )}
                     />
@@ -105,7 +112,7 @@ const CategoryCard = ({
                         type="submit" 
                         color="primary"
                         //isDisabled={!getValues("category") || getValues("category")?.id === categoryId} // Sprawdzenie czy kategoria jest inna niż domyślna
-                        isDisabled={!watch("category") || watch("category.id") === categoryId || isSubmitting}
+                        isDisabled={!watch("category") || watch("category") === category || isSubmitting}
                         isLoading={isSubmitting}
                     >
                         {isSubmitting ? "Przetwarzanie..." : "Zmień kategorię"}

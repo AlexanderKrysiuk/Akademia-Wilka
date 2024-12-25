@@ -1,12 +1,12 @@
 "use server"
 
-import { getUserById } from "@/data/user"
+import { getUserById } from "@/data/user";
 import { prisma } from "@/lib/prisma"
-import { Category } from "@prisma/client"
-import { GetCourseById } from "./course"
-import { AdminGate } from "../gates/gates"
+import { Subject } from "@prisma/client"
+import { GetCourseById } from "./course";
+import { AdminGate } from "../gates/gates";
 
-export async function UpdateCourseCategory(category:Category, userId:string, courseId:string) {
+export async function UpdateCourseSubject(subject:Subject, userId:string, courseId:string) {
     const user = await getUserById(userId)
     if (!user) {
         throw new Error("Użytkownik nie jest zalogowany");
@@ -21,13 +21,13 @@ export async function UpdateCourseCategory(category:Category, userId:string, cou
     const isAdmin = await AdminGate(userId)
 
     if (!isAdmin && user.id !== course.ownerId) {
-        throw new Error("Brak uprawnień do zmiany kategorii kursu");
+        throw new Error("Brak uprawnień do zmiany przedmiotu kursu");
     }
 
     await prisma.course.update({
         where: {id: courseId},
-        data: {category: category}
+        data: {subject: subject}
     })
 
-    return "Kategoria została zmieniona pomyślnie";
+    return "Przedmiot został zmieniony pomyślnie";
 }

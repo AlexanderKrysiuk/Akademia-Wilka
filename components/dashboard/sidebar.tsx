@@ -2,7 +2,7 @@
 
 import { Listbox, ListboxItem, ListboxSection } from "@nextui-org/react";
 
-import { teacherItems, userItems } from "@/components/Dashboard/menu";
+import { teacherItems, userItems } from "@/components/dashboard/menu";
 import { usePathname } from "next/navigation";
 import { useCurrentUser } from "@/hooks/user";
 import { UserRole } from "@prisma/client";

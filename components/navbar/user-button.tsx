@@ -6,7 +6,7 @@ import { LogOutButton } from '@/components/auth/Logout-Button';
 import { RxExit } from "react-icons/rx";
 import { TfiDashboard } from "react-icons/tfi";
 import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from '@nextui-org/react';
-import { userItems, teacherItems } from '@/components/Dashboard/menu';
+import { userItems, teacherItems } from '@/components/dashboard/menu';
 import { usePathname } from 'next/navigation';
 import { UserRole } from '.prisma/client';
 import { LogOut } from 'lucide-react';

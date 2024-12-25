@@ -1,6 +1,6 @@
 "use client"
-import SideBar from "@/components/Dashboard/sidebar";
-import Sidebar from "@/components/Dashboard/sidebar";
+import SideBar from "@/components/dashboard/sidebar";
+import Sidebar from "@/components/dashboard/sidebar";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@nextui-org/react";
 import { motion } from "framer-motion";

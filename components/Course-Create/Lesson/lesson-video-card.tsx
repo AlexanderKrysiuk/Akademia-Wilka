@@ -35,8 +35,9 @@ const LessonVideoCard = ({
     const media = lesson.media ? JSON.parse(lesson.media as string) : []
     const initialSource = media.lenght > 0 && media[0].source ? media[0].source : undefined
     
-    const [source, setSource] = useState(initialSource)
     const [edit, setEdit] = useState(false)
+    const [source, setSource] = useState<string>("");
+
     const [isUploading, setIsUploading] = useState(false)
 
     const { register, handleSubmit, setError, formState: { errors, isSubmitting }} = useForm<FormFields>({
@@ -77,6 +78,7 @@ const LessonVideoCard = ({
     //     }
     // }
 
+  
     const handleVideoUpload = async (file: File) => {
         if (!file.type.startsWith("video/")) {
             toast.error("Proszę przesłać plik wideo.");
@@ -103,7 +105,9 @@ const LessonVideoCard = ({
             } catch (error) {
                 toast.error("Nie udało się przesłać filmu");
             } finally {
+                setEdit(false)
                 setIsUploading(false);
+                setSource("")
             }
         }
     }
@@ -133,11 +137,12 @@ const LessonVideoCard = ({
                             label="Źródło filmu" 
                             placeholder="Wybierz źródło filmu"
                             variant="bordered"
-                            //selectedKeys={source ? [source] : undefined}
-                            selectedKeys={source}
-                            onChange={(event) => setSource(event.target.value)}                          >
+                            selectedKeys={[source]}
+                            onChange={(e) => setSource(e.target.value)}                         
+                        >
+                            
                             {sources.map((source) => (
-                                <SelectItem key={source.key}>{source.label}</SelectItem>
+                                <SelectItem key={source.key} value={source.label}>{source.label}</SelectItem>
                             ))}
                         </Select>
                         {source === "server" && (

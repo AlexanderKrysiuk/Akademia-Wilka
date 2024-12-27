@@ -23,3 +23,11 @@ export const CreateLessonSchema = z.object({
     title: titleTemplate,
     lessonType: z.nativeEnum(LessonType, { message: 'Typ lekcji jest wymagany' }),
 })
+
+const UrlTemplate = z.string().url({
+    message: "Podaj poprawny odnośnik"
+});
+
+export const UpdateExternalVideoSource = z.object({
+    url: UrlTemplate
+})

@@ -84,3 +84,35 @@ export async function uploadLessonVideo(formdata: FormData) {
     client.close()
     return
 }
+
+export async function DeleteVideoIfExist(courseId:string, chapterId:string, lessonId:string) {
+    const dirPath = `courses/course-${courseId}/chapter-${chapterId}/lesson-${lessonId}`
+    const fileName = `${lessonId}.mp4`
+
+    const client = new ftp.Client()
+    client.ftp.verbose = true
+
+    try {
+        await client.access({
+            host: process.env.FTP_HOST,
+            user: process.env.FTP_USER,
+            password: process.env.FTP_PASS,
+            secure: false
+        })
+        try {
+            await client.remove(dirPath + "/" + fileName);
+            console.log(`Plik ${fileName} usunięty pomyślnie.`);
+        } catch (error) {
+            console.log(error)
+        }
+        
+    } catch (error) {
+        console.error(`Błąd podczas łączenia z serwerem FTP: ${error}`);
+    } finally {
+        client.close()
+    } 
+}
+
+export async function UpdateVideoSource(videoUrl:string) {
+    //await prisma.lesson.
+}

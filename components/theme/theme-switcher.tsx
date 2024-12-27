@@ -20,7 +20,7 @@ export function ThemeSwitcher() {
   }
 
   return (
-    <Button size="sm" isIconOnly color="primary" variant="light" onClick={toggleTheme}>
+    <Button size="sm" isIconOnly color="primary" variant="light" onClick={toggleTheme} radius="full">
       {theme === 'light' ? (
         <Moon/>
       ) : (

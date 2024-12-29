@@ -73,7 +73,6 @@ const ChapterCard = ({
                     requiredFields={requiredFields}
                     lessons={lessons}
                     onUpdate={fetchLessons}
-                    onLessonUpdate={fetchLessons}
                 />
                 <ChapterDeleteModal
                     chapter={chapter}

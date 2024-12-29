@@ -40,7 +40,9 @@ export default async function RootLayout({
           >
             <Header/>
             <main className="max-h-full">
+
               {children}
+              
               <Toaster/>
             </main>
           </ThemeProvider>

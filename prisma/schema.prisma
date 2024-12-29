@@ -18,6 +18,7 @@ model User {
   roles         UserRoleAssignment[] // Relacja wiele-do-wielu do ról
   accounts      Account[]
   sessions      Session[]
+  purchases     Purchase[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -115,7 +116,6 @@ model Course {
   subject     Subject?
 
   chapters    Chapter[]
-  purchases   Purchase[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -201,38 +201,31 @@ enum LessonType {
   Subchapter
 }
 
-model BussinesInfo {
-  id        String  @id @default(uuid())
-  name      String
-  address   String
-  vatNumber String?
-  email     String?
-  phone     String?
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  purchases Purchase[]
-}
 
 model Purchase {
-  id     String @id @default(uuid())
-  
-  userId String
+  id                String             @id @default(uuid()) // Unikalny identyfikator zakupu
+  stripeSessionId   String             @unique              // ID sesji Stripe
+  userId            String?                                // Powiązanie z użytkownikiem (jeśli istnieje)
+  user              User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
+  totalAmount       Int                                    // Całkowita kwota zakupu (w groszach)
+  currency          String             @default("PLN")     // Waluta (np. PLN, USD)
+  status            PaymentStatus      @default(Pending)   // Status płatności (PENDING, PAID, FAILED, REFUNDED)
+  purchasedProducts PurchasedProducts[]                   // Powiązane produkty
 
-  courseId String
-  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  createdAt         DateTime           @default(now())     // Data utworzenia
+  updatedAt         DateTime           @updatedAt          // Data ostatniej aktualizacji
 
-  // Fields for Bussiness info
-  bussinessInfoId String
-  bussinessInfo   BussinesInfo  @relation(fields: [bussinessInfoId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([userId, courseId])
-  @@index([courseId])
+  @@index([stripeSessionId]) // Indeks dla Stripe
+  @@index([userId])          // Indeks na userId dla szybszych zapytań
 }
+
+enum PaymentStatus {
+  Pending    // Oczekuje na płatność
+  Paid       // Opłacone
+  Failed     // Niepowodzenie płatności
+  Refunded   // Zwrócono pieniądze
+}
+
 
 model StripeCustomer {
   id               String @id @default(uuid())
@@ -241,4 +234,34 @@ model StripeCustomer {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model PurchasedProducts {
+  id             String       @id @default(uuid()) // Unikalny identyfikator
+  purchaseId     String       // Powiązanie z transakcją
+  productId      String       // Identyfikator produktu (kurs, sesja, itd.)
+  productType    ProductType  // Typ produktu (np. COURSE, SESSION)
+  userId         String?      // Użytkownik przypisany do tej sesji/produktu (jeśli istnieje)
+  isGift         Boolean      @default(false)      // Czy to prezent?
+  recipientEmail String?      // Email odbiorcy prezentu (jeśli isGift = true)
+  status         ProductStatus @default(Active)    // Status produktu (ACTIVE, USED, RETURNED)
+  assignedAt     DateTime?    // Data przypisania do użytkownika
+  usedAt         DateTime?    // Data wykorzystania (np. sesji)
+  createdAt      DateTime     @default(now())      // Data utworzenia
+  updatedAt      DateTime     @updatedAt           // Data ostatniej aktualizacji
+
+  purchase       Purchase     @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+
+  @@index([purchaseId])
+  @@index([userId])
+}
+
+enum ProductType {
+  Course
+}
+
+enum ProductStatus {
+  Active
+  Used
+  Returned
 }

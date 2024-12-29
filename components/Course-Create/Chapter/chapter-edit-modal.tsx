@@ -19,13 +19,11 @@ const ChapterEditModal = ({
     requiredFields,
     lessons,
     onUpdate,
-    onLessonUpdate,
 } : {
     chapter: Chapter,
     requiredFields: (string | boolean | null)[]
     lessons: Lesson[]
     onUpdate: () => void
-    onLessonUpdate: () => void
 }) => {
     const [loading, setLoading] = useState(true)
     const { isOpen, onOpen, onOpenChange } = useDisclosure()

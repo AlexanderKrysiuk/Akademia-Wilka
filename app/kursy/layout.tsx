@@ -6,10 +6,8 @@ const CoursesLayout = ({
     children: React.ReactNode
 }) => {
     return ( 
-        <main className="flex justify-center p-4">
-            <div className="max-w-7xl px-[10vw]">
-                {children}
-            </div>
+        <main className="flex justify-center mx-auto w-full max-w-7xl lg:px-[10vw]">
+            {children}
         </main>
      );
 }

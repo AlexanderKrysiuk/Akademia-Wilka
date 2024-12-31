@@ -25,53 +25,152 @@ const CourseIdPage = ({
     params: { courseId: string }
 }) => {
     const user = useCurrentUser();        
-    const [course, setCourse] = useState<Course | null>(null);
+    const [course, setCourse] = useState<Course>();
     const [chapters, setChapters] = useState<Chapter[]>([]);
     const [loading, setLoading] = useState(true);
+    const [requiredFieldsNumber, setRequiredFieldsNumber] = useState<number>(0)
+    const [completedFieldsNumber, setCompletedFieldsNumber] = useState<number>(0)
+    //const [dataReady, setDataReady] = useState(false)
     
-    const requiredFields = useMemo(() => (
-        course ? [
+
+    //const requiredFields = useMemo(() => (
+    //    course ? [
+    //        course.title,
+    //        course.slug,
+    //        course.imageUrl,
+    //        course.category,
+    //        course.level,
+    //        course.subject,
+    //        chapters.some(chapter => chapter.published)
+    //    ] : []
+    //), [course, chapters]);
+    //const completedFields = requiredFields.filter(Boolean).length;
+
+    const checkIfCourseCanBePublished = useCallback(async (course: Course, chapters: Chapter[]) => {
+        const requiredFields = [
             course.title,
             course.slug,
             course.imageUrl,
             course.category,
             course.level,
             course.subject,
-            chapters.some(chapter => chapter.published)
-        ] : []
-    ), [course, chapters]);
-    const completedFields = requiredFields.filter(Boolean).length;
+            chapters.some(chapters => chapters.published)
+        ];
+        const completedFields = requiredFields.filter(Boolean).length;
+    
+        if (completedFields < requiredFields.length && course.published) {
+            try {
+                await unpublishCourse(course.id)
+                    .then(()=>{
+                        course.published=false
+                    })
+                toast.warning("Kurs zmienił status na szkic");
+            } catch (error) {
+                console.error("[UNPUBLISH COURSE ERROR]:", error);
+                toast.warning("Nastąpił nieoczekiwany błąd");
+            }
+        }
+    
+        setCompletedFieldsNumber(completedFields);
+        setRequiredFieldsNumber(requiredFields.length);
+    }, []);
 
-    const fetchCourseData = useCallback(async () => {
-        if(!user) return
-
-        //setLoading(true)
+    const fetchCourseAndChapter = useCallback(async () => {
         try {
-            const [fetchedCourse, fetchedChapters] = await Promise.all([
-                GetMyCreatedCourse(user.id, params.courseId),
-                GetChaptersByCourseId(params.courseId),
-            ])
-            if (fetchedCourse.ownerId !== user.id && !user.role.includes(UserRole.Admin)) {
-                return
-            }
-            if (completedFields < requiredFields.length && fetchedCourse.published) {
-                await unpublishCourse(fetchedCourse.id)
-                toast.warning(
-                    "Kurs zmienił status na: szkic. Uzupełnij wszystkie pola, by go opublikować."
-                );
-            }
-                setCourse(fetchedCourse)
-                setChapters(fetchedChapters)
-        } catch(error) {
-            console.error("Error fetching data:", error);
+            const courseData = await GetMyCreatedCourse(params.courseId);
+            setCourse(courseData);
+
+            const chapterData = await GetChaptersByCourseId(params.courseId);
+            setChapters(chapterData);
+
+            checkIfCourseCanBePublished(courseData, chapterData);
+
+        } catch (error) {
+            console.log("[FETCH COURSE AND CHAPTER ERROR]:", error);
+            toast.error("Nie udało się pobrać danych o kursie lub rozdziałach");
         } finally {
             setLoading(false)
         }
-    }, [user, params.courseId, completedFields, requiredFields])
+    }, [params.courseId, checkIfCourseCanBePublished]);  // dependencies array, ensuring that the function is only recreated when the courseId changes
+    
 
-    useEffect(()=>{
-        if (loading) fetchCourseData()
-    }, [loading, fetchCourseData])
+    useEffect(() => {
+        fetchCourseAndChapter();
+    }, [fetchCourseAndChapter]);  // Now `fetchCourseAndChapter` is stable and will not trigger unnecessary rerenders
+
+    // async function fetchCourseAndChapter2 () {
+    //     await GetMyCreatedCourse(params.courseId)
+    //     .then((data)=>setCourse(data))
+    //         .catch((error)=>{
+    //             console.log("[GET MY CREATED COURSE ERROR]:",error)
+    //             toast.error(error || "Nie udało się pobrać danych o kursie")
+    //         })
+    //     await GetChaptersByCourseId(params.courseId)
+    //         .then((data)=>setChapters(data))
+    //         .catch((error)=>{
+    //             console.log("[GET CHAPTERS BY COURSE ID ERROR]:",error)
+    //             toast.error(error || "Nie udało się pobrać danych o rozdziałach")
+    //         })
+    //         setLoading(false)
+    
+
+    //     //try {
+    //     //    const fetchedCourse = await GetMyCreatedCourse(params.courseId)
+    //     //    const fetchedChapters = await GetChaptersByCourseId(params.courseId)
+    //     //    setCourse(fetchedCourse)
+    //     //    setChapters(fetchedChapters)
+    //     //} catch (error) {
+    //     //    console.error(error)
+    //     //    toast.error("Nie udało pobrać się danych o kursie")
+    //     //} finally {
+
+    //     //}
+    // }
+
+    //useEffect(()=>{
+    //    fetchCourseAndChapter()
+    //},[])
+
+    //const fetchCourseData = useCallback(async () => {
+        //if(!user) return
+
+        //setLoading(true)
+    //    try {
+    //        const [fetchedCourse, fetchedChapters] = await Promise.all([
+    //            GetMyCreatedCourse(params.courseId),
+    //            GetChaptersByCourseId(params.courseId),
+    //        ])
+            //if (fetchedCourse.ownerId !== user.id && !user.role.includes(UserRole.Admin)) {
+            //    return
+            //}
+            // if (completedFields < requiredFields.length && fetchedCourse.published) {
+            //     await unpublishCourse(fetchedCourse.id)
+            //     toast.warning(
+            //         "Kurs zmienił status na: szkic. Uzupełnij wszystkie pola, by go opublikować."
+            //     );
+            // }
+    //            setCourse(fetchedCourse)
+    //            setChapters(fetchedChapters)
+    //    } catch(error) {
+    //        console.error("Error fetching data:", error);
+    //    } finally {
+    //        setLoading(false)
+    //    }
+    //}, [user, params.courseId, completedFields, requiredFields])
+
+
+
+
+    // useEffect(()=>{
+    //     if (dataReady && course) checkIfCourseCanBePublished(course, chapters)
+    // },[course, chapters])
+   
+       
+   
+
+    //useEffect(()=>{
+    //    if (loading) fetchCourseData()
+    //}, [loading, fetchCourseData])
 
     if (loading) {
         return <PageLoader/>
@@ -93,18 +192,18 @@ const CourseIdPage = ({
                         <PublishButton
                             courseId={course.id}
                             published={course.published}
-                            onUpdate={fetchCourseData}
-                            completedFields={completedFields}
-                            requiredFields={requiredFields.length}
+                            onUpdate={fetchCourseAndChapter}
+                            completedFields={completedFieldsNumber}
+                            requiredFields={requiredFieldsNumber}
                         />
                     </div>
                 </CardHeader>
                 <CardBody>
                     <Progress
-                        label={`(${completedFields}/${requiredFields.length})`}
-                        value={completedFields / requiredFields.length * 100}
+                        label={`(${completedFieldsNumber}/${requiredFieldsNumber})`}
+                        value={completedFieldsNumber / requiredFieldsNumber * 100}
                         showValueLabel={true}
-                        color={completedFields / requiredFields.length === 1 ? "success" : "warning"} 
+                        color={completedFieldsNumber / requiredFieldsNumber === 1 ? "success" : "warning"} 
                     />
                 </CardBody>
             </Card>
@@ -113,47 +212,47 @@ const CourseIdPage = ({
                     <TitleCard
                         courseId={course.id}
                         title={course.title}
-                        onUpdate={fetchCourseData}
+                        onUpdate={fetchCourseAndChapter}
                     />
                     <SlugCard
                         courseId={course.id}
                         slug={course.slug}
-                        onUpdate={fetchCourseData}
+                        onUpdate={fetchCourseAndChapter}
                     />
                     <ImageCard
                         courseId={course.id}
                         imageUrl={course.imageUrl}
-                        onUpdate={fetchCourseData}
+                        onUpdate={fetchCourseAndChapter}
                     />
                     <CategoryCard
                         courseId={course.id}
                         userId={user.id}
                         category={course.category}
-                        onUpdate={fetchCourseData}
+                        onUpdate={fetchCourseAndChapter}
                     />
                     <LevelCard
                         courseId={course.id}
                         userId={user.id}
                         level={course.level}
-                        onUpdate={fetchCourseData}
+                        onUpdate={fetchCourseAndChapter}
                     />
                     <SubjectCard
                         courseId={course.id}
                         userId={user.id}
                         subject={course.subject}
-                        onUpdate={fetchCourseData}
+                        onUpdate={fetchCourseAndChapter}
                     />
                     <PriceCard
                         courseId={course.id}
                         price={course.price}
-                        onUpdate={fetchCourseData}
+                        onUpdate={fetchCourseAndChapter}
                     />
                 </div>
                 <div>
                     <ChapterList
                         courseId={course.id}
                         chapters={chapters}
-                        onUpdate={fetchCourseData}
+                        onUpdate={fetchCourseAndChapter}
                     />
                 </div>
             </div>

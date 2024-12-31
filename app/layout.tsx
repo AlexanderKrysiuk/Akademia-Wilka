@@ -39,7 +39,7 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <Header/>
-            <main className="max-h-full">
+            <main className="flex justify-center mx-auto w-full max-w-7xl lg:px-[10vw]">
 
               {children}
               

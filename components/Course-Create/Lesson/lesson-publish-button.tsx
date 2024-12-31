@@ -11,45 +11,58 @@ const PublishLessonButton = ({
     onUpdate,
     completedFields,
     requiredFields
-} : {
-    lessonId: string,
-    published: boolean,
-    onUpdate: () => void,
-    completedFields: number,
+}: {
+    lessonId: string
+    published: boolean
+    onUpdate: () => void
+    completedFields: number
     requiredFields: number
 }) => {
     const [submitting, setSubmitting] = useState(false)
-    const onSubmit = () => {
+    const [isPublished, setIsPublished] = useState(published) // Stan przycisku
+
+    const onSubmit = async () => {
+        if (submitting) return // Zapobiegamy wielokrotnemu kliknięciu przycisku
         setSubmitting(true)
+
+        if (completedFields < requiredFields) {
+            toast.warning("Uzupełnij wszystkie pola przed opublikowaniem.");
+            setSubmitting(false); // Zatrzymaj ładowanie przycisku
+            return;
+        }
+
         try {
-            if (published === false) {
-                publishLesson(lessonId)
-                toast.success("Opublikowano lekcję")
-            } else if (published === true) {
-                unpublishLesson(lessonId)
-                toast.info("Zmieniono na szkic")
+            // W zależności od stanu publikacji, publikujemy lub wycofujemy lekcję
+            if (!isPublished) {
+                await publishLesson(lessonId) // Zakładając, że publishLesson zwróci Promise
+                toast.success("Lekcja została opublikowana!")
+                setIsPublished(true) // Zaktualizuj stan przycisku po udanej publikacji
             } else {
-                toast.error("Wystąpił nieoczekiwany błąd")
+                await unpublishLesson(lessonId) // Zakładając, że unpublishLesson zwróci Promise
+                toast.info("Lekcja została zmieniona na szkic.")
+                setIsPublished(false) // Zaktualizuj stan przycisku po wycofaniu publikacji
             }
-        } catch {
-            toast.error("Wystąpił nieoczekiwany błąd")
+        } catch (error) {
+            console.error(error)
+            toast.error("Wystąpił nieoczekiwany błąd podczas zmiany statusu lekcji.")
         } finally {
             setSubmitting(false)
-            onUpdate()
+            onUpdate() // Zaktualizuj stan po zakończeniu
         }
     }
 
     return (
         <Button
             size="sm"
-            className="text-white"
-            isDisabled={(completedFields < requiredFields) || submitting}
+            isDisabled={completedFields < requiredFields || submitting}
             color={completedFields < requiredFields ? "warning" : "success"}
             isLoading={submitting}
             onClick={onSubmit}
+            className="text-white"
         >
-            {published ? "Zmień na szkic" : "Opublikuj"}
+            {isPublished ? "Zmień na szkic" : "Opublikuj"}
         </Button>
     )
 }
+
 export default PublishLessonButton

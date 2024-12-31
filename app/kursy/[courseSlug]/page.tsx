@@ -1,6 +1,7 @@
 "use client"
 import { getPublishedCourseBySlug } from "@/actions/student/course";
-import CourseLandingPagePaymentElement from "@/components/payment/course-landing-page";
+import PageLoader from "@/components/page-loader";
+import CourseAccessElement from "@/components/payment/course-access-element";
 import { Card, CardBody, CardHeader, Image } from "@nextui-org/react";
 import { Course } from "@prisma/client";
 import { useRouter } from "next/navigation";
@@ -12,6 +13,7 @@ const CourseSlugPage = ({
 } : {
     params: {courseSlug: string}
 }) => {
+    const [loading, setLoading] = useState(true)
     const [course, setCourse] = useState<Course | null>()
     const router = useRouter()
     
@@ -22,33 +24,43 @@ const CourseSlugPage = ({
                 toast.error(error)
                 router.push(`/kursy`)
             })
+            .finally(()=>{
+                setLoading(false)
+            })
     },[params.courseSlug, router])
 
+    if (loading) return <PageLoader/>
+
+    if (!course || !course.imageUrl || !course.title) return
+
     return ( 
-        <main className="space-y-4">
-            <Card
-                className="aspect-video flex"
-            >
-                {course?.imageUrl && (
-                    <Image
-                        src={course.imageUrl}
-                        alt={course.title}
+        <main className="container mx-auto p-4">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+                {/* Sekcja główna */}
+                <div className="lg:col-span-3 space-y-4">
+                    <Card className="aspect-video">
+                        <Image
+                            src={course.imageUrl}
+                            alt={course.title}
+                            className="object-cover w-full h-full"
+                        />
+                    </Card>
+                    <Card>
+                        <CardHeader>
+                            <h1 className="text-xl font-bold">{course.title}</h1>
+                        </CardHeader>
+                        <CardBody>
+                            <p>{course.description}</p>
+                        </CardBody>
+                    </Card>
+                </div>
+                {/* Sekcja płatności */}
+                <div className="lg:col-span-2">
+                    <CourseAccessElement
+                        course={course}
                     />
-            )}
-            </Card>
-            <Card>
-                <CardHeader>
-                    {course?.title}
-                </CardHeader>
-                <CardBody>
-                    {course?.description}
-                </CardBody>
-            </Card>
-            <CourseLandingPagePaymentElement
-                courseSlug={params.courseSlug}
-                price={100}
-            />
-            {/*JSON.stringify(course, null,2)*/}
+                </div>
+            </div>
         </main>
      );
 }

@@ -16,30 +16,25 @@ import LessonsList from "../Lesson/lessons-list"
 
 const ChapterEditModal = ({
     chapter,
-    requiredFields,
+    requiredFieldsNumber,
+    completedFieldsNumber,
     lessons,
     onUpdate,
 } : {
     chapter: Chapter,
-    requiredFields: (string | boolean | null)[]
+    requiredFieldsNumber: number,
+    completedFieldsNumber: number
     lessons: Lesson[]
     onUpdate: () => void
 }) => {
-    const [loading, setLoading] = useState(true)
+    //const [loading, setLoading] = useState(true)
     const { isOpen, onOpen, onOpenChange } = useDisclosure()
 
     // Memoize requiredFields to avoid unnecessary recalculations
-    const completedFields = useMemo(() => requiredFields.filter(Boolean).length, [requiredFields])
 
-    useEffect(() => {
-        if (completedFields < requiredFields.length && chapter.published) {
-            unpublishChapter(chapter.id)
-            toast.warning("Rozdział zmienił status na:szkic, uzupełnij wszystkie pola by go opublikować")
-        }
-        setLoading(false)
-    }, [chapter.id, chapter.published, completedFields, requiredFields.length])
+    
+    //if (loading) return <PageLoader />
 
-    if (loading) return <PageLoader />
 
     return (
         <main>
@@ -59,7 +54,12 @@ const ChapterEditModal = ({
                 }}
             >
                 <ModalContent>
-                    {(onClose) => (
+                    {(onClose) => {
+                        const handleClose = () => {
+                            onUpdate()
+                            onClose()
+                        }
+                        return(
                         <>
                             <ModalHeader className="flex justify-between mt-8">
                                 <div className="flex gap-2 items-center">
@@ -78,17 +78,17 @@ const ChapterEditModal = ({
                                         chapterId={chapter.id}
                                         published={chapter.published}
                                         onUpdate={onUpdate}
-                                        completedFields={completedFields}
-                                        requiredFields={requiredFields.length}
+                                        completedFields={completedFieldsNumber}
+                                        requiredFields={requiredFieldsNumber}
                                     />
                                 </div>
                             </ModalHeader>
                             <ModalHeader>
                                 <Progress
-                                    label={`(${completedFields}/${requiredFields.length})`}
-                                    value={(completedFields / requiredFields.length) * 100}
+                                    label={`(${completedFieldsNumber}/${requiredFieldsNumber})`}
+                                    value={(completedFieldsNumber / requiredFieldsNumber) * 100}
                                     showValueLabel={true}
-                                    color={completedFields / requiredFields.length === 1 ? "success" : "warning"}
+                                    color={completedFieldsNumber / requiredFieldsNumber === 1 ? "success" : "warning"}
                                 />
                             </ModalHeader>
                             <Divider />
@@ -120,13 +120,14 @@ const ChapterEditModal = ({
                                 <Button
                                     color="primary"
                                     variant="light"
-                                    onClick={onClose}
+                                    onClick={handleClose}
                                 >
                                     Zakończ edycję
                                 </Button>
                             </ModalFooter>
                         </>
-                    )}
+                        )
+                    }}
                 </ModalContent>
             </Modal>
         </main>

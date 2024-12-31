@@ -4,6 +4,7 @@ import * as ftp from "basic-ftp"
 import { prisma } from "@/lib/prisma"
 import { CreateChapterSchema } from "@/schemas/chapter"
 import { z } from "zod"
+import { checkLessonPublicationStatus } from "../lesson-teacher/lesson"
 
 export async function CreateChapter (fields: z.infer<typeof CreateChapterSchema>, courseId:string) {
 
@@ -108,3 +109,8 @@ export const DeleteChapterById = async (courseId:string, chapterId:string) => {
     await ReorderChaptersByCourseId(courseId)
     return
 }
+
+export const checkChapterPublicationStatus = (chapter: any) => {
+    // Sprawdzamy, czy rozdział zawiera przynajmniej jedną opublikowaną lekcję
+    return chapter.lessons.some(checkLessonPublicationStatus);
+};

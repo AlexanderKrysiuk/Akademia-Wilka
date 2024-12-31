@@ -129,3 +129,8 @@ export async function publishLesson (lessonId:string) {
         data: {published: true}
     })
 }
+
+export const checkLessonPublicationStatus = (lesson: any) => {
+    // Sprawdzamy, czy lekcja jest opublikowana
+    return lesson.published;
+};

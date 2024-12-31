@@ -39,9 +39,9 @@ export async function getPublishedCourseBySlug(slug:string) {
   }
 }
 
-export async function checkIfUserHasCourse(userId:string, courseSlug:string) {
+export async function checkIfUserHasCourse(userId:string, courseId:string) {
   const course = await prisma.course.findUnique({
-    where: { slug: courseSlug },
+    where: { id: courseId },
     select: { id: true }
   })
 

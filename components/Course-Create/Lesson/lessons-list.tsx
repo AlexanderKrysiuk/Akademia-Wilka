@@ -100,6 +100,7 @@ const LessonsList = ({
             <CardFooter>
                 <CreateLessonModal
                     chapterId={chapter.id}
+                    courseId={chapter.courseId}
                     onUpdate={onUpdate}
                 />
             </CardFooter>

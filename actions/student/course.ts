@@ -1,5 +1,6 @@
 "use server"
 
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { ProductStatus, ProductType } from "@prisma/client";
 
@@ -39,7 +40,9 @@ export async function getPublishedCourseBySlug(slug:string) {
   }
 }
 
-export async function checkIfUserHasCourse(userId:string, courseId:string) {
+export async function checkIfUserHasCourse(courseId:string) {
+  const session = await auth()
+  if (!session || !session.user || !session.user.id ) throw new Error("Brak dostępu")
   const course = await prisma.course.findUnique({
     where: { id: courseId },
     select: { id: true }
@@ -49,7 +52,7 @@ export async function checkIfUserHasCourse(userId:string, courseId:string) {
   
   const hasCourse = await prisma.purchasedProducts.findFirst({
     where: {
-      userId,
+      userId: session.user.id,
       productId: course.id,
       productType: ProductType.Course,
       status: ProductStatus.Active

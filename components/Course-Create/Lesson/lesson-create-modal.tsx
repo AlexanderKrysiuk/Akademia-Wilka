@@ -15,9 +15,11 @@ type FormFields = z.infer<typeof CreateLessonSchema>
 
 const CreateLessonModal = ({
     chapterId,
+    courseId,
     onUpdate
 } : {
     chapterId:string,
+    courseId:string
     onUpdate: () => void
 }) => {
     const { isOpen, onOpen, onOpenChange } = useDisclosure()
@@ -27,7 +29,7 @@ const CreateLessonModal = ({
 
     const onSubmit: SubmitHandler<FormFields> = async (data) => {
         startTransition(async() => {
-            await CreateLesson(data, chapterId)
+            await CreateLesson(data, chapterId, courseId)
                 .then(()=>{
                     toast.success("Dodano nową lekcję")
                     onUpdate()

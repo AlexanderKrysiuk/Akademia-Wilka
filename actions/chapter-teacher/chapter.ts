@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma"
 import { CreateChapterSchema } from "@/schemas/chapter"
 import { z } from "zod"
 import { checkLessonPublicationStatus } from "../lesson-teacher/lesson"
+import { ProductType } from "@prisma/client"
 
 export async function CreateChapter (fields: z.infer<typeof CreateChapterSchema>, courseId:string) {
 
@@ -48,7 +49,7 @@ export const GetChapterBySlug = async (chapterSlug:string, courseId:string) => {
     })
 }
 
-export async function unpublishChapter (chapterId:string) {
+export async function unpublishChapter (chapterId:string) {    
     await prisma.chapter.update({
         where: {id: chapterId},
         data: {published: false}

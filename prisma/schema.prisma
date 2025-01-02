@@ -38,7 +38,7 @@ enum UserRole {
   Teacher
 }
 
-model UserProgress {
+model UserCourseProgress {
   id     String @id @default(uuid())
   userId String
   lessonId String
@@ -186,7 +186,7 @@ model Lesson {
 
   attachments Attachment[]
 
-  userProgress UserProgress[]
+  userProgress UserCourseProgress[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -219,23 +219,6 @@ model Purchase {
   @@index([userId])          // Indeks na userId dla szybszych zapytań
 }
 
-enum PaymentStatus {
-  Pending    // Oczekuje na płatność
-  Paid       // Opłacone
-  Failed     // Niepowodzenie płatności
-  Refunded   // Zwrócono pieniądze
-}
-
-
-model StripeCustomer {
-  id               String @id @default(uuid())
-  userId           String @unique
-  stripeCustomerId String @unique
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model PurchasedProducts {
   id             String       @id @default(uuid()) // Unikalny identyfikator
   purchaseId     String       // Powiązanie z transakcją
@@ -255,6 +238,24 @@ model PurchasedProducts {
   @@index([purchaseId])
   @@index([userId])
 }
+
+enum PaymentStatus {
+  Pending    // Oczekuje na płatność
+  Paid       // Opłacone
+  Failed     // Niepowodzenie płatności
+  Refunded   // Zwrócono pieniądze
+}
+
+
+model StripeCustomer {
+  id               String @id @default(uuid())
+  userId           String @unique
+  stripeCustomerId String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 
 enum ProductType {
   Course

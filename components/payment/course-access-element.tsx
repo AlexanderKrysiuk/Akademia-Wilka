@@ -3,26 +3,41 @@
 import { checkIfUserHasCourse } from "@/actions/student/course";
 import StartPage from "@/app/auth/start/page";
 import { useCurrentUser } from "@/hooks/user";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { toast } from "react-toastify";
 import PageLoader from "../page-loader";
 import { Button, Card, CardBody, CardHeader } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { Course } from "@prisma/client";
+import { CreateCoursePaymentPage } from "@/actions/stripe/course";
 
 const CourseAccessElement = ({ course }: { course: Course }) => {
   const user = useCurrentUser();
   const [loading, setLoading] = useState(true);
   const [hasCourse, setHasCourse] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
   const router = useRouter();
 
-  useEffect(() => {
-    if (!user) {
-      setLoading(false);
-      return;
-    }
+  const handlePayment = () => {
+    startTransition(async () => {
+      try {
+        const result = await CreateCoursePaymentPage(course.slug!);
 
-    checkIfUserHasCourse(user.id, course.id)
+        if (!result?.props.checkoutUrl) {
+          throw new Error("Nie udało się utworzyć sesji płatności.");
+        }
+
+        router.push(result.props.checkoutUrl);
+      } catch (error) {
+        toast.error("Błąd podczas inicjalizacji płatności.");
+        console.error(error);
+      }
+    });
+  };
+
+  useEffect(() => {
+    checkIfUserHasCourse(course.id)
       .then((data) => setHasCourse(data))
       .catch((error) => {
         toast.error("Nie udało się sprawdzić dostępu do kursu.");
@@ -47,7 +62,7 @@ const CourseAccessElement = ({ course }: { course: Course }) => {
   if (loading) return <PageLoader />;
 
   return hasCourse ? (
-    <Button className="w-full" color="success">
+    <Button className="w-full text-white" color="success">
       Przejdź do kursu
     </Button>
   ) : (
@@ -56,28 +71,8 @@ const CourseAccessElement = ({ course }: { course: Course }) => {
         <div className="w-full text-center">Uzyskaj dostęp do kursu za: {course.price}zł</div>
       </CardHeader>
       <CardBody className="flex flex-col items-center">
-        <Button
-          color="primary"
-          fullWidth
-          onClick={async () => {
-            try {
-              const response = await fetch(`/api/courses/${course.id}/checkout`, {
-                method: "POST",
-              });
-
-              if (!response.ok) {
-                throw new Error("Nie udało się przekierować do płatności.");
-              }
-
-              const { checkoutUrl } = await response.json();
-              router.push(checkoutUrl);
-            } catch (error) {
-              toast.error("Błąd podczas inicjalizacji płatności.");
-              console.error(error);
-            }
-          }}
-        >
-          Przejdź do płatności
+      <Button color="primary" fullWidth onClick={handlePayment} disabled={isPending}>
+          {isPending ? "Przekierowanie..." : "Przejdź do płatności"}
         </Button>
       </CardBody>
     </Card>

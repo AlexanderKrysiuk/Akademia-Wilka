@@ -16,8 +16,8 @@ const DashboardLayout = ({
 
 
     return (
-        <main className="flex p-4">
-            {/*
+        <main className="flex justify-center mx-auto w-full max-w-7xl lg:px-[10vw]">
+        {/*
             <motion.div
                 animate={{
                     width: isSidebarOpen ? "auto" : "0", 

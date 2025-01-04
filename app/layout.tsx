@@ -38,12 +38,17 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <Header/>
-            <main className="flex justify-center mx-auto w-full max-w-7xl lg:px-[10vw]">
+            <main className="w-full h-full flex flex-col">
+              <div>
+                <Header/>
 
+              </div>
+              <div className="flex-1 overflow-auto">
               {children}
-              
               <Toaster/>
+
+              </div>
+              
             </main>
           </ThemeProvider>
         </body>

@@ -9,7 +9,7 @@ export async function getPublishedCourses() {
     const courses = await prisma.course.findMany({
       where: {
         published: true,
-        category: "Course", // Sprawdzanie, czy kategoria to "Course"
+        category: ProductType.Course, // Sprawdzanie, czy kategoria to "Course"
       }
     });
 
@@ -40,22 +40,46 @@ export async function getPublishedCourseBySlug(slug:string) {
   }
 }
 
-export async function checkIfUserHasCourse(courseId:string) {
-  const session = await auth()
-  if (!session || !session.user || !session.user.id ) throw new Error("Brak dostępu")
+export async function checkIfUserHasCourse(courseId:string, email?:string) {
   const course = await prisma.course.findUnique({
     where: { id: courseId },
     select: { id: true }
   })
 
   if (!course) throw new Error ("Nie znaleziono kursu")
+
+  let user
+
+  if (email) {
+    user = await prisma.user.findUnique({
+      where: { email }
+    })
+
+    if (user) {
+      const hasCourse = await prisma.purchasedProducts.findFirst({
+        where: {
+          userId: user.id,
+          productId: course.id,
+          productType: ProductType.Course,
+          status: ProductStatus.Used
+        }
+      })   
+      return !!hasCourse 
+    }
+    return false
+  } else {
+    const session = await auth()
+    user = session?.user
+  }
+  
+  if (!user) return false
   
   const hasCourse = await prisma.purchasedProducts.findFirst({
     where: {
-      userId: session.user.id,
+      userId: user.id,
       productId: course.id,
       productType: ProductType.Course,
-      status: ProductStatus.Active
+      status: ProductStatus.Used
     }
   })
 

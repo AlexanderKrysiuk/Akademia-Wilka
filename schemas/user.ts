@@ -20,6 +20,10 @@ export const NewPasswordSchema = z.object({
     message: "Hasła muszą być takie same",
 })
 
+export const EmailSchema = z.object({
+    email: emailTemplate
+})
+
 export const RegisterSchema = z.object({
     name: nameTemplate,
     email: emailTemplate,

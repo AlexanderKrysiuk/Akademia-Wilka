@@ -3,7 +3,7 @@ import { getToken } from 'next-auth/jwt'; // Funkcja do uzyskania tokenu JWT z r
 
 import NextAuth from "next-auth";
 
-import { apiAuthPrefix, apiPrefix, authRoutes, coursePrefix, publicRoutes, teacherPrefix, userRoutes } from "./routes";
+import { apiAuthPrefix, apiPrefix, authRoutes, coursePrefix, courseprefix, publicRoutes, teacherPrefix, userRoutes } from "./routes";
 import { UserRole } from "@prisma/client";
 import { getUserByEmail } from "./data/user";
 import { useCurrentUser } from "./hooks/user";
@@ -56,6 +56,10 @@ export default auth((request) => {
 
   const courseRoute = request.nextUrl.pathname.startsWith(coursePrefix)
   if (courseRoute) {
+    return NextResponse.next()
+  }
+  const courseLearingRoute = request.nextUrl.pathname.startsWith(courseprefix)
+  if (courseLearingRoute) {
     return NextResponse.next()
   }
   

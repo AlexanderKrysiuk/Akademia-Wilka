@@ -6,6 +6,7 @@ import { ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import LessonMenu from "./lesson-menu";
 import { Chapter, Course, Lesson } from "@prisma/client";
+import { Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHeader, useDisclosure } from "@nextui-org/react";
 
 //const CourseLayoutWrapper = ({children: course} : {children: React.ReactNode; course: any}) => {
 const CourseLayoutWrapper = ({
@@ -22,56 +23,71 @@ const CourseLayoutWrapper = ({
     completedLessons: string[]
 }) => {
 
-    const [menuVisible, setMenuVisible] = useState(false)
-    
-    useEffect(() => {
-        const mediaQuery = window.matchMedia("(min-width: 1024px)");
-        const handleResize = () => setMenuVisible(mediaQuery.matches);
-        handleResize(); // Sprawdź początkowy stan
-        mediaQuery.addEventListener("change", handleResize);
-        return () => mediaQuery.removeEventListener("change", handleResize);
-    }, []);
-    return ( 
-        <main className="w-full h-full flex flex-row">
-        <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: menuVisible ? "25%" : "0%" }}
-            transition={{ duration: 0.3 }}
-            className="shadow-lg overflow-hidden h-full border-r-white border-r-1"
-        >
-            <div className="h-full w-full overflow-y-auto max-w-1/4">
-                <LessonMenu 
-                    course={course} 
-                    chapters={chapters} 
-                    lessons={lessons}
-                    completedLessons={completedLessons}
-                />
-            </div>
-        </motion.div>
-        <div className="w-full h-full border-4 border-violet-500">
-            <div className="bg-primary text-white w-full flex flex-row">
-                <Button
-                    isIconOnly
-                    color="primary"
-                    onClick={()=>{setMenuVisible(!menuVisible)}}
-                >
-                    <motion.div
-                        animate={{ rotate: menuVisible ? 180 : 0 }}
-                        transition={{ duration: 0.3 }}
-                    >
-                        <ChevronRight/>
-                    </motion.div>
-                </Button>
-                <div className="w-full flex justify-center items-center">
-                    Lesson Navbar
+    const {isOpen, onOpen, onOpenChange} = useDisclosure()
+
+    return (
+        <>
+            <Drawer
+                isOpen={isOpen}
+                placement="left"
+                onOpenChange={onOpenChange}
+            >
+                <DrawerContent>
+                    {(onClose)=>(
+                        <>
+                            <DrawerHeader/>
+                            <DrawerBody
+                                className="px-0"
+                            >
+                                <LessonMenu 
+                                    course={course} 
+                                    chapters={chapters} 
+                                    lessons={lessons}
+                                    completedLessons={completedLessons}
+                                    
+                                />
+                            </DrawerBody>
+                            <DrawerFooter>
+                                <Button color="danger" variant="light" onPress={onClose}>
+                                    Zamknij
+                                </Button>
+                            </DrawerFooter>
+                        </>
+                    )}
+                </DrawerContent>
+            </Drawer>
+            <main className="w-full h-full flex flex-row">
+                <div className="w-1/4 overflow-y-auto shadow-md dark:shadow-white hidden lg:block">
+                    <LessonMenu 
+                        course={course} 
+                        chapters={chapters} 
+                        lessons={lessons}
+                        completedLessons={completedLessons}
+                    />
                 </div>
-            </div>
-            <div className="flex-1 overflow-auto">
-                {children}
-            </div>
-        </div>
-    </main>
-     );
+                <div className="w-full flex flex-col">
+
+                    <div className="bg-primary text-white w-full flex items-center">
+                        <Button
+                            isIconOnly
+                            color="primary"
+                            onClick={onOpen}
+                            className="lg:hidden"
+                        >
+                            <ChevronRight/>
+                        </Button>
+                        {/*
+                        <span className="w-full flex justify-center">
+                            Lesson Navbar
+                        </span>
+                        */}
+                    </div>
+                    <div className="w-full h-full">
+                        {children}
+                    </div>
+                </div>
+            </main>
+        </>
+    )
 }
- 
 export default CourseLayoutWrapper;

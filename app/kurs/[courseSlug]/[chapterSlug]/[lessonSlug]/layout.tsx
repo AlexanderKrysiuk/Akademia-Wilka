@@ -71,7 +71,7 @@ const CourseSlugLayout = async ({
     const extendedCourse = await checkifUserHasAccessToCurseIfYesReturnCourse(params.courseSlug);
 
   return (
-    <div className="w-full h-full flex flex-col border-green-500 border-2">
+    <div className="w-full h-full flex flex-col">
       {/*
       <h1>Kurs: {course.slug}</h1>
       <p>{JSON.stringify(course)}</p>

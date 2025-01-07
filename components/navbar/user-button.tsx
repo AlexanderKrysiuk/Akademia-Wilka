@@ -52,12 +52,13 @@ const UserButton = () => {
                         )}
                     </DropdownSection>  
                         <DropdownItem
+                            key={''}
                             startContent={<LogOut size={16}/>}
-                            >
+                        >
                             <LogOutButton>
-                            Wyloguj
-                    </LogOutButton>
-                        </DropdownItem>
+                                Wyloguj
+                            </LogOutButton>
+                    </DropdownItem>
                 </DropdownMenu>
             </Dropdown>
         );

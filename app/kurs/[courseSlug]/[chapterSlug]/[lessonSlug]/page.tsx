@@ -1,26 +1,61 @@
 "use client"
 
-import { Button } from "@nextui-org/button";
-import { motion } from "framer-motion";
-import { ChevronRight } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Chapter, Course, Lesson, LessonType } from "@prisma/client";
 
-const LessonPage = () => {
-    const [menuVisible, setMenuVisible] = useState(false)
-    
-    useEffect(() => {
-        const mediaQuery = window.matchMedia("(min-width: 1024px)");
-        const handleResize = () => setMenuVisible(mediaQuery.matches);
-        handleResize(); // Sprawdź początkowy stan
-        mediaQuery.addEventListener("change", handleResize);
-        return () => mediaQuery.removeEventListener("change", handleResize);
-    }, []);
-    
+interface LessonPageProps {
+    params: {
+      courseSlug: string;
+      chapterSlug: string;
+      lessonSlug: string;
+    };
+    course: Course;
+    chapters: Chapter[];
+    lessons: Lesson[];
+    completedLessons: string[];
+  }
+
+  const LessonPage = ({ params, course, chapters, lessons, completedLessons }: LessonPageProps) => {
+   
     return (
-        <main className="w-full h-full flex flex-row">
-            LessonPage
-        </main>
-    );
+        <pre>
+            {JSON.stringify(completedLessons,null,2)}
+            {JSON.stringify(params,null,2)}
+        </pre>
+            
+    )
+    
+    {/*
+    const { chapterSlug, lessonSlug } = params;
+  
+    // Znajdź odpowiedni rozdział po chapterSlug
+    const chapter = chapters.find((chapter) => chapter.slug === chapterSlug);
+    
+    if (!chapter) {
+      return <div>Nie znaleziono rozdziału.</div>;
+    }
+  
+  // Znajdź odpowiednią lekcję po lessonSlug w kontekście chapterId
+  const lesson = lessons.find((lesson) => lesson.slug === lessonSlug && lesson.chapterId === chapter.id);
+  
+    if (!lesson) {
+      return <div>Nie znaleziono lekcji.</div>;
+    }
+  
+    // Sprawdź, czy lekcja została ukończona
+    const completed = completedLessons.includes(lesson.id);
+  
+    // Renderuj różne komponenty w zależności od typu lekcji
+    switch (lesson.type) {
+      case LessonType.Video:
+        //return <VideoLesson lesson={lesson} completed={completed} />;
+      case LessonType.Text:
+        //return <TextLesson lesson={lesson} completed={completed} />;
+      case LessonType.Subchapter:
+        //return <QuizLesson lesson={lesson} completed={completed} />;
+      default:
+        return <div>Nieobsługiwany typ lekcji.</div>;
+    }
+  };
+    */}
 }
- 
 export default LessonPage;

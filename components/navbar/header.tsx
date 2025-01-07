@@ -20,7 +20,7 @@ export default function Header() {
     return (
         <Navbar
             onMenuOpenChange={setIsMenuOpen} 
-            className='flex items-center shadow-md border-b' 
+            className='flex items-center shadow-md dark:shadow-white' 
         >
                 <NavbarMenuToggle
                     aria-label={isMenuOpen ? "Close menu" : "Open menu"}

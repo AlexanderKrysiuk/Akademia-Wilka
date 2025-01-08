@@ -5,6 +5,7 @@ import { formatPrice } from "@/lib/format"
 import { PriceSchema } from "@/schemas/course"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, Card, CardBody, CardFooter, Input } from "@nextui-org/react"
+import { useRouter } from "next/navigation"
 import { startTransition } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { toast } from "react-toastify"
@@ -15,12 +16,11 @@ type FormFields = z.infer<typeof PriceSchema>
 const PriceCard = ({
     courseId,
     price,
-    onUpdate
 } : {
     courseId:string,
     price:number | null,
-    onUpdate: () => void
 }) => {
+    const router = useRouter()
     const { register, handleSubmit, setError, watch, formState: { errors, isSubmitting }} = useForm<FormFields>({
         defaultValues: price? {price} : undefined,
         resolver: zodResolver(PriceSchema)
@@ -31,7 +31,7 @@ const PriceCard = ({
             await UpdateCoursePrice(data, courseId)
             .then(()=>{
                 toast.success("Cenę zmieniono pomyślnie")
-                onUpdate()
+                router.refresh()
             })
             .catch((error)=>{
                 setError("price", {message: error.message})

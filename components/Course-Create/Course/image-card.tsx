@@ -11,6 +11,7 @@ import ReactCrop, { Crop, centerCrop, convertToPixelCrop, makeAspectCrop } from 
 import { toast } from "react-toastify";
 import { uploadCourseImage } from "@/actions/course-teacher/image";
 import { number } from "zod";
+import { useRouter } from "next/navigation";
 
 const MAX_IMAGE_SIZE = 4 * 1024 * 1024;
 const MIN_DIMENSION = 100;
@@ -20,11 +21,9 @@ const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
 const ImageCard = ({
     courseId,
     imageUrl,
-    onUpdate
 }: {
     courseId: string;
     imageUrl: string | null;
-    onUpdate: () => void;
 }) => {
     const user = useCurrentUser();
 
@@ -37,6 +36,7 @@ const ImageCard = ({
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [crop, setCrop] = useState<Crop>();
     const [imgSrc, setImgSrc] = useState<string>();
+    const router = useRouter()
 
     if (!user || !user.role.includes(UserRole.Teacher || UserRole.Admin)) return null;
 
@@ -134,7 +134,7 @@ const ImageCard = ({
                 .then(() => {
                     toast.success("Obrazek przesyłany pomyślnie!");
                     onOpenChange();
-                    onUpdate();
+                    router.refresh()
                 })
                 .catch((error) => {
                     toast.error(error.message);

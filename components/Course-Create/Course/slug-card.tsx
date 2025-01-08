@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, Card, CardBody, CardFooter, Input } from "@nextui-org/react"
 import { UserRole } from "@prisma/client"
 import { Pen, PenOff } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { startTransition, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { toast } from "react-toastify"
@@ -17,12 +18,11 @@ type FormFields = z.infer<typeof EditCourseSlugSchema>
 const SlugCard = ({
     courseId,
     slug,
-    onUpdate
 } : {
     courseId: string
     slug: string | null
-    onUpdate: () => void
 }) => {    
+    const router = useRouter()
     // Always call useForm at the top level
     const { register, handleSubmit, setError, watch, formState: { errors, isSubmitting }} = useForm<FormFields>({
         defaultValues: slug ? { slug } : undefined,
@@ -34,7 +34,7 @@ const SlugCard = ({
             UpdateCourseSlug(data, courseId)
                 .then(() => {
                     toast.success("Odnośnik został zmieniony pomyślnie")
-                    onUpdate()
+                    router.refresh()
                 })
                 .catch((error) => {
                     setError("slug", { message: error.message })

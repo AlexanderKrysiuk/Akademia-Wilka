@@ -4,6 +4,7 @@ import { UpdateCourseLevel } from "@/actions/course-teacher/level"
 import { LevelNames } from "@/lib/enums"
 import { Button, Card, CardBody, CardFooter, Select, SelectItem } from "@nextui-org/react"
 import { Level } from "@prisma/client"
+import { useRouter } from "next/navigation"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 
@@ -17,14 +18,12 @@ const LevelCard = ({
     courseId,
     userId,
     level,
-    onUpdate
 } : {
     courseId: string,
     userId: string,
     level: Level | null,
-    onUpdate: () => void
 }) => {
-
+    const router = useRouter()
     const { control, handleSubmit, watch, setError, formState: { errors, isSubmitting } } = useForm<FormFields>({
         defaultValues: { 
             level: level ?? undefined ,
@@ -36,7 +35,7 @@ const LevelCard = ({
         try {
             const result = await UpdateCourseLevel(data.level, data.userId, data.courseId)
             toast.success(result)
-            onUpdate()
+            router.refresh()
         } catch(error) {
             console.error("Error updating course level:", error);  // Logowanie błędu
             const errorMessage = error instanceof Error ? error.message : "Nie udało się zaktualizować poziomu"

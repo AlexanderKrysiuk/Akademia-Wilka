@@ -4,6 +4,7 @@ import { UpdateCourseSubject } from "@/actions/course-teacher/subject"
 import { SubjectNames } from "@/lib/enums"
 import { Button, Card, CardBody, CardFooter, Select, SelectItem } from "@nextui-org/react"
 import { Subject } from "@prisma/client"
+import { useRouter } from "next/navigation"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 
@@ -17,14 +18,13 @@ const SubjectCard = ({
     courseId,
     userId,
     subject,
-    onUpdate
+    
 } : {
     courseId: string,
     userId: string,
     subject: Subject | null,
-    onUpdate: () => void
 }) => {
-
+    const router = useRouter()
     const { control, handleSubmit, watch, setError, formState: { errors, isSubmitting } } = useForm<FormFields>({
         defaultValues: { 
             subject: subject ?? undefined ,
@@ -36,7 +36,7 @@ const SubjectCard = ({
         try {
             const result = await UpdateCourseSubject(data.subject, data.userId, data.courseId)
             toast.success(result)
-            onUpdate()
+            router.refresh()
         } catch(error) {
             console.error("Error updating course subject:", error);  // Logowanie błędu
             const errorMessage = error instanceof Error ? error.message : "Nie udało się zaktualizować przedmiotu"

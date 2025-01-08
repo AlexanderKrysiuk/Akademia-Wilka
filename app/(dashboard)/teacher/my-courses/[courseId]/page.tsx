@@ -1,5 +1,11 @@
 import { auth } from "@/auth"
+import CategoryCard from "@/components/Course-Create/Course/category-card"
+import ImageCard from "@/components/Course-Create/Course/image-card"
+import LevelCard from "@/components/Course-Create/Course/level-card"
+import PriceCard from "@/components/Course-Create/Course/price-card"
 import PublishButton from "@/components/Course-Create/Course/publish-button"
+import SlugCard from "@/components/Course-Create/Course/slug-card"
+import SubjectCard from "@/components/Course-Create/Course/subject-card"
 import TitleCard from "@/components/Course-Create/Course/title-card"
 import { prisma } from "@/lib/prisma"
 import { Card, CardBody, CardFooter, CardHeader, Progress } from "@nextui-org/react"
@@ -34,11 +40,11 @@ const CourseIdPage = async ({
     const requiredFields = [
         course.title,
         course.slug,
-        //course.imageUrl,
+        course.imageUrl,
         //course.description,
-        //course.category,
-        //course.level,
-        //course.subject,
+        course.category,
+        course.level,
+        course.subject,
         //lessons.some((lesson) => lesson.published)
     ]
 
@@ -49,9 +55,7 @@ const CourseIdPage = async ({
             where: { id: course.id },
             data: { published: false } 
         })
-        toast.info("Zmieniono na szkic")
     }
-
 
     return (
         <main className="flex flex-col space-y-4">
@@ -82,11 +86,43 @@ const CourseIdPage = async ({
                 </CardFooter>
             </Card>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <div>
+                <div className="space-y-4">
                     <TitleCard
                         courseId={course.id}
                         title={course.title}
                     />
+                    <SlugCard
+                        courseId={course.id}
+                        slug={course.slug}
+                    />
+                    <ImageCard
+                        courseId={course.id}
+                        imageUrl={course.imageUrl}
+                    />
+                    <CategoryCard
+                        courseId={course.id}
+                        userId={user.id}
+                        category={course.category}
+                    />
+                    <LevelCard
+                        courseId={course.id}
+                        userId={user.id}
+                        level={course.level}
+                    />
+                    <SubjectCard
+                        courseId={course.id}
+                        userId={user.id}
+                        subject={course.subject}
+                    />
+                    <PriceCard
+                        courseId={course.id}
+                        price={course.price}
+                    />
+                </div>
+                <div>
+                    <Card>
+                        123
+                    </Card>
                 </div>
             </div>
         </main>

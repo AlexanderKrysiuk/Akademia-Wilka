@@ -4,6 +4,7 @@ import { UpdateCourseCategory } from "@/actions/course-teacher/category"
 import { CategoryNames } from "@/lib/enums"
 import { Button, Card, CardBody, CardFooter, CardHeader, Select, SelectItem } from "@nextui-org/react"
 import { Category } from "@prisma/client"
+import { useRouter } from "next/navigation"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 import { z } from "zod"
@@ -18,14 +19,12 @@ const CategoryCard = ({
     courseId,
     userId,
     category,
-    onUpdate
 } : {
     courseId: string,
     userId: string,
     category: Category | null,
-    onUpdate: () => void
 }) => {
-
+    const router = useRouter()
     const { control, handleSubmit, watch, setError, formState: { errors, isSubmitting } } = useForm<FormFields>({
         defaultValues: { 
             category: category ?? undefined ,
@@ -37,7 +36,7 @@ const CategoryCard = ({
         try {
             const result = await UpdateCourseCategory(data.category, data.userId, data.courseId)
             toast.success(result)
-            onUpdate()
+            router.refresh()
         } catch(error) {
             console.error("Error updating course category:", error);  // Logowanie błędu
             const errorMessage = error instanceof Error ? error.message : "Nie udało się zaktualizować kategorii"

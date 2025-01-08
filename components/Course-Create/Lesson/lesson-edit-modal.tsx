@@ -41,6 +41,7 @@ const LessonEditModal = ({
             />
             <Modal
                 isOpen={isOpen}
+                isDismissable={false}
                 onOpenChange={onOpenChange}
                 placement="center"
                 size="5xl"

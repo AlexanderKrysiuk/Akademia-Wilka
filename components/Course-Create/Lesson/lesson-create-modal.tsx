@@ -59,6 +59,7 @@ const CreateLessonModal = ({
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
+                isDismissable={false}
                 placement="center"
                 size="xs"
                 backdrop="opaque"

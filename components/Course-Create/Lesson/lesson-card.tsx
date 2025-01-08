@@ -49,7 +49,16 @@ const LessonCard = ({
     const [requiredFieldsNumber, setRequiredFieldsNumber] = useState<number>(0);
 
     const checkIfLessonCanBePublished = useCallback(async (lesson: Lesson) => {
-        const requiredFields = [lesson.title, lesson.slug];
+        let requiredFields = [lesson.title]
+        
+        //switch (lesson.type) {
+        //    case LessonType.Video :
+        //        requiredFields = [lesson.title, lesson.slug, lesson.ImageURL]
+        //    default : 
+        //        requiredFields = [lesson.title]
+        //}
+
+        //const requiredFields = [lesson.title, lesson.slug];
 
         const completedFields = requiredFields.filter(Boolean).length;
 

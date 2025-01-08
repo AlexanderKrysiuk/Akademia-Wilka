@@ -116,11 +116,57 @@ model Course {
   subject     Subject?
 
   chapters    Chapter[]
+  lessons     Lesson[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([category])
+}
+
+model Chapter {
+  id  String  @id @default(uuid())
+  title String
+  courseId String
+  course  Course  @relation(fields: [courseId], references: [id])
+  order Int
+  subchapters SubChapter[] 
+  lessons Lesson[]  
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model SubChapter {
+  id  String  @id @default(uuid())
+  title String
+  chapterId String
+  chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  order Int
+  lessons Lesson[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Lesson {
+  id        String      @id @default(uuid())
+  title     String
+  courseId  String
+  course  Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  chapterId String?
+  chapter Chapter?  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  subChapterId  String?
+  subChapter  SubChapter? @relation(fields: [subChapterId], references: [id], onDelete: Cascade)
+  type      LessonType
+  order     Int
+  content   String?     @db.Text
+  media     LessonMedia[]
+  ImageURL String?
+  published Boolean     @default(false)
+  free      Boolean     @default(false)
+  attachments Attachment[]
+  userProgress UserCourseProgress[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Category {
@@ -151,48 +197,19 @@ model Attachment {
   updatedAt DateTime @updatedAt
 }
 
-model Chapter {
-  id       String @id @default(uuid())
-  title    String
-  slug     String?
-  published Boolean @default(false)
+model LessonMedia {
+  id   String @id @default(uuid())
+  name String
+  url  String @db.Text
+  duration  Int?
 
-  courseId String
-  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-
-  order   Int
-  lessons Lesson[]
+  lessonId String?
+  lesson   Lesson? @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  @@unique([courseId, slug], map: "unique_chapter_slug_per_course")
 }
 
-model Lesson {
-  id        String      @id @default(uuid())
-  title     String
-  slug      String?
-  type      LessonType
-  order     Int
-  content   String?     @db.Text
-  media     Json?
-  ImageURL String?
-
-  published Boolean     @default(false)
-  free      Boolean     @default(false)
-
-  chapterId String
-  chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-
-  attachments Attachment[]
-
-  userProgress UserCourseProgress[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([chapterId, slug], map: "unique_lesson_slug_per_chapter")
-}
 
 enum LessonType {
   Text

@@ -4,23 +4,23 @@ import { publishCourse, unpublishCourse } from "@/actions/course-teacher/course"
 import { useCurrentUser } from "@/hooks/user"
 import { Button } from "@nextui-org/button"
 import { UserRole } from "@prisma/client"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "react-toastify"
 
 const PublishButton = ({
     courseId,
     published,
-    onUpdate,
     completedFields,
     requiredFields,
 } : {
     courseId: string,
     published: boolean,
-    onUpdate: () => void,
     completedFields: number,
     requiredFields: number
 }) => {
     const user = useCurrentUser()
+    const router = useRouter()
     const [submitting, setSubmitting] = useState(false)
     if (!user || !user.role.includes(UserRole.Teacher || UserRole.Admin)) return
 
@@ -40,7 +40,7 @@ const PublishButton = ({
             toast.error("Wystąpił nieoczekiwany błąd")
         } finally {
             setSubmitting(false)
-            onUpdate()
+            router.refresh()
         }
     }
 

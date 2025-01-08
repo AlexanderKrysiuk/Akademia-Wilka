@@ -124,7 +124,7 @@ const NewVerificationForm = () => {
                 } 
                 <Button type={verificationCompleted ? "button" : "submit"} color="primary" fullWidth disabled={isSubmitting} isLoading={isSubmitting} className="space-y-0">
                     {verificationCompleted ? (
-                        <Link href="/api/start">
+                        <Link href="/auth/start">
                             Przejdź do logowania
                         </Link>
                     ): (

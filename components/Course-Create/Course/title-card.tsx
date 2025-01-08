@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Card, CardBody, CardFooter, Input } from "@nextui-org/react";
 import { UserRole } from "@prisma/client";
 import { Pen, PenOff } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { startTransition, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -16,24 +17,23 @@ type FormFields = z.infer<typeof EditCourseTitleSchema>
 
 const TitleCard = ({
     courseId,
-    title,
-    onUpdate
+    title
 } : {
     courseId: string
     title: string
-    onUpdate: () => void
 }) => {   
     const { register, handleSubmit, setError, watch, formState: { errors, isSubmitting }} = useForm<FormFields>({
         defaultValues: { title },
         resolver: zodResolver(EditCourseTitleSchema)
     })
+    const router = useRouter()
 
     const onSubmit: SubmitHandler<FormFields> = async (data) => {
         startTransition(()=>{
             UpdateCourseTitle(data, courseId)
                 .then(()=>{
                     toast.success("Tytuł kursu został zmieniony")
-                    onUpdate()
+                    router.refresh()
                 })
                 .catch((error)=>{
                     setError("title", {message: error.message})

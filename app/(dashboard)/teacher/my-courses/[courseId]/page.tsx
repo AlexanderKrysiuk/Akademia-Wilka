@@ -1,5 +1,6 @@
 import { auth } from "@/auth"
 import CategoryCard from "@/components/Course-Create/Course/category-card"
+import DescriptionCard from "@/components/Course-Create/Course/description-card"
 import ImageCard from "@/components/Course-Create/Course/image-card"
 import LevelCard from "@/components/Course-Create/Course/level-card"
 import PriceCard from "@/components/Course-Create/Course/price-card"
@@ -94,6 +95,10 @@ const CourseIdPage = async ({
                     <SlugCard
                         courseId={course.id}
                         slug={course.slug}
+                    />
+                    <DescriptionCard
+                        courseId={course.id}
+                        description={course.description}
                     />
                     <ImageCard
                         courseId={course.id}

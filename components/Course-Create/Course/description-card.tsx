@@ -3,6 +3,7 @@
 import { UpdateCourseDescription } from "@/actions/course-teacher/description"
 import { EditCourseDescriptionSchema } from "@/schemas/course"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { Button, Card, CardBody, CardFooter, Textarea } from "@nextui-org/react"
 import { useRouter } from "next/navigation"
 import { startTransition } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
@@ -39,7 +40,34 @@ const DescriptionCard = ({
     }
 
     return ( 
-        <main></main>
+        <Card>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <CardBody>
+                    <Textarea
+                        {...register("description")}
+                        label="Opis"
+                        labelPlacement="outside"
+                        placeholder="opis kursu"
+                        isRequired
+                        isClearable
+                        isDisabled={isSubmitting}
+                        variant="bordered"
+                        isInvalid={!!errors.description}
+                        errorMessage={errors.description?.message}
+                    />
+                </CardBody>
+                <CardFooter>
+                    <Button
+                        type="submit"
+                        color="primary"
+                        isDisabled={isSubmitting || watch("description") === description || !!errors.description}
+                        isLoading={isSubmitting}
+                    >
+                        {isSubmitting ? "Przetwarzanie..." : "Zmień opis"}
+                    </Button>
+                </CardFooter>
+            </form>
+        </Card>
      );
 }
  

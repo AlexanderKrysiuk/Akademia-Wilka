@@ -29,6 +29,16 @@ const CourseAccessElement = ({ course }: { course: Course }) => {
   const { register, handleSubmit, setError, formState: {errors, isSubmitting}} = useForm<FormFields>({resolver: zodResolver(EmailSchema)})
   const router = useRouter();
 
+  const getNextLessonSlug = (lessons: Lesson[], completedLessonIds: string[]) => {
+    // Znajdź pierwszą lekcję, której nie ma na liście ukończonych
+    const nextLesson = lessons.find((lesson) => !completedLessonIds.includes(lesson.id));
+  
+    // Jeśli wszystkie lekcje ukończone, zwróć ostatnią lekcję
+    const targetLesson = nextLesson || lessons[lessons.length - 1];
+  
+    return `/kursy/${course.slug}/lekcja-${targetLesson.order}`;
+  };
+
   type FormFields = z.infer<typeof EmailSchema>
 
   const handlePayment = (email?:string) => {

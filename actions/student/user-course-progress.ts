@@ -6,12 +6,12 @@ export async function getLessonsWithProgressForCourse(courseId: string, userId: 
   // Pobierz wszystkie opublikowane lekcje z opublikowanych rozdziałów danego kursu
   const lessons = await prisma.lesson.findMany({
     where: {
-      chapter: {
-        courseId: courseId,
-        published: true,
-      },
+      courseId: courseId,
       published: true,
     },
+    orderBy: {
+      order: "asc"
+    }
   });
 
   // Pobierz ukończone lekcje użytkownika w ramach danego kursu

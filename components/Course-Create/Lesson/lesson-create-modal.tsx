@@ -6,7 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, useDisclosure } from "@nextui-org/react"
 import { LessonType } from "@prisma/client"
 import { SquarePlus } from "lucide-react"
-import { startTransition, useState } from "react"
+import { useRouter } from "next/navigation"
+import { startTransition } from "react"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 import { z } from "zod"
@@ -14,26 +15,23 @@ import { z } from "zod"
 type FormFields = z.infer<typeof CreateLessonSchema>
 
 const CreateLessonModal = ({
-    chapterId,
-    courseId,
-    onUpdate
+    courseId
 } : {
-    chapterId:string,
-    courseId:string
-    onUpdate: () => void
+    courseId: string
 }) => {
+    const router = useRouter()
     const { isOpen, onOpen, onOpenChange } = useDisclosure()
     const { control, register, handleSubmit, setError, setValue, formState: { errors, isSubmitting }} = useForm<FormFields>({
         resolver: zodResolver(CreateLessonSchema)
     })
 
-    const onSubmit: SubmitHandler<FormFields> = async (data) => {
-        startTransition(async() => {
-            await CreateLesson(data, chapterId, courseId)
+    const onSubmit: SubmitHandler<FormFields> = async (fields) => {
+        startTransition(async()=>{
+            await CreateLesson(fields, courseId)
                 .then(()=>{
                     toast.success("Dodano nową lekcję")
-                    onUpdate()
-                    onOpenChange()
+                    router.refresh()
+                    onOpenChange()                   
                 })
                 .catch((error)=>{
                     setError("root", {message: error.message})
@@ -47,10 +45,10 @@ const CreateLessonModal = ({
             <Button
                 color="primary"
                 variant="bordered"
-                onClick={()=>{
+                size="sm"
+                onPress={()=>{
                     setValue("title","")
                     onOpen()
-
                 }}
             >
                 <SquarePlus/>
@@ -75,7 +73,8 @@ const CreateLessonModal = ({
                             </ModalHeader>
                             <form onSubmit={handleSubmit(onSubmit)}>
                                 <ModalBody>
-                                    <Input {...register("title")}
+                                    <Input 
+                                        {...register("title")}
                                         label="Tytuł"
                                         labelPlacement="outside"
                                         type="text"
@@ -84,7 +83,7 @@ const CreateLessonModal = ({
                                         isClearable
                                         isDisabled={isSubmitting}
                                         variant="bordered"
-                                        isInvalid={errors.title ? true : false}
+                                        isInvalid={!!errors.title}
                                         errorMessage={errors.title?.message}
                                     />
                                     <Controller
@@ -97,16 +96,18 @@ const CreateLessonModal = ({
                                                 labelPlacement="outside"
                                                 isRequired
                                                 variant="bordered"
-                                                isInvalid={errors.lessonType ? true : false}
+                                                isInvalid={!!errors.lessonType}
                                                 errorMessage={errors.lessonType?.message}
                                                 placeholder="Wybierz typ lekcji"
                                             >
-                                                {Object.values(LessonType).map((lessontype)=>(
-                                                    <SelectItem key={lessontype} value={lessontype}>
-                                                        {lessontype}
+                                                {Object.values(LessonType).map((lessonType)=>(
+                                                    <SelectItem
+                                                        key={lessonType}
+                                                        value={lessonType}
+                                                    >
+                                                        {lessonType}
                                                     </SelectItem>
                                                 ))}
-
                                             </Select>
                                         )}
                                     />
@@ -116,7 +117,7 @@ const CreateLessonModal = ({
                                         color="danger"
                                         variant="light"
                                         isDisabled={isSubmitting}
-                                        onClick={onClose}
+                                        onPress={onClose}
                                     >
                                         Wyjdź
                                     </Button>
@@ -133,7 +134,6 @@ const CreateLessonModal = ({
                         </>
                     )}
                 </ModalContent>
-                
             </Modal>
         </main>
     )

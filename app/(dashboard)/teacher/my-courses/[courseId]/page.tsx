@@ -1,5 +1,6 @@
 import { auth } from "@/auth"
 import CategoryCard from "@/components/Course-Create/Course/category-card"
+import ContentCard from "@/components/Course-Create/Course/content-card"
 import DescriptionCard from "@/components/Course-Create/Course/description-card"
 import ImageCard from "@/components/Course-Create/Course/image-card"
 import LevelCard from "@/components/Course-Create/Course/level-card"
@@ -28,7 +29,11 @@ const CourseIdPage = async ({
     const course = await prisma.course.findUnique({
         where: { id: params.courseId },
         include: {
-            lessons: true
+            lessons: {
+                orderBy: {
+                    order: "asc"
+                }
+            }
         }
     })
 
@@ -42,11 +47,11 @@ const CourseIdPage = async ({
         course.title,
         course.slug,
         course.imageUrl,
-        //course.description,
+        course.description,
         course.category,
         course.level,
         course.subject,
-        //lessons.some((lesson) => lesson.published)
+        lessons.some((lesson) => lesson.published)
     ]
 
     const completedFields = requiredFields.filter(Boolean).length
@@ -125,9 +130,10 @@ const CourseIdPage = async ({
                     />
                 </div>
                 <div>
-                    <Card>
-                        123
-                    </Card>
+                    <ContentCard
+                        courseId={course.id}
+                        lessons={lessons}
+                    />
                 </div>
             </div>
         </main>

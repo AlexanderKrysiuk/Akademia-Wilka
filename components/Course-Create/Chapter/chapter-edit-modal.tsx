@@ -12,7 +12,7 @@ import ChapterDeleteModal from "./chapter-delete-modal"
 import PublishChapterButton from "./chapter-publish-button"
 import ChapterTitleForm from "./chapter-title-form"
 import ChapterSlugForm from "./chapter-slug-form"
-import LessonsList from "../Lesson/lessons-list"
+import LessonsList from "../Lesson-old/lessons-list"
 
 const ChapterEditModal = ({
     chapter,

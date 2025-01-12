@@ -89,8 +89,8 @@ export async function CreateCoursePaymentPage(slug:string, email?:string) {
         },
       ],
       mode: "payment",
-      success_url: `${domain}/kurs/${course.slug}`,
-      cancel_url: `${domain}/kurs/${course.slug}`,
+      success_url: `${domain}/kursy/${course.slug}`,
+      cancel_url: `${domain}/kursy/${course.slug}`,
       metadata: {
         userId: user.id,   // Identyfikator użytkownika
         courseId: course.id,    // Identyfikator kursu

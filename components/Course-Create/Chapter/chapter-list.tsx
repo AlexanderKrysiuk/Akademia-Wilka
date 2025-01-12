@@ -11,7 +11,7 @@ import CreateChapterModal from "@/components/Course-Create/Chapter/chapter-creat
 import DeleteChapterModal from "./chapter-delete-modal";
 import Link from "next/link";
 import ChapterEditModal from "./chapter-edit-modal";
-import LessonsList from "../Lesson/lessons-list";
+import LessonsList from "../Lesson-old/lessons-list";
 import { motion } from "framer-motion";
 import ChapterCard from "./chapter-card";
 

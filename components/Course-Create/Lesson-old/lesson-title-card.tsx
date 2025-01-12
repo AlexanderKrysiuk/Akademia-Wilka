@@ -1,12 +1,9 @@
 "use client"
 
 import { UpdateLessonTitle } from "@/actions/lesson-teacher/lesson-title"
-import { FormField } from "@/components/ui/form"
 import { EditLessonTitleSchema } from "@/schemas/lesson"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, CardBody, CardFooter, Input } from "@nextui-org/react"
-import { Lesson } from "@prisma/client"
-import { useRouter } from "next/navigation"
+import { Button, Card, CardBody, CardFooter, Input } from "@nextui-org/react"
 import { startTransition } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { toast } from "react-toastify"
@@ -15,24 +12,25 @@ import { z } from "zod"
 type FormFields = z.infer<typeof EditLessonTitleSchema>
 
 const LessonTitleCard = ({
-    id,
-    title
+    lessonId,
+    title,
+    onUpdate
 } : {
-    id: string
-    title: string,
+    lessonId: string
+    title: string
+    onUpdate: () => void
 }) => {
-    const router = useRouter()
-    const {register, handleSubmit, setError, watch, formState: {errors, isSubmitting}} = useForm<FormFields>({
+    const { register, handleSubmit, setError, watch, formState: { errors, isSubmitting }} = useForm<FormFields>({
         defaultValues: {title},
         resolver: zodResolver(EditLessonTitleSchema)
     })
 
-    const onSubmit: SubmitHandler<FormFields> = async (fields) => {
+    const onSubmit: SubmitHandler<FormFields> = async (data) => {
         startTransition(async()=>{
-            await UpdateLessonTitle(fields, id)
-            .then(()=>{
+            await UpdateLessonTitle(data, lessonId)
+            .then((data)=>{
                 toast.success("Zmieniono tytuł")
-                router.refresh()
+                onUpdate()
             })
             .catch((error)=>{
                 toast.error(error.message)
@@ -40,12 +38,11 @@ const LessonTitleCard = ({
             })
         })
     }
-    
+
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
             <CardBody>
-                <Input
-                    {...register("title")}
+                <Input {...register("title")}
                     label="Tytuł"
                     labelPlacement="outside"
                     type="text"
@@ -54,7 +51,7 @@ const LessonTitleCard = ({
                     isClearable
                     isDisabled={isSubmitting}
                     variant="bordered"
-                    isInvalid={!!errors.title}
+                    isInvalid={errors.title ? true : false}
                     errorMessage={errors.title?.message}
                 />
             </CardBody>
@@ -69,7 +66,6 @@ const LessonTitleCard = ({
                 </Button>
             </CardFooter>
         </form>
-    );
+    )
 }
- 
-export default LessonTitleCard;
+export default LessonTitleCard

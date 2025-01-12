@@ -1,68 +1,56 @@
 "use client"
 
-import { publishLesson, unpublishLesson } from "@/actions/lesson-teacher/lesson"
-import { Button } from "@nextui-org/react"
-import { useState } from "react"
-import { toast } from "react-toastify"
+import { changeLessonPublicity } from "@/actions/lesson-teacher/lesson";
+import { Button } from "@nextui-org/react";
+import { Lesson } from "@prisma/client";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "react-toastify";
 
-const PublishLessonButton = ({
-    lessonId,
-    published,
-    onUpdate,
+const LessonPublishButton = ({
+    lesson,
     completedFields,
-    requiredFields
-}: {
-    lessonId: string
-    published: boolean
-    onUpdate: () => void
+    requiredFields,
+} : {
+    lesson: Lesson
     completedFields: number
     requiredFields: number
 }) => {
+    const router = useRouter()
     const [submitting, setSubmitting] = useState(false)
-    const [isPublished, setIsPublished] = useState(published) // Stan przycisku
 
-    const onSubmit = async () => {
-        if (submitting) return // Zapobiegamy wielokrotnemu kliknięciu przycisku
+    const onSubmit = () => {
         setSubmitting(true)
-
-        if (completedFields < requiredFields) {
-            toast.warning("Uzupełnij wszystkie pola przed opublikowaniem.");
-            setSubmitting(false); // Zatrzymaj ładowanie przycisku
-            return;
-        }
-
-        try {
-            // W zależności od stanu publikacji, publikujemy lub wycofujemy lekcję
-            if (!isPublished) {
-                await publishLesson(lessonId) // Zakładając, że publishLesson zwróci Promise
-                toast.success("Lekcja została opublikowana!")
-                setIsPublished(true) // Zaktualizuj stan przycisku po udanej publikacji
+        changeLessonPublicity(lesson)
+        .then((data)=>{
+            if (data.published === true){
+                toast.success("Lekcja opublikowana")
             } else {
-                await unpublishLesson(lessonId) // Zakładając, że unpublishLesson zwróci Promise
-                toast.info("Lekcja została zmieniona na szkic.")
-                setIsPublished(false) // Zaktualizuj stan przycisku po wycofaniu publikacji
+                toast.info("Status lekcji zmieniono na szkic")
             }
-        } catch (error) {
+        })
+        .catch((error)=>{
             console.error(error)
-            toast.error("Wystąpił nieoczekiwany błąd podczas zmiany statusu lekcji.")
-        } finally {
+            toast.error(error?.message)
+        })
+        .finally(()=>{
             setSubmitting(false)
-            onUpdate() // Zaktualizuj stan po zakończeniu
-        }
+            router.refresh()
+        })
     }
 
     return (
         <Button
             size="sm"
-            isDisabled={completedFields < requiredFields || submitting}
+            className="text-white"
+            isDisabled={(completedFields<requiredFields) || submitting}
             color={completedFields < requiredFields ? "warning" : "success"}
             isLoading={submitting}
-            onClick={onSubmit}
-            className="text-white"
+            onPress={onSubmit}
         >
-            {isPublished ? "Zmień na szkic" : "Opublikuj"}
+            {lesson.published ? "Zmień na szkic" : "Opublikuj"}            
         </Button>
-    )
+    );
 }
-
-export default PublishLessonButton
+ 
+export default LessonPublishButton;

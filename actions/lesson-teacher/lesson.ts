@@ -4,12 +4,12 @@ import * as ftp from "basic-ftp"
 import { prisma } from "@/lib/prisma"
 import { CreateLessonSchema } from "@/schemas/lesson"
 import { z } from "zod"
-import { ProductStatus, ProductType } from "@prisma/client"
+import { Lesson, ProductStatus, ProductType } from "@prisma/client"
 
-export const CreateLesson = async (fields: z.infer<typeof CreateLessonSchema>, chapterId:string, courseId:string) => {
+export const CreateLesson = async (fields: z.infer<typeof CreateLessonSchema>, courseId:string) => {
     
     const lastLesson = await prisma.lesson.findFirst({
-        where: { chapterId: chapterId },
+        where: { courseId: courseId },
         orderBy: {order: "desc"}
     })
 
@@ -17,7 +17,7 @@ export const CreateLesson = async (fields: z.infer<typeof CreateLessonSchema>, c
     
     const newLesson = await prisma.lesson.create({
         data: {
-            chapterId: chapterId,
+            courseId: courseId,
             title: fields.title,
             type: fields.lessonType,
             order: newOrder
@@ -55,9 +55,9 @@ export const CreateLesson = async (fields: z.infer<typeof CreateLessonSchema>, c
     return newLesson
 }
 
-export const GetLessonsByChapterId = async (chapterId:string) => {
+export const GetLessonsByCourseId = async (courseId:string) => {
     return await prisma.lesson.findMany({
-        where: {chapterId: chapterId},
+        where: {courseId: courseId},
         orderBy: {order: "asc"}
     })
 }
@@ -78,8 +78,8 @@ export const reOrderLessons = async (data: { id:string, position:number}[]) => {
     await Promise.all(updatePromises)
 }
 
-export const ReorderLessonsByChapterId = async (chapterId:string) => {
-    const lessons = await GetLessonsByChapterId(chapterId)
+export const ReorderLessonsByCourseId = async (courseId:string) => {
+    const lessons = await GetLessonsByCourseId(courseId)
 
     for (let i = 0 ; i < lessons.length ; i++ ) {
         await prisma.lesson.update({
@@ -89,8 +89,9 @@ export const ReorderLessonsByChapterId = async (chapterId:string) => {
     }
 }
 
-export const DeleteLessonById = async (courseId:string, chapterId:string, lessonId:string) => {
-    const dirPath = `/courses/course-${courseId}/chapter-${chapterId}/lesson-${lessonId}`
+export const DeleteLessonById = async (lesson:Lesson) => {
+    
+    const dirPath = `/lessons/${lesson.id}`
 
     const client = new ftp.Client()
     client.ftp.verbose = true
@@ -103,7 +104,7 @@ export const DeleteLessonById = async (courseId:string, chapterId:string, lesson
             secure: false
         })
 
-        const list = await client.list(`/courses/course-${courseId}/chapter-${chapterId}/lesson-${lessonId}`);
+        const list = await client.list(`/lessons/${lesson.id}`);
         console.log("Root directory contents:", list);
         
         // Sprawdzanie czy folder istnieje
@@ -136,14 +137,14 @@ export const DeleteLessonById = async (courseId:string, chapterId:string, lesson
     //Usuwanie rekordu w bazie danych
     try {
         await prisma.lesson.delete({
-            where: { id: lessonId }
+            where: { id: lesson.id }
         })
         await prisma.userCourseProgress.deleteMany({
-            where: { lessonId }
+            where: { lessonId: lesson.id }
         });
          
-        await ReorderLessonsByChapterId(chapterId)
-        console.log(`Lekcja o ID ${lessonId} została usunięta z bazy danych.`)
+        await ReorderLessonsByCourseId(lesson.courseId)
+        console.log(`Lekcja o ID ${lesson.id} została usunięta z bazy danych.`)
     } catch (error) {
         console.error("Błąd podczas usuwania lekcji z bazy danych:", error)
     }
@@ -166,6 +167,13 @@ export async function publishLesson (lessonId:string) {
     await prisma.lesson.update({
         where: {id: lessonId},
         data: {published: true}
+    })
+}
+
+export async function changeLessonPublicity (lesson: Lesson) {
+    return await prisma.lesson.update({
+        where: {id: lesson.id},
+        data: {published: !lesson.published}
     })
 }
 

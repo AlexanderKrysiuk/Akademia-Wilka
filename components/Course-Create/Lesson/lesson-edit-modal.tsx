@@ -1,37 +1,37 @@
 "use client"
 
 import { unpublishLesson } from "@/actions/lesson-teacher/lesson"
-import { Button, Divider, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Progress, useDisclosure } from "@nextui-org/react"
-import { Chapter, Lesson, LessonType } from "@prisma/client"
+import { Modal, ModalBody, ModalContent, ModalHeader, Progress, useDisclosure } from "@nextui-org/react"
+import { Lesson, LessonType } from "@prisma/client"
 import { Settings, SquarePen } from "lucide-react"
-import { useEffect, useState } from "react"
-import { toast } from "react-toastify"
+import { useRouter } from "next/navigation"
 import LessonDeleteModal from "./lesson-delete-modal"
-import PublishLessonButton from "./lesson-publish-button"
+import LessonPublishButton from "./lesson-publish-button"
 import LessonTitleCard from "./lesson-title-card"
-import LessonSlugForm from "./lesson-slug-form"
-import LessonVideoCard from "./lesson-video-card"
-import LessonVideoImageForm from "./lesson-video-image-form"
-import LessonFreeForm from "./lesson-free-form"
+import LessonImageForm from "./lesson-image-form"
+import LessonVideoForm from "./lesson-video-form"
 
 const LessonEditModal = ({
-    chapter,
-    lesson,
-    requiredFieldsNumber,
-    completedFieldsNumber,
-    onUpdate
-}: {
-    chapter: Chapter
+    lesson
+} : {
     lesson: Lesson
-    requiredFieldsNumber: number
-    completedFieldsNumber: number
-    onUpdate: () => void
 }) => {
-    const {isOpen, onOpen, onOpenChange} = useDisclosure();    
-    // Oblicz postęp na podstawie wypełnionych pól
-    
-    // Obsługa zmiany statusu publikacji
-   
+    const router = useRouter()
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const media = lesson.media ? JSON.parse(lesson.media as string) : []
+
+    const requiredFields = [
+        lesson.title,
+        lesson.ImageURL,
+        lesson.type === LessonType.Video ? (media.length > 0 && media[0].url) : true,
+    ]
+
+    const completedFields = requiredFields.filter(Boolean).length
+
+    if (completedFields < requiredFields.length && lesson.published) {
+        unpublishLesson(lesson.id)
+        .then(()=>{router.refresh()})
+    }
 
     return (
         <main>
@@ -53,100 +53,57 @@ const LessonEditModal = ({
             >
                 <ModalContent>
                     {(onClose) => {
-                        const handleClose = () => {
-                            onUpdate(); // Wywołaj onUpdate
-                            onClose();  // Zamknij modal
-                        };
-
+                        const handleClose = () =>{
+                            router.refresh()
+                            onClose()
+                        }
                         return (
                             <>
-                                <ModalHeader className="mt-8 grid-flow-row grid gap-y-4">
-                                    <div className="justify-between flex w-full">
-                                        <div className="flex gap-2 items-center">
-                                            <Settings />
+                                <ModalHeader/>
+                                <ModalHeader>
+                                    <div className="flex justify-between w-full">
+                                        <div className="flex gap-1 items-center">
+                                            <Settings/>
                                             Lekcja: {lesson.title}
                                         </div>
-                                        <div className="flex gap-2 items-center">
-                                            <LessonDeleteModal
-                                                lesson={lesson}
-                                                chapter={chapter}
-                                                onUpdate={() => {
-                                                    onUpdate();
-                                                    onClose();
-                                                }}
+                                        <div className="flex gap-1 items-center">
+                                            <LessonPublishButton
+                                                lesson={lesson} 
+                                                completedFields={completedFields} 
+                                                requiredFields={requiredFields.length}                                                
                                             />
-                                            <PublishLessonButton
-                                                lessonId={lesson.id}
-                                                published={lesson.published}
-                                                onUpdate={onUpdate}
-                                                completedFields={completedFieldsNumber}
-                                                requiredFields={requiredFieldsNumber}
+                                            <LessonDeleteModal 
+                                                lesson={lesson}                                                
                                             />
                                         </div>
                                     </div>
+                                </ModalHeader>
+                                <ModalHeader>
                                     <Progress
-                                        label={`(${completedFieldsNumber}/${requiredFieldsNumber})`} // Pokazanie liczby z wymaganymi i uzupełnionymi polami
-                                        value={(completedFieldsNumber/requiredFieldsNumber)*100}
-                                        showValueLabel
-                                        color={completedFieldsNumber / requiredFieldsNumber === 1 ? "success" : "warning"}
+                                        label={`(${completedFields}/${requiredFields.length})`}
+                                        value={completedFields/requiredFields.length*100}
+                                        showValueLabel={true}
+                                        color={completedFields/requiredFields.length === 1 ? "success" : "warning"}
                                     />
                                 </ModalHeader>
-                                <Divider />
                                 <ModalBody>
                                     <LessonTitleCard
-                                        lessonId={lesson.id}
+                                        id={lesson.id}
                                         title={lesson.title}
-                                        onUpdate={onUpdate}
                                     />
-                                    {lesson.type !== LessonType.Subchapter && (
-                                        <>
-                                            <Divider />
-                                            <LessonSlugForm
-                                                lesson={lesson}
-                                                onUpdate={onUpdate}
-                                            />
-                                            <Divider/>
-                                            <LessonFreeForm
-                                                lesson={lesson}
-                                                onUpdate={onUpdate}
-                                            />
-                                        </>
-                                    )}
-                                    {lesson.type === LessonType.Video && (
-                                        <>
-                                            <Divider />
-                                            <LessonVideoCard
-                                                courseId={chapter.courseId}
-                                                chapterId={chapter.id}
-                                                lesson={lesson}
-                                                onUpdate={onUpdate}
-                                            />
-                                            <Divider/>
-                                            <LessonVideoImageForm
-                                                chapter={chapter}
-                                                lesson={lesson}
-                                                onUpdate={onUpdate}
-                                            />
-                                        </>
-                                    )}
+                                    <LessonImageForm
+                                        lesson={lesson}
+                                    />
+                                    <LessonVideoForm
+                                        lesson={lesson}
+                                    />
                                 </ModalBody>
-                                <Divider />
-                                <ModalFooter>
-                                    <Button
-                                        color="primary"
-                                        variant="light"
-                                        onClick={handleClose} // Użyj nowej funkcji
-                                    >
-                                        Zakończ Edycję
-                                    </Button>
-                                </ModalFooter>
                             </>
-                        );
+                        )
                     }}
                 </ModalContent>
             </Modal>
         </main>
-    );
+    )
 }
-
-export default LessonEditModal;
+export default LessonEditModal

@@ -1,0 +1,115 @@
+"use client"
+
+import { LessonPageAccessStatus, getPublishedCourseBySlug } from "@/actions/student/course"
+import { LessonDispal } from "@/components/course-display/lesson-display"
+import LessonMenu from "@/components/course-display/lesson-menu"
+import { PageLoader } from "@/utils/Page-Placeholders"
+import { Button, Divider, Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHeader, useDisclosure } from "@nextui-org/react"
+import { Course, Lesson } from "@prisma/client"
+import { ChevronRight } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+
+const LessonPage = ({       
+    params
+} : {
+    params: {
+        courseSlug:string
+        lessonNumber:number
+    }
+}) => {
+    const router = useRouter()
+    const {isOpen, onOpen, onOpenChange} = useDisclosure()
+    const [loading, setLoading] = useState(true)
+    const [course, setCourse] = useState<Course>()
+    const [lessons, setLessons] = useState<Lesson[]>([])
+    const [completedLessonsIds, setCompletedLessonsIds] = useState<string[]>([])
+
+    useEffect(()=>{
+        async function fetchData () {
+            try {
+                const course = await getPublishedCourseBySlug(params.courseSlug)
+                if (!course) return router.push("/kursy")
+                const result = await LessonPageAccessStatus(course.id)
+                if (!result || !result.allLessons || !result.completedLessonsIds) return router.push('/kursy')
+                setCourse(course)
+                setLessons(result.allLessons)
+                setCompletedLessonsIds(result.completedLessonsIds)
+            } catch(error) {
+                console.error("Błąd podczas ładowania lekcji")
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchData()
+    },[params.courseSlug, router])
+
+    if (loading) return <PageLoader/>
+
+    if (!course) return router.push("/kursy")    
+
+    return (
+        <main className="w-full">
+            <Drawer
+                isOpen={isOpen}
+                placement="left"
+                onOpenChange={onOpenChange}
+            >
+                <DrawerContent>
+                    {(onClose)=>(
+                        <>
+                            <DrawerHeader/>
+                            <DrawerBody
+                                className="px-0"
+                            >
+                                <LessonMenu
+                                    course={course}
+                                    lessons={lessons}
+                                    completedLessonsIds={completedLessonsIds}
+                                />
+                            </DrawerBody>
+                            <DrawerFooter>
+                                <Button
+                                    color="danger"
+                                    variant="light"
+                                    onPress={onClose}
+                                >
+                                    Zamknij
+                                </Button>
+                            </DrawerFooter>
+                        </>
+                    )}
+                </DrawerContent>
+            </Drawer>
+            <div className="w-full h-full flex flex-row">
+                <div className="w-1/4 overflow-y-auto shadow-md dark:shadow-white hidden lg:block h-full">
+                    <LessonMenu
+                        course={course}
+                        lessons={lessons}
+                        completedLessonsIds={completedLessonsIds}
+                    />
+                </div>
+                <div className="w-full flex flex-col">
+                    <div className="bg-primary text-white w-full flex items-center">
+                        <Button
+                            isIconOnly
+                            color="primary"
+                            onPress={onOpen}
+                            className="lg:hidden"
+                        >
+                            <ChevronRight/>
+                        </Button>
+                    </div>
+                    <div>
+                        <LessonDispal
+                            lessonNumber={params.lessonNumber}
+                            lessons={lessons}
+                        />
+                    </div>
+                </div>
+            </div>
+        </main>
+    );
+}
+ 
+export default LessonPage;

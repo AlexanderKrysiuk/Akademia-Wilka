@@ -80,7 +80,8 @@ const LessonImageForm = ({
                 ):(
                     lesson.ImageURL ? (
                         <Image
-                            src={lesson.ImageURL!}
+                            src={lesson.ImageURL}
+                            alt={lesson.title}
                             className="max-w-full h-auto aspect-video"
                         />
                     ):(

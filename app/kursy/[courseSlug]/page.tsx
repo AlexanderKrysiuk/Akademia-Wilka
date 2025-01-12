@@ -3,10 +3,10 @@ import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import { Card, CardBody, CardHeader, Image } from "@nextui-org/react";
 import { ImageOff, VideoOff } from "lucide-react";
-import ImageNotFound from "@/utils/images-not-found";
+import { ImageNotFound } from "@/utils/Page-Placeholders";
 import { auth } from "@/auth";
 import { ProductStatus, ProductType } from "@prisma/client";
-import CourseAccessElement from "@/components/payment/course-access-element";
+import CourseAccessElement from "@/components/Course/Landing-Page/CourseAccessElement";
 
 const CourseSlugPage = async ({
     params
@@ -19,8 +19,7 @@ const CourseSlugPage = async ({
     if (!course) redirect(`/kursy`)
 
     return (
-        <main>
-            {JSON.stringify(course,null,2)}
+        <main className="mx-auto max-w-7xl lg:px-[10vw] w-full pt-4">
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
                 <div className="lg:col-span-3 space-y-4">
                     {course.imageUrl ? (

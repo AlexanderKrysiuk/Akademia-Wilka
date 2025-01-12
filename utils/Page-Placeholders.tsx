@@ -1,6 +1,8 @@
+"use client"
+import { Spinner } from "@nextui-org/react";
 import { ImageOff } from "lucide-react";
 
-const ImageNotFound = () => {
+export const ImageNotFound = () => {
     return ( 
         <div className="w-full h-auto aspect-video bg-primary/10 items-center flex justify-center flex-col">
             <ImageOff
@@ -14,5 +16,14 @@ const ImageNotFound = () => {
         </div>
      );
 }
- 
-export default ImageNotFound;
+
+export const PageLoader = () => {
+    return (
+        <Spinner 
+            color="primary" 
+            label="Ładowanie" 
+            labelColor="primary"
+            className="w-full h-full flex items-center justify-center"
+        />
+    )
+}

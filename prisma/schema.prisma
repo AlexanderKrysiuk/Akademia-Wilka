@@ -19,6 +19,8 @@ model User {
   accounts      Account[]
   sessions      Session[]
   purchases     Purchase[]
+  courses       Course[]
+  completedLessons  Lesson[] //@relation("CompletedLessons")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -36,20 +38,6 @@ model UserRoleAssignment {
 enum UserRole {
   Admin
   Teacher
-}
-
-model UserCourseProgress {
-  id     String @id @default(uuid())
-  userId String
-  lessonId String
-  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  completed Boolean @default(false)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([userId, lessonId])
-  @@index([lessonId])
 }
 
 model Account {
@@ -117,6 +105,7 @@ model Course {
 
   chapters    Chapter[]
   lessons     Lesson[]
+  users       User[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -164,7 +153,7 @@ model Lesson {
   published Boolean     @default(false)
   free      Boolean     @default(false)
   attachments Attachment[]
-  userProgress UserCourseProgress[]
+  completedByUsers User[] //@relation("CompletedLessons")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

@@ -51,29 +51,10 @@ export async function POST(req: Request) {
                     productId: courseId, // Id kursu
                     productType: ProductType.Course, // Typ produktu
                     userId: userId, // Użytkownik przypisany do produktu
-                    status: ProductStatus.Used, // Status aktywny
+                    status: ProductStatus.Active, // Status aktywny
                     assignedAt: new Date(), // Data przypisania
                 }
             })
-
-            const lessons = await prisma.lesson.findMany({
-                where: {
-                    chapter: {
-                        courseId: courseId
-                    }
-                }
-            })
-
-            const userProgressEntries = lessons.map((lesson)=>({
-                userId: userId,
-                lessonId: lesson.id,
-                completed: false,
-            }))
-
-            await prisma.userCourseProgress.createMany({
-                data: userProgressEntries
-            })
-
             console.log(`Zakup pomyślnie zapisany dla użytkownika ${userId}, kurs: ${courseId}`)
 
         } catch (error: any) {

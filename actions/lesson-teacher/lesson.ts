@@ -24,33 +24,6 @@ export const CreateLesson = async (fields: z.infer<typeof CreateLessonSchema>, c
         }
     })
 
-    // Pobieramy użytkowników, którzy mają dostęp do kursu (na podstawie lesson.courseId)
-    const usersWithAccess = await prisma.purchasedProducts.findMany({
-        where: {
-            productId: courseId,
-            productType: ProductType.Course,
-            status: ProductStatus.Used,
-        },
-        select: { userId: true },
-    });
-
-    // Filtrowanie rekordów, które mają przypisany userId
-    const validUsersWithAccess = usersWithAccess.filter(user => user.userId);
-
-    // Tworzymy progres dla każdego użytkownika, który ma przypisane userId
-    const progressEntries = validUsersWithAccess.map((user) => ({
-        userId: user.userId!,
-        lessonId: newLesson.id,
-        completed: false, // Początkowo nieukończony
-    }));
-
-    if (progressEntries.length > 0) {
-        await prisma.userCourseProgress.createMany({ data: progressEntries });
-        console.log(`Progres został utworzony dla ${progressEntries.length} użytkowników.`);
-    } else {
-        console.log('Brak użytkowników z przypisanym userId, progres nie został utworzony.');
-    }
-
     console.log(`Lekcja o ID ${newLesson.id} została opublikowana.`);
     return newLesson
 }
@@ -139,9 +112,6 @@ export const DeleteLessonById = async (lesson:Lesson) => {
         await prisma.lesson.delete({
             where: { id: lesson.id }
         })
-        await prisma.userCourseProgress.deleteMany({
-            where: { lessonId: lesson.id }
-        });
          
         await ReorderLessonsByCourseId(lesson.courseId)
         console.log(`Lekcja o ID ${lesson.id} została usunięta z bazy danych.`)
@@ -156,10 +126,6 @@ export async function unpublishLesson (lessonId:string) {
     await prisma.lesson.update({
         where: {id: lessonId},
         data: {published: false}
-    })
-
-    await prisma.userCourseProgress.deleteMany({
-        where: {lessonId: lessonId}
     })
 }
 

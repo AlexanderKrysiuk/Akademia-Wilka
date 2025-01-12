@@ -43,7 +43,7 @@ export default async function RootLayout({
                 <Header/>
 
               </div>
-              <div className="flex-1 overflow-auto pt-4 pb-20">
+              <div className="flex-1 overflow-auto">
               {children}
               <Toaster/>
 

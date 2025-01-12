@@ -61,7 +61,7 @@ const LoginForm = ({
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="max-w-xs w-full">
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full">
             <Input {...register("email")}
                 label="E-mail"
                 labelPlacement="outside"
@@ -74,7 +74,7 @@ const LoginForm = ({
                 isInvalid={errors.email ? true : false}
                 errorMessage={errors.email?.message}
                 autoComplete="email"
-                className="max-w-s"
+                fullWidth
             />
             <Link href="/auth/reset" className="absolute right-4 text-sm text-primary transition-all duration-300 hover:underline pt-3">
                 Nie pamiętasz hasła?
@@ -85,7 +85,7 @@ const LoginForm = ({
                 labelPlacement="outside"
                 placeholder="********"
                 endContent={
-                    <Button isIconOnly type="button" variant="light" size="sm" className="flex items-center" onClick={() => setPasswordVisible((prev) => !prev)}>
+                    <Button isIconOnly type="button" variant="light" size="sm" className="flex items-center" onPress={() => setPasswordVisible((prev) => !prev)}>
                         {passwordVisible ? <Eye/> : <EyeOff/>}
                     </Button>
                 }
@@ -95,7 +95,8 @@ const LoginForm = ({
                 isInvalid={errors.password ? true : false}
                 errorMessage={errors.password?.message}
                 autoComplete="current-password"
-                className="max-w-xs mb-4 pt-4"
+                fullWidth
+                className="mb-4 pt-4"
             />
             <Button type="submit" color="primary" fullWidth disabled={isSubmitting} isLoading={isSubmitting}>
                 Zaloguj

@@ -66,7 +66,7 @@ const LessonWrapper = ({
                         lessonNumber={lessonNumber}                          
                     />
                 </div>
-                <div className="w-full flex flex-col">
+                <div className="w-full h-full flex flex-col overflow-y-auto">
                     <div className="bg-primary text-white w-full flex items-center">
                         <Button
                             isIconOnly
@@ -76,6 +76,9 @@ const LessonWrapper = ({
                         >
                             <ChevronRight/>
                         </Button>
+                        <div className="flex w-full justify-center py-2">
+                            {currentLesson.title}
+                        </div>
                     </div>
                     <div>
                         <LessonDisplay

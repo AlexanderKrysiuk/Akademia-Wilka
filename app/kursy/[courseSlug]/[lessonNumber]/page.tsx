@@ -50,18 +50,14 @@ const LessonPage = async ({
     })
 
     const lessonNumber = parseInt(params.lessonNumber.replace('lekcja-', ''), 10);
-
     // Sprawdzamy, czy lekcja o numerze `lessonNumber` istnieje
     const currentlesson = lessons.find(lesson => lesson.order === lessonNumber);
 
     if (!currentlesson) {
-        // Jeśli lekcja nie istnieje, przekierowujemy na najwyższą dostępną lekcję
-        const highestAvailableLesson = lessons.reduce((max, lesson) => 
-            lesson.order > max.order ? lesson : max, lessons[0]);
-        
-        redirect(`/kursy/${course.slug}/lekcja-${highestAvailableLesson.order}`);
+        // Jeśli lekcja nie istnieje, przekierowujemy na pierwszą dostępną
+        redirect(`/kursy/${course.slug}/lekcja-${lessons[0]?.order}`);
     }
-    
+
     // COMPLETED LESSONS
     // {JSON.stringify(completedLessonsIds)}
     // <Divider/>

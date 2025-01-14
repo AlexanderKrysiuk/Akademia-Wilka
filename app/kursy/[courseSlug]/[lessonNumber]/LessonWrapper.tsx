@@ -12,7 +12,7 @@ const LessonWrapper = ({
     lessons,
     initialCompletedLessonsIds,
     lessonNumber,
-    currentLesson
+    currentLesson,
 }:{
     course: Course
     lessons: Lesson[]
@@ -21,7 +21,7 @@ const LessonWrapper = ({
     currentLesson: Lesson
 }) => {
     const { isOpen, onOpen, onOpenChange} = useDisclosure()
-    const [completedLessonsIds, setCompletedLessonsIds] = useState<string[]>(initialCompletedLessonsIds)
+    //const [completedLessonsIds, setCompletedLessonsIds] = useState<string[]>(initialCompletedLessonsIds)
 
     return ( 
         <main className="w-full h-full">
@@ -40,7 +40,7 @@ const LessonWrapper = ({
                                 <LessonMenu 
                                     course={course} 
                                     lessons={lessons} 
-                                    completedLessonsIds={completedLessonsIds}
+                                    completedLessonsIds={initialCompletedLessonsIds}
                                     lessonNumber={lessonNumber}                          
                                 />
                             </DrawerBody>
@@ -62,7 +62,7 @@ const LessonWrapper = ({
                     <LessonMenu 
                         course={course} 
                         lessons={lessons} 
-                        completedLessonsIds={completedLessonsIds}
+                        completedLessonsIds={initialCompletedLessonsIds}
                         lessonNumber={lessonNumber}                          
                     />
                 </div>
@@ -83,6 +83,9 @@ const LessonWrapper = ({
                     <div>
                         <LessonDisplay
                             lesson={currentLesson}
+                            lessons={lessons}
+                            completedLessonsIds={initialCompletedLessonsIds}
+                            course={course}
                         />
                     </div>
                 </div>

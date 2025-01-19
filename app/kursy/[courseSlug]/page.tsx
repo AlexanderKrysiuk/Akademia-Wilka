@@ -6,7 +6,7 @@ import { ImageOff, VideoOff } from "lucide-react";
 import { ImageNotFound } from "@/utils/Page-Placeholders";
 import { auth } from "@/auth";
 import { ProductStatus, ProductType } from "@prisma/client";
-import CourseAccessElement from "@/components/Course/Landing-Page/CourseAccessElement";
+import CourseAccessElement from "./course-access-element";
 
 const CourseSlugPage = async ({
     params
@@ -20,8 +20,8 @@ const CourseSlugPage = async ({
 
     return (
         <main className="mx-auto max-w-7xl lg:px-[10vw] w-full pt-4">
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-                <div className="lg:col-span-3 space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-10 gap-4">
+                <div className="lg:col-span-7 space-y-4">
                     {course.imageUrl ? (
                         <Image
                             src={course.imageUrl}
@@ -40,8 +40,10 @@ const CourseSlugPage = async ({
                         </CardBody>
                     </Card>
                 </div>
-                <div className="lg:col-span-2">
-                    123
+                <div className="lg:col-span-3">
+                    <CourseAccessElement
+                        course={course}
+                    />
                 </div>    
             </div>
         </main>

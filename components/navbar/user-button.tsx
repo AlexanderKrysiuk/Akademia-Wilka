@@ -68,7 +68,7 @@ const UserButton = () => {
         <Button 
             variant="outline"
             size='sm'
-            className='items-center flex'
+            className='hidden lg:block'
         >
             <Link href="/auth/start" passHref>
                 Zacznij Tutaj

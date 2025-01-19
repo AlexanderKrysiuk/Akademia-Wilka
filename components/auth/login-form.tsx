@@ -26,7 +26,7 @@ const LoginForm = ({
 }: LoginFormProps ) => {
     const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<FormFields>({ resolver: zodResolver(LoginSchema )})
     const [passwordVisible, setPasswordVisible] = useState(false)
-    {/* const router = useRouter() */}
+    const router = useRouter()
 
     const onSubmit: SubmitHandler<FormFields> = async (data) => {
         try {
@@ -53,6 +53,8 @@ const LoginForm = ({
 
         if (redirectUrl) {
             window.location.href = redirectUrl;
+        } else {
+            router.refresh()
         }
         
         } catch(error: any) {
@@ -98,8 +100,15 @@ const LoginForm = ({
                 fullWidth
                 className="mb-4 pt-4"
             />
-            <Button type="submit" color="primary" fullWidth disabled={isSubmitting} isLoading={isSubmitting}>
-                Zaloguj
+            <Button 
+                type="submit" 
+                color="primary" 
+                fullWidth 
+                disabled={isSubmitting} 
+                isLoading={isSubmitting}
+                className="text-white"
+            >
+                {isSubmitting ? "Logowanie..." : "Zaloguj się"}
             </Button>
         </form>
     )

@@ -1,6 +1,6 @@
 "use client"
 
-import { Button, Divider, Link, Progress } from "@nextui-org/react";
+import { Button, Divider, Link, Progress } from "@heroui/react";
 import { Course, Lesson, LessonType } from "@prisma/client";
 import { Circle, CircleCheckBig } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";

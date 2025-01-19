@@ -1,5 +1,5 @@
 "use client"
-import { Spinner } from "@nextui-org/react";
+import { Spinner } from "@heroui/react";
 import { ImageOff } from "lucide-react";
 
 export const ImageNotFound = () => {

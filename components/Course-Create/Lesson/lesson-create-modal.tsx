@@ -3,7 +3,7 @@
 import { CreateLesson } from "@/actions/lesson-teacher/lesson"
 import { CreateLessonSchema } from "@/schemas/lesson"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, useDisclosure } from "@nextui-org/react"
+import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, useDisclosure } from "@heroui/react"
 import { LessonType } from "@prisma/client"
 import { SquarePlus } from "lucide-react"
 import { useRouter } from "next/navigation"

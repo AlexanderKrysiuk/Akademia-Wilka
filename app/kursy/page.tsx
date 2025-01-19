@@ -2,7 +2,7 @@
 
 import { getPublishedCourses } from "@/actions/student/course";
 import PageLoader from "@/components/page-loader";
-import { Button, Card, CardFooter, CardHeader, Image } from "@nextui-org/react";
+import { Button, Card, CardFooter, CardHeader, Image } from "@heroui/react";
 import { Course } from "@prisma/client";
 import { EyeIcon, Gift, ShoppingBasket, ShoppingCart, ShoppingCartIcon } from "lucide-react";
 import { useRouter } from "next/navigation";

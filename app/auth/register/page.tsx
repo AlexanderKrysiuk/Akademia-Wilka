@@ -1,6 +1,6 @@
 import RegisterForm from "@/components/auth/register-form";
 import { Button } from "@/components/ui/button";
-import {Card, CardHeader, CardBody, CardFooter} from "@nextui-org/card";
+import {Card, CardHeader, CardBody, CardFooter} from "@heroui/card";
 import Link from "next/link";
 
 const RegisterPage = () => {

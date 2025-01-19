@@ -4,7 +4,7 @@ import { CreateCourse } from "@/actions/course-teacher/course";
 import { useCurrentUser } from "@/hooks/user";
 import { CreateCourseSchema } from "@/schemas/course";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/react";
+import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@heroui/react";
 import { UserRole } from "@prisma/client";
 import { SquarePlus } from "lucide-react";
 import { useRouter } from "next/navigation";

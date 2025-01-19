@@ -1,7 +1,7 @@
 "use client"
 
 import { unpublishLesson } from "@/actions/lesson-teacher/lesson"
-import { Modal, ModalBody, ModalContent, ModalHeader, Progress, useDisclosure } from "@nextui-org/react"
+import { Modal, ModalBody, ModalContent, ModalHeader, Progress, useDisclosure } from "@heroui/react"
 import { Lesson, LessonType } from "@prisma/client"
 import { Settings, SquarePen } from "lucide-react"
 import { useRouter } from "next/navigation"

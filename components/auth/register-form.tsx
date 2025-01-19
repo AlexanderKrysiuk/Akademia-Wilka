@@ -3,7 +3,7 @@
 import { registerNewUser } from "@/actions/auth/register";
 import { RegisterSchema } from "@/schemas/user";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Input } from "@nextui-org/react";
+import { Button, Input } from "@heroui/react";
 import { startTransition } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";

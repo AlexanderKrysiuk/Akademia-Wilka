@@ -2,7 +2,7 @@
 
 import "react-image-crop/dist/ReactCrop.css";
 import { useCurrentUser } from "@/hooks/user";
-import { Button, Card, CardBody, CardHeader, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/react";
+import { Button, Card, CardBody, CardHeader, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@heroui/react";
 import Image from "next/image";
 import { UserRole } from "@prisma/client";
 import { ImageIcon, ImagePlus, Images } from "lucide-react";

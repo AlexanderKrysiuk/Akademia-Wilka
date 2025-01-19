@@ -1,6 +1,6 @@
 import NewPasswordForm from "@/components/auth/new-password-form";
 import { Button } from "@/components/ui/button";
-import { Card, CardBody, CardFooter, CardHeader } from "@nextui-org/react";
+import { Card, CardBody, CardFooter, CardHeader } from "@heroui/react";
 import Link from "next/link";
 
 const NewPasswordPage = () => {

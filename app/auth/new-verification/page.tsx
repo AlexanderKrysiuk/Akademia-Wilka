@@ -1,5 +1,5 @@
 import NewVerificationForm from "@/components/auth/new-verification-form";
-import { Card, CardBody, CardHeader } from "@nextui-org/react";
+import { Card, CardBody, CardHeader } from "@heroui/react";
 
 const NewVerificationPage = () => {
     return (

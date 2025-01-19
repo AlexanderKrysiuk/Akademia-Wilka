@@ -1,12 +1,11 @@
 "use client"
-import Link from 'next/link';
 import UserButton from '@/components/navbar/user-button';
 import { ThemeSwitcher } from '@/components/theme/theme-switcher';
-import Image from 'next/image'
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem} from "@nextui-org/react";
+import { Image, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Link} from "@heroui/react";
 import { useState } from 'react';
 import { usePathname } from 'next/navigation'; // Importujemy hook do pobierania aktualnej ścieżki
 import { useCurrentUser } from '@/hooks/user';
+import { Settings } from 'lucide-react';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -19,13 +18,64 @@ export default function Header() {
 
     return (
         <Navbar
-            onMenuOpenChange={setIsMenuOpen} 
-            className='flex items-center shadow-md dark:shadow-white' 
+            isBordered
+            onMenuOpenChange={setIsMenuOpen}
+            //height={68}
         >
+            <NavbarContent>
                 <NavbarMenuToggle
                     aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-                    className="md:hidden">
+                    className="lg:hidden">
                 </NavbarMenuToggle>
+                <NavbarBrand>
+                    <Image
+                        //as={Link}
+                        //href={"/"}
+                        height={100}
+                        src='/logo-banner-light.svg'
+                        alt='Akademia Wilka'
+                    />
+                </NavbarBrand>
+            </NavbarContent>
+            <NavbarContent
+                className='hidden lg:flex gap-4'
+                justify='end'
+            >
+                {menuItems.map((item,index) => (
+                    <NavbarMenuItem key={`${item}-${index}`}>
+                        <Link href={`/${item}`}>{item}</Link>
+                    </NavbarMenuItem>
+                ))}
+            </NavbarContent>
+            <ThemeSwitcher/>
+            <UserButton/>
+            <NavbarMenu>
+                {menuItems.map((item,index) => (
+                    <NavbarMenuItem key={`${item}-${index}`}>
+                        <Link href={`/${item}`}>{item}</Link>
+                    </NavbarMenuItem>
+                ))}
+            </NavbarMenu>
+        </Navbar>
+    )
+
+    return (
+        <Navbar
+            onMenuOpenChange={setIsMenuOpen} 
+            className='shadow-md dark:shadow-white'
+        >
+            <NavbarBrand>
+                <Image
+                    src="/logo.png"
+                    alt="logo"
+                    className=''
+                />
+            </NavbarBrand>
+
+            <NavbarContent
+                className='border-1 border-pink-500'
+            >
+            </NavbarContent>     
                 <NavbarMenu>
                     {menuItems.map((item,index) => (
                         <NavbarMenuItem key={`${item}-${index}`}>
@@ -33,13 +83,17 @@ export default function Header() {
                         </NavbarMenuItem>
                     ))}
                 </NavbarMenu>
-                <NavbarBrand className='h-full'>
-                    <Link href="/" className='h-full flex items-center gap-x-[1vw]'>                
-                        <Image className='max-h-full w-auto' src="/logo.png" alt="Logo" width={500} height={500}/>
-                        <div className='hidden md:flex'>
-                            Akademia Wilka
-                        </div>
-                    </Link>
+                        {/*
+                        <Image
+                            //className='flex border-1 border-green' 
+                            //src="/logo.png" 
+                            //alt="Logo" 
+                        />
+                    */}
+                <NavbarBrand 
+                    className='border-1 border-red-500 h-full'
+                >
+                   
                 </NavbarBrand>
             <div className='hidden md:flex'>
                 {menuItems.map((item,index) => (
@@ -53,42 +107,3 @@ export default function Header() {
         </Navbar>
     )
 }
-
-{/* 
-const Header = () => {
-    return ( 
-        <div className="h-[10vh] w-full items-center flex px-[1vw] py-[1vh] justify-between border-b shadow-sm">
-            <div className='md:hidden'>
-            <Sheet>
-            <SheetTrigger>
-            <Menu/>
-            </SheetTrigger>
-            <SheetContent side={`left`} className='p-0'>
-            <SideBar/>
-                    </SheetContent>
-                    </Sheet>
-                    </div>
-                    <Link href="/" passHref className='flex items-center space-x-[1vh]'>    
-                    <div className="relative flex w-[8vh] h-[8vh]">
-                    <Image
-                    src="/logo.png"
-                    layout="fill"
-                    objectFit="cover"
-                    alt="Logo"
-                    />
-                    </div>
-                    <h1>
-                    Akademia Wilka
-                </h1>
-            </Link>
-            <div className='max-h-[8vh] flex items-center space-x-[1vw]'>
-            <MenuLinks/>
-            <ThemeSwitcher/>
-            <UserButton/>
-            </div>
-            </div>
-        );
-}
- 
-export default Header;
-    */}

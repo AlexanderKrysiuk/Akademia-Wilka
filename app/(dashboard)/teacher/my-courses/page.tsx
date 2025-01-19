@@ -7,7 +7,7 @@ import Image from "next/image";
 import Link from 'next/link';
 import { GetMyCreatedCourses } from '@/actions/course-teacher/course';
 import PageLoader from '@/components/page-loader';
-import { Button, Card, CardBody, CardFooter, CardHeader, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react';
+import { Button, Card, CardBody, CardFooter, CardHeader, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@heroui/react";
 import CreateCourseModal from '@/components/Course-Create/Course/create-course-modal';
 import { prisma } from "@/lib/prisma"
 

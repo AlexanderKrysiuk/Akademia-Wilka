@@ -1,5 +1,5 @@
 import ResetForm from "@/components/auth/reset-form";
-import { Card, CardBody, CardHeader, CardFooter } from "@nextui-org/react";
+import { Card, CardBody, CardHeader, CardFooter } from "@heroui/react";
 import Link from "next/link";
 
 const ResetPage = () => {

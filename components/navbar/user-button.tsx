@@ -5,7 +5,7 @@ import { useCurrentUser } from '@/hooks/user';
 import { LogOutButton } from '@/components/auth/Logout-Button';
 import { RxExit } from "react-icons/rx";
 import { TfiDashboard } from "react-icons/tfi";
-import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from '@nextui-org/react';
+import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from "@heroui/react";
 import { userItems, teacherItems } from '@/components/dashboard/menu';
 import { usePathname } from 'next/navigation';
 import { UserRole } from '.prisma/client';

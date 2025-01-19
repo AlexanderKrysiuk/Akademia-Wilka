@@ -1,7 +1,7 @@
 "use client"
 
 import { formatPrice } from "@/lib/format";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import { PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";

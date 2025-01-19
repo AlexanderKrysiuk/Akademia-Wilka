@@ -1,6 +1,6 @@
 "use client"
 
-import { Button, Divider, Progress } from "@nextui-org/react";
+import { Button, Divider, Image, Progress } from "@heroui/react";
 import { Course, Lesson } from "@prisma/client";
 import { Circle, CircleCheckBig } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -20,6 +20,7 @@ const LessonMenu = ({
     return (
         <main className="flex flex-col">
             <div className="p-4">
+               
                 <span className="text-xl">
                     {course.title}
                 </span>

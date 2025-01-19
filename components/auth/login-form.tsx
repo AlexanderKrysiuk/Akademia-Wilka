@@ -3,7 +3,7 @@
 import { LoginVerification } from "@/actions/auth/login";
 import { LoginSchema } from "@/schemas/user";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Input } from "@nextui-org/react";
+import { Button, Input } from "@heroui/react";
 import { Eye, EyeOff } from "lucide-react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";

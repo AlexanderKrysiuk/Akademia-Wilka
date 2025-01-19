@@ -1,7 +1,7 @@
 "use client"
 
 import { toggleLessonCompletion } from "@/actions/student/complete-lesson";
-import { Button, Divider } from "@nextui-org/react";
+import { Button, Divider } from "@heroui/react";
 import { Course, Lesson } from "@prisma/client";
 import { ChevronLeft, ChevronRight, VideoOff } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -68,12 +68,12 @@ const LessonDisplay = ({
                         size="sm"
                         color="primary"
                         className={`text-white`}
-                        startContent={<ChevronLeft/>}
+                        isIconOnly
                         onPress={()=>{
                             router.push(`/kursy/${course.slug}/lekcja-${previousLesson.order}`)
                         }}
                     >
-                        Poprzednia lekcja
+                        <ChevronLeft/>
                     </Button>
                 )}
                 <Button
@@ -93,12 +93,12 @@ const LessonDisplay = ({
                         size="sm"
                         color="primary"
                         className={`text-white`}
-                        endContent={<ChevronRight/>}
+                        isIconOnly
                         onPress={()=>{
                             router.push(`/kursy/${course.slug}/lekcja-${nextLesson.order}`)
                         }}
                     >
-                        Następna lekcja
+                        <ChevronRight/>
                     </Button>
                 )}
             </div>

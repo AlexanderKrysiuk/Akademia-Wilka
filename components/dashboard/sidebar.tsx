@@ -1,6 +1,6 @@
 "use client"
 
-import { Listbox, ListboxItem, ListboxSection } from "@nextui-org/react";
+import { Listbox, ListboxItem, ListboxSection } from "@heroui/react";
 
 import { teacherItems, userItems } from "@/components/dashboard/menu";
 import { usePathname } from "next/navigation";

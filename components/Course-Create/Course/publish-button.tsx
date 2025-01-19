@@ -2,7 +2,7 @@
 
 import { publishCourse, unpublishCourse } from "@/actions/course-teacher/course"
 import { useCurrentUser } from "@/hooks/user"
-import { Button } from "@nextui-org/button"
+import { Button } from "@heroui/button"
 import { UserRole } from "@prisma/client"
 import { useRouter } from "next/navigation"
 import { useState } from "react"

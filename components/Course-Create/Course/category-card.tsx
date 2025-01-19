@@ -2,7 +2,7 @@
 
 import { UpdateCourseCategory } from "@/actions/course-teacher/category"
 import { CategoryNames } from "@/lib/enums"
-import { Button, Card, CardBody, CardFooter, CardHeader, Select, SelectItem } from "@nextui-org/react"
+import { Button, Card, CardBody, CardFooter, CardHeader, Select, SelectItem } from "@heroui/react"
 import { Category } from "@prisma/client"
 import { useRouter } from "next/navigation"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"

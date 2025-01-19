@@ -1,7 +1,7 @@
 "use client"
 
 import { DeleteLessonById } from "@/actions/lesson-teacher/lesson"
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/react"
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@heroui/react"
 import { Lesson } from "@prisma/client"
 import { Trash } from "lucide-react"
 import { useRouter } from "next/navigation"

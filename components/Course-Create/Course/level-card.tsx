@@ -2,7 +2,7 @@
 
 import { UpdateCourseLevel } from "@/actions/course-teacher/level"
 import { LevelNames } from "@/lib/enums"
-import { Button, Card, CardBody, CardFooter, Select, SelectItem } from "@nextui-org/react"
+import { Button, Card, CardBody, CardFooter, Select, SelectItem } from "@heroui/react"
 import { Level } from "@prisma/client"
 import { useRouter } from "next/navigation"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"

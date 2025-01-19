@@ -1,7 +1,7 @@
 import { auth } from "@/auth"
 import { redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
-import { Divider } from "@nextui-org/react"
+import { Divider } from "@heroui/react"
 import LessonWrapper from "./LessonWrapper"
 
 const LessonPage = async ({
@@ -86,7 +86,7 @@ export default LessonPage;
 // import { LessonDispal } from "@/components/course-display/lesson-display"
 // import LessonMenu from "@/components/course-display/lesson-menu"
 // import { PageLoader } from "@/utils/Page-Placeholders"
-// import { Button, Divider, Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHeader, useDisclosure } from "@nextui-org/react"
+// import { Button, Divider, Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHeader, useDisclosure } from "@heroui/react"
 // import { Course, Lesson } from "@prisma/client"
 // import { ChevronRight } from "lucide-react"
 // import { useRouter } from "next/navigation"

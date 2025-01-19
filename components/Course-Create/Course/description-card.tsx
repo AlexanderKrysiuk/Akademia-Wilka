@@ -3,7 +3,7 @@
 import { UpdateCourseDescription } from "@/actions/course-teacher/description"
 import { EditCourseDescriptionSchema } from "@/schemas/course"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Card, CardBody, CardFooter, Textarea } from "@nextui-org/react"
+import { Button, Card, CardBody, CardFooter, Textarea } from "@heroui/react"
 import { useRouter } from "next/navigation"
 import { startTransition } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"

@@ -10,7 +10,7 @@ import SlugCard from "@/components/Course-Create/Course/slug-card"
 import SubjectCard from "@/components/Course-Create/Course/subject-card"
 import TitleCard from "@/components/Course-Create/Course/title-card"
 import { prisma } from "@/lib/prisma"
-import { Card, CardBody, CardFooter, CardHeader, Progress } from "@nextui-org/react"
+import { Card, CardBody, CardFooter, CardHeader, Progress } from "@heroui/react"
 import { UserRole } from "@prisma/client"
 import { Settings } from "lucide-react"
 import { toast } from "react-toastify"
@@ -152,7 +152,7 @@ export default CourseIdPage
 // import { Settings } from 'lucide-react';
 // import { GetMyCreatedCourse, unpublishCourse } from "@/actions/course-teacher/course";
 // import PageLoader from "@/components/page-loader";
-// import { Button, Card, CardBody, CardFooter, CardHeader, Progress } from "@nextui-org/react";
+// import { Button, Card, CardBody, CardFooter, CardHeader, Progress } from "@heroui/react";
 // import TitleCard from "@/components/Course-Create/Course/title-card";
 // import SlugCard from "@/components/Course-Create/Course/slug-card";
 // import ImageCard from "@/components/Course-Create/Course/image-card";

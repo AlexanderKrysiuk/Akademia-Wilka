@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { startTransition, useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { CheckCircle, Eye, EyeOff, Loader2, TriangleAlert } from "lucide-react";
-import { Button, Input } from "@nextui-org/react";
+import { Button, Input } from "@heroui/react";
 import { NewPasswordSchema } from "@/schemas/user";
 import { z } from 'zod'
 import { zodResolver } from "@hookform/resolvers/zod";

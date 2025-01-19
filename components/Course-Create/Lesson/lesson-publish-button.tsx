@@ -1,7 +1,7 @@
 "use client"
 
 import { changeLessonPublicity } from "@/actions/lesson-teacher/lesson";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import { Lesson } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

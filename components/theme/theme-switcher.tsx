@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import { Moon, Sun } from "lucide-react";
 import {useTheme} from "next-themes";
 import { useEffect, useState } from "react";
@@ -20,7 +20,7 @@ export function ThemeSwitcher() {
   }
 
   return (
-    <Button size="sm" isIconOnly color="primary" variant="light" onClick={toggleTheme} radius="full">
+    <Button size="sm" isIconOnly color="primary" variant="light" onPress={toggleTheme} radius="full">
       {theme === 'light' ? (
         <Moon/>
       ) : (

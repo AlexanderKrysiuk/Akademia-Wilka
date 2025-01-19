@@ -2,7 +2,7 @@
 import SideBar from "@/components/dashboard/sidebar";
 import Sidebar from "@/components/dashboard/sidebar";
 import { Separator } from "@/components/ui/separator";
-import { Button } from "@nextui-org/react";
+import { Button } from "@heroui/react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";

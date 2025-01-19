@@ -6,7 +6,7 @@ import { useCurrentUser } from "@/hooks/user";
 import { EmailSchema } from "@/schemas/user";
 import { PageLoader } from "@/utils/Page-Placeholders";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Card, CardBody, CardFooter, CardHeader, Input, Link, Progress } from "@nextui-org/react";
+import { Button, Card, CardBody, CardFooter, CardHeader, Input, Link, Progress } from "@heroui/react";
 import { Course, Lesson } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

@@ -1,8 +1,8 @@
 "use client"
 import LoginForm from "@/components/auth/login-form";
 import RegisterForm from "@/components/auth/register-form";
-import { Card, CardBody } from "@nextui-org/card";
-import { Tab, Tabs } from "@nextui-org/tabs";
+import { Card, CardBody } from "@heroui/card";
+import { Tab, Tabs } from "@heroui/tabs";
 
 const StartPage = () => {
     return ( 

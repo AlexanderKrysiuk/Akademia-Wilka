@@ -4,7 +4,7 @@ import { UpdateCourseTitle } from "@/actions/course-teacher/title";
 import { useCurrentUser } from "@/hooks/user";
 import { EditCourseTitleSchema } from "@/schemas/course";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Card, CardBody, CardFooter, Input } from "@nextui-org/react";
+import { Button, Card, CardBody, CardFooter, Input } from "@heroui/react";
 import { UserRole } from "@prisma/client";
 import { Pen, PenOff } from "lucide-react";
 import { useRouter } from "next/navigation";

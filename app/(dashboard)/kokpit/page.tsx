@@ -4,7 +4,7 @@ import { useCurrentUser } from "@/hooks/user";
 import { useSession, signOut } from "next-auth/react";
 import { useEffect } from "react";
 
-import {  Listbox,  ListboxSection,  ListboxItem} from "@nextui-org/listbox";
+import {  Listbox,  ListboxSection,  ListboxItem} from "@heroui/listbox";
 
 const DashboardPage = () => {
     //const isTeacher = useIsTeacher()

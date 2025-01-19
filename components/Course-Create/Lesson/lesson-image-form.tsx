@@ -2,7 +2,7 @@
 
 import { UploadLessonImage } from "@/actions/lesson-teacher/lesson-image"
 import { sanitizeFileName } from "@/utils/link"
-import { Button, CardBody, CardHeader, Image, Input, Spinner } from "@nextui-org/react"
+import { Button, CardBody, CardHeader, Image, Input, Spinner } from "@heroui/react"
 import { Lesson } from "@prisma/client"
 import { ImageOff, ImagePlus, ImagePlusIcon, Images } from "lucide-react"
 import { useRouter } from "next/navigation"

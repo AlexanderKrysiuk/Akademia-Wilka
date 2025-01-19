@@ -44,8 +44,10 @@ export default function Header() {
                 <div
                     className='hidden lg:block'
                 >
-                    {basicLinks.map((item)=>(
-                        <NavbarItem>
+                    {basicLinks.map((item, key)=>(
+                        <NavbarItem
+                            key={key}
+                        >
                             <Link
                                 color='foreground'
                                 href={item.href}
@@ -138,8 +140,10 @@ export default function Header() {
                         <Divider/>
                     </div>
                 }
-                {basicLinks.map((item)=>(
-                        <NavbarMenuItem>
+                {basicLinks.map((item, key)=>(
+                        <NavbarMenuItem
+                            key={key}
+                        >
                             <Link
                                 color='foreground'
                                 href={item.href}
@@ -159,8 +163,10 @@ export default function Header() {
                                     Nauczyciel
                                 </div>
                                 <Divider/>
-                                {teacherLinks.map((item)=>(
-                                    <NavbarMenuItem>
+                                {teacherLinks.map((item, key)=>(
+                                    <NavbarMenuItem
+                                        key={key}
+                                    >
                                         <Link
                                             color='foreground'
                                             href={item.href}

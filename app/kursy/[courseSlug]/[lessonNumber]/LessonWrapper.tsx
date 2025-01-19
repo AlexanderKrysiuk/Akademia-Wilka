@@ -67,19 +67,19 @@ const LessonWrapper = ({
                     />
                 </div>
                 <div className="w-full h-full flex flex-col overflow-y-auto">
-                    <div className="bg-primary text-white w-full flex items-center">
+                    <div className="bg-primary text-white w-full flex items-center relative">
                         <Button
                             isIconOnly
                             color="primary"
                             onPress={onOpen}
-                            className="lg:hidden"
+                            className="lg:hidden absolute left-0"
                         >
-                            <ChevronRight/>
+                            <ChevronRight />
                         </Button>
-                        <div className="flex w-full justify-center py-2">
-                            {currentLesson.title}
-                        </div>
+                    <div className="w-full text-center py-2">
+                        {currentLesson.title}
                     </div>
+                </div>
                     <div>
                         <LessonDisplay
                             lesson={currentLesson}

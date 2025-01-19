@@ -63,19 +63,19 @@ const LessonDisplay = ({
             )}            
             <Divider/>
             <div className="gap-4 w-full flex justify-center items-center py-4" >
-                {previousLesson && (
-                    <Button
-                        size="sm"
-                        color="primary"
-                        className={`text-white`}
-                        isIconOnly
-                        onPress={()=>{
-                            router.push(`/kursy/${course.slug}/lekcja-${previousLesson.order}`)
-                        }}
-                    >
-                        <ChevronLeft/>
-                    </Button>
-                )}
+                <Button
+                    size="sm"
+                    color="primary"
+                    className={`text-white`}
+                    isIconOnly
+                    isDisabled={!previousLesson}
+                    onPress={()=>{
+                        router.push(`/kursy/${course.slug}/lekcja-${previousLesson.order}`)
+                    }}
+                >
+                    <ChevronLeft/>
+                </Button>
+    
                 <Button
                     size="sm"
                     color="primary"
@@ -88,19 +88,19 @@ const LessonDisplay = ({
                 >
                     {completed ? "Zmień na nieukończoną" : "Ukończ lekcję"}
                 </Button>
-                {nextLesson && (
-                    <Button
-                        size="sm"
-                        color="primary"
-                        className={`text-white`}
-                        isIconOnly
-                        onPress={()=>{
-                            router.push(`/kursy/${course.slug}/lekcja-${nextLesson.order}`)
-                        }}
-                    >
-                        <ChevronRight/>
-                    </Button>
-                )}
+            
+                <Button
+                    size="sm"
+                    color="primary"
+                    className={`text-white`}
+                    isIconOnly
+                    isDisabled={!nextLesson}
+                    onPress={()=>{
+                        router.push(`/kursy/${course.slug}/lekcja-${nextLesson.order}`)
+                    }}
+                >
+                    <ChevronRight/>
+                </Button>
             </div>
             {/*JSON.stringify(lesson,null,2)*/}
         </main>

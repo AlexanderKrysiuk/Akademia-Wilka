@@ -65,7 +65,11 @@ const UserButton = () => {
     }
 
     return (
-        <Button variant="outline" className='items-center flex'>
+        <Button 
+            variant="outline"
+            size='sm'
+            className='items-center flex'
+        >
             <Link href="/auth/start" passHref>
                 Zacznij Tutaj
             </Link>

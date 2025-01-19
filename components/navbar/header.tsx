@@ -34,6 +34,13 @@ export default function Header() {
                         height={100}
                         src='/logo-banner-light.svg'
                         alt='Akademia Wilka'
+                        className='hidden lg:block'
+                    />
+                    <Image
+                        height={64}
+                        src='/logo-square-light.svg'
+                        alt='Akademia Wilka'
+                        className='lg:hidden'
                     />
                 </NavbarBrand>
             </NavbarContent>
@@ -56,54 +63,6 @@ export default function Header() {
                     </NavbarMenuItem>
                 ))}
             </NavbarMenu>
-        </Navbar>
-    )
-
-    return (
-        <Navbar
-            onMenuOpenChange={setIsMenuOpen} 
-            className='shadow-md dark:shadow-white'
-        >
-            <NavbarBrand>
-                <Image
-                    src="/logo.png"
-                    alt="logo"
-                    className=''
-                />
-            </NavbarBrand>
-
-            <NavbarContent
-                className='border-1 border-pink-500'
-            >
-            </NavbarContent>     
-                <NavbarMenu>
-                    {menuItems.map((item,index) => (
-                        <NavbarMenuItem key={`${item}-${index}`}>
-                            <Link href={`/${item}`}>{item}</Link>
-                        </NavbarMenuItem>
-                    ))}
-                </NavbarMenu>
-                        {/*
-                        <Image
-                            //className='flex border-1 border-green' 
-                            //src="/logo.png" 
-                            //alt="Logo" 
-                        />
-                    */}
-                <NavbarBrand 
-                    className='border-1 border-red-500 h-full'
-                >
-                   
-                </NavbarBrand>
-            <div className='hidden md:flex'>
-                {menuItems.map((item,index) => (
-                    <NavbarItem key={`${item}-${index}`}>
-                        <Link className={`hover:transition-all duration-500 hover:underline hover:text-primary ${pathname.startsWith(`/${item}`) ? 'text-primary' : ''}`} href={`/${item}`}>{item}</Link>
-                    </NavbarItem>
-                ))}
-            </div>
-            <ThemeSwitcher/>
-            <UserButton/>    
         </Navbar>
     )
 }

@@ -6,6 +6,40 @@ import LoginPage from "@/app/auth/login/page";
 import StartPage from "@/app/auth/start/page";
 import { Button, Card, CardBody, CardFooter, CardHeader, Link, Progress } from "@heroui/react";
 
+const activateCourse = async(courseId:string) => {
+    const session = await auth()
+    const user = session?.user
+
+    if (!user || !user.id) throw new Error("Niezalogowany");
+
+    const course = await prisma.course.findUnique({
+        where: {
+            id: courseId
+        }
+    })
+
+    if (!course) throw new Error("Nie znaleziono kursu")
+
+    const hasCourse = await prisma.user.findFirst({
+        where: {
+            id: user.id,
+            courses: {
+                some: {
+                    id: course.id
+                }
+            }
+        }
+    })
+
+    if (hasCourse) return new Error("Masz już dostęp do tego kursu")
+
+    const productToActivate = await prisma.purchasedProducts.findFirst({
+        where: {
+            
+        }
+    })
+}
+
 const CourseAccessElement = async ({
     course
 } : {

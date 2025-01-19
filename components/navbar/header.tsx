@@ -1,23 +1,20 @@
 "use client"
 import UserButton from '@/components/navbar/user-button';
 import { ThemeSwitcher } from '@/components/theme/theme-switcher';
-import { Image, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Link, Badge, Avatar, Divider} from "@heroui/react";
+import { Image, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Link, Badge, Avatar, Divider, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, DropdownSection} from "@heroui/react";
 import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation'; // Importujemy hook do pobierania aktualnej ścieżki
 import { useCurrentUser } from '@/hooks/user';
 import { GraduationCap, LogIn, LogOut, ShoppingCart } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { UserRole } from '@prisma/client';
+import { basicLinks, teacherLinks } from '../menu';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const pathname = usePathname();
     const user = useCurrentUser()
     const router = useRouter()
-
-    const menuItems = [
-        "kursy"
-    ]
 
     return (
         <Navbar
@@ -44,14 +41,20 @@ export default function Header() {
             <NavbarContent
                 justify='end'
             >
-                <NavbarItem>
-                    <Link
-                        color='foreground'
-                        href='/kursy'
-                    >
-                        Kursy
-                    </Link>
-                </NavbarItem>
+                <div
+                    className='hidden lg:block'
+                >
+                    {basicLinks.map((item)=>(
+                        <NavbarItem>
+                            <Link
+                                color='foreground'
+                                href={item.href}
+                            >
+                                {item.label}
+                            </Link>
+                        </NavbarItem>
+                    ))}
+                </div>
                 <ShoppingCart
                     className='hidden'
                 />
@@ -59,7 +62,61 @@ export default function Header() {
                 <div
                     className='hidden lg:block'
                 >
-                    <UserButton/>
+
+                    {user ? (
+                        <Dropdown
+                            placement='bottom-end'
+                            radius='none'
+                        >
+                            <DropdownTrigger>
+                                <Avatar
+                                    showFallback
+                                    src={user.image!}
+                                    as="button"
+                                    className='transition-all hover:cursor-pointer hover:ring-2 hover:ring-primary duration-500'
+                                />
+                            </DropdownTrigger>
+                            <DropdownMenu variant='light'>
+                                <DropdownSection 
+                                    title="Nauczyciel"
+                                    hidden={!user.role.includes(UserRole.Teacher || UserRole.Admin)}
+                                    items={teacherLinks}
+                                    showDivider
+                                >
+                                    {(item)=>(
+                                        <DropdownItem
+                                            key={item.label}
+                                            href={item.href}
+                                            startContent={<item.icon size={16}/>}
+                                        >
+                                            {item.label}
+                                        </DropdownItem>
+                                    )}
+                                </DropdownSection>
+                                <DropdownItem
+                                    key={''}
+                                    startContent={<LogOut size={16}/>}
+                                    onPress={()=>{
+                                        signOut()
+                                        router.refresh()
+                                    }}
+                                >
+                                    Wyloguj
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+
+                        
+                    ):(
+                        <Button
+                            size="sm"
+                            variant="bordered"
+                            as={Link}
+                            href="/auth/start"
+                        >
+                            Zacznij tutaj
+                        </Button>
+                    )}
                 </div>
                 <NavbarMenuToggle
                     aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -81,14 +138,16 @@ export default function Header() {
                         <Divider/>
                     </div>
                 }
-                <NavbarMenuItem>
-                    <Link
-                        href='/kursy'
-                        color='foreground'
-                    >
-                        Wszystkie Kursy
-                    </Link>
-                </NavbarMenuItem>
+                {basicLinks.map((item)=>(
+                        <NavbarMenuItem>
+                            <Link
+                                color='foreground'
+                                href={item.href}
+                            >
+                                {item.label}
+                            </Link>
+                        </NavbarMenuItem>
+                    ))}
                 {user ? (
                     <>
                         {user.role.includes(UserRole.Teacher || UserRole.Admin) &&(
@@ -100,21 +159,25 @@ export default function Header() {
                                     Nauczyciel
                                 </div>
                                 <Divider/>
-                                <NavbarMenuItem>
-                                    <Link
-                                        color='foreground'
-                                        href='/teacher/my-courses'
-                                    >
-                                        Moje utworzone kursy
-                                    </Link>
-                                </NavbarMenuItem>
-
+                                {teacherLinks.map((item)=>(
+                                    <NavbarMenuItem>
+                                        <Link
+                                            color='foreground'
+                                            href={item.href}
+                                            className='flex gap-x-2'
+                                        >
+                                            <item.icon size={16}/>
+                                            {item.label}
+                                        </Link>
+                                    </NavbarMenuItem>
+                                ))}
                             </>
                         )}
+                        <Divider/>
                         <NavbarMenuItem
                             onClick={()=>{
                                 signOut()
-                                router.push("/")
+                                router.refresh()
                             }}
                         >
                             <Link
@@ -127,16 +190,19 @@ export default function Header() {
                         </NavbarMenuItem>
                     </>
                 ) : (
-                    <NavbarMenuItem>
-                        <Link
-                            href='/auth/start'
-                            color='foreground'
-                            className='gap-2'
-                        >
-                            Logowanie
-                            <LogIn size={16}/>
-                        </Link>
-                    </NavbarMenuItem>
+                    <>
+                        <Divider/>
+                        <NavbarMenuItem>
+                            <Link
+                                color='foreground'
+                                href='/auth/start'
+                                className='flex gap-x-2'
+                            >
+                                <LogIn size={16}/>
+                                Logowanie            
+                            </Link>
+                        </NavbarMenuItem>
+                    </>
                 )}  
             </NavbarMenu>
         </Navbar>

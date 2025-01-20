@@ -9,6 +9,7 @@ import { GraduationCap, LogIn, LogOut, ShoppingCart } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { UserRole } from '@prisma/client';
 import { basicLinks, teacherLinks } from '../menu';
+import { CartButton } from '../cart/cart';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -60,6 +61,7 @@ export default function Header() {
                 <ShoppingCart
                     className='hidden'
                 />
+                <CartButton/>
                 <ThemeSwitcher/>
                 <div
                     className='hidden lg:block'

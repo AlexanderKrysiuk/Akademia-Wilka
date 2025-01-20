@@ -1,28 +1,34 @@
 "use client"
 
 import { Button } from "@heroui/button";
-import { Badge } from "@heroui/react";
+import { Badge, Divider, Drawer, DrawerBody, DrawerContent, DrawerFooter, DrawerHeader, Image, useDisclosure } from "@heroui/react";
 import { ProductType } from "@prisma/client";
-import { Bird, Check, ShoppingCart } from "lucide-react";
+import { Bird, Check, ImageOff, ShoppingCart, Trash } from "lucide-react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 interface CartItem {
     id: string,
     type: ProductType,
+    image: string,
+    title: string,
     quantity: number,
+    price: number
 }
 
 // Tworzymy kontekst koszyka
 const CartContext = createContext<{
     cart: CartItem[];
     addToCart: (item: CartItem) => void;
-    removeFromCart: (id: string, type: string) => void;
+    removeFromCart: (id: string, type: ProductType) => void;
     getCartItemCount: () => number;
-  } | null>(null);
+    onOpen: () => void; // Otwórz koszyk
+    onOpenChange: () => void; // Zamknij koszyk
+} | null>(null);
   
   export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     const [cart, setCart] = useState<CartItem[]>([]);
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
   
     // Załaduj koszyk z localStorage po załadowaniu komponentu
     useEffect(() => {
@@ -63,11 +69,21 @@ const CartContext = createContext<{
     };
   
     return (
-      <CartContext.Provider value={{ cart, addToCart, removeFromCart, getCartItemCount }}>
-        {children}
-      </CartContext.Provider>
+        <CartContext.Provider 
+            value={{ 
+                cart, 
+                addToCart, 
+                removeFromCart, 
+                getCartItemCount,
+                onOpen,
+                onOpenChange,
+            }}
+        >
+            {children}
+            <CartDrawer isOpen={isOpen} onOpenChange={onOpenChange} />
+        </CartContext.Provider>
     );
-  };
+};
   
 // Custom hook, który umożliwia dostęp do koszyka
 export const useCart = () => {
@@ -79,7 +95,7 @@ export const useCart = () => {
 };
 
 export const CartButton = () => {
-    const { getCartItemCount } = useCart();
+    const { getCartItemCount, onOpen } = useCart();
     const itemCount = getCartItemCount(); // Pobierz liczbę przedmiotów z koszyka
 
     return (
@@ -89,13 +105,16 @@ export const CartButton = () => {
             className="text-white"
             content={itemCount}
         >
-            <ShoppingCart/>
+            <ShoppingCart
+                onClick={()=>{onOpen()}}
+                className="cursor-pointer"
+            />
         </Badge>
     )
 }
 
 export const AddToCartButton = (cartItem: CartItem) => {
-    const { addToCart, cart } = useCart();
+    const { addToCart, cart, onOpen } = useCart();
     // Sprawdzamy, czy przedmiot jest już w koszyku
     const isItemInCart = cart.some(
         (item) => item.id === cartItem.id && item.type === cartItem.type
@@ -106,8 +125,7 @@ export const AddToCartButton = (cartItem: CartItem) => {
             startContent={isItemInCart ? <Check/> : <ShoppingCart/>}
             color={isItemInCart ? "success" : "primary"}
             onPress={()=>{
-                isItemInCart ? addToCart(cartItem) :
-                ()=>{}
+                isItemInCart ? onOpen() : addToCart(cartItem)
             }}    
             className="text-white"
             //onPress={() => {
@@ -119,3 +137,80 @@ export const AddToCartButton = (cartItem: CartItem) => {
     )
 }
 
+const CartDrawer = ({ isOpen, onOpenChange }: { isOpen: boolean; onOpenChange: () => void }) => {
+    const { cart, removeFromCart } = useCart()
+    return (
+        <>
+            <Drawer
+                isOpen={isOpen}
+                onOpenChange={onOpenChange}
+                radius="none"
+                placement="right"
+            >
+                <DrawerContent>
+                    {(onClose)=>(
+                        <>
+                            <DrawerHeader>
+                                Twój koszyk
+                            </DrawerHeader>
+                            <Divider/>
+                            <DrawerBody>
+                                {cart.map((item)=>(
+                                    <div key={item.id} className="grid grid-cols-4 gap-4">
+                                        <div className="col-span-1">
+                                            <Image
+                                                radius="none"
+                                                fallbackSrc={<ImageOff/>}
+                                                src={item.image}
+                                                alt={item.title}
+                                                className="w-full aspect-square"
+                                            />
+                                        </div>
+                                        <div className="col-span-2 flex flex-col">
+                                            <span>{item.title}</span>
+                                            <span>{item.price * item.quantity} zł</span>
+                                        </div>
+                                        <div className="col-span-1 flex justify-end">
+                                            <Button
+                                                isIconOnly
+                                                size="sm"
+                                                variant="light"
+                                                onPress={()=>{
+                                                    removeFromCart(item.id, item.type)
+                                                }}
+                                            >
+                                                <Trash/>
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </DrawerBody>
+                            <Divider/>
+                            <DrawerFooter
+                                className="justify-center flex flex-col gap-y-4"
+                            >
+                                <Button
+                                    fullWidth
+                                    radius="none"
+                                    color="success"
+                                    startContent={<ShoppingCart/>}
+                                    className="text-white"
+                                >
+                                    Przejdź do kasy
+                                </Button>
+                                <Button
+                                    variant="light"
+                                    size="sm"
+                                    onPress={onClose}
+                                >
+                                    Kontynuuj zakupy
+                                </Button>
+                            </DrawerFooter>
+                        </>
+                    )}
+                </DrawerContent>
+                
+            </Drawer>
+        </>
+    )
+}

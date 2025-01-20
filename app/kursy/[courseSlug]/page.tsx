@@ -41,15 +41,20 @@ const CourseSlugPage = async ({
                         </CardBody>
                     </Card>
                 </div>
-                <div className="lg:col-span-3">
+                <div className="lg:col-span-3 justify-center gap-y-4">
                     <CourseAccessElement
                         course={course}
                     />
-                    <AddToCartButton 
-                        id={course.id} 
-                        type={ProductType.Course} 
-                        quantity={1}                        
-                    />
+                    <div className="my-4 justify-center w-full flex">
+                        <AddToCartButton 
+                            id={course.id}
+                            type={ProductType.Course}
+                            quantity={1} 
+                            image={course.imageUrl!}
+                            title={course.title}
+                            price={course.price || 100}                
+                        />
+                    </div>
                 </div>    
             </div>
         </main>

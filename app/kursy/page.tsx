@@ -1,31 +1,13 @@
-"use client"
+import { prisma } from "@/lib/prisma";
+import { Card, CardFooter, CardHeader, Image, Link } from "@heroui/react";
+import { ImageOff } from "lucide-react";
 
-import { getPublishedCourses } from "@/actions/student/course";
-import PageLoader from "@/components/page-loader";
-import { Button, Card, CardFooter, CardHeader, Image } from "@heroui/react";
-import { Course } from "@prisma/client";
-import { EyeIcon, Gift, ShoppingBasket, ShoppingCart, ShoppingCartIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
-
-const CoursesPage = () => {
-    const [loading, setLoading] = useState(true)
-    const [courses, setCourses] = useState<Course[]>([])
-    const router = useRouter();
-    
-    useEffect(()=>{
-        getPublishedCourses()
-            .then((data)=>setCourses(data))
-            .catch((error)=>{
-                toast.error(error)
-            })
-            .finally(()=>{
-                setLoading(false)
-            })
-    }, [])
-
-    if (loading) return <PageLoader/>
+const CoursesPage = async () => {
+    const courses = await prisma?.course.findMany({
+        where: {
+            published: true
+        }
+    })
 
     return (
         <main className="mx-auto max-w-7xl lg:px-[10vw] pt-4">
@@ -35,15 +17,15 @@ const CoursesPage = () => {
                         <Card
                             isPressable
                             isHoverable
-                            key={course.id} 
-                            className="mb-4 group transition-all duration-500 hover:border-1 hover:border-primary"
-                            style={{ overflow: "hidden" }}
-                            onPress={() => router.push(`/kursy/${course.slug}`)} // Nawigacja po kliknięciu
+                            as={Link}
+                            key={course.id}
+                            href={`/kursy/${course.slug}`}
                         >
                             <Image
+                                fallbackSrc={<ImageOff/>}
                                 src={course.imageUrl!}
                                 alt={course.title}
-                                className="rounded-b-none transition-transform duration-300 "
+
                             />
                             <CardHeader
                                 className="flex justify-between p-4 transition-all duration-300"
@@ -53,15 +35,8 @@ const CoursesPage = () => {
                                     >
                                     {course.title}
                                 </h3>
-                                {/*
-                                <Button
-                                    size="sm"
-                                    isIconOnly
-                                    variant="light"
-                                >
-                                    <EyeIcon/>
-                                </Button>
-                    */}
+                                
+                
                             </CardHeader>
                             <p>{course.description}</p>
                             <CardFooter className="gap-4">

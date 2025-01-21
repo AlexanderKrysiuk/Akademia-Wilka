@@ -9,22 +9,34 @@ generator client {
 }
 
 model User {
-  id            String              @id @default(uuid())
-  name          String?
-  email         String              @unique
-  emailVerified DateTime?
-  password      String?
-  image         String?
-  roles         UserRoleAssignment[] // Relacja wiele-do-wielu do ról
-  accounts      Account[]
-  sessions      Session[]
-  purchases     Purchase[]
-  courses       Course[]
-  completedLessons  Lesson[] //@relation("CompletedLessons")
+  id                String              @id @default(uuid())   // Unikalny identyfikator użytkownika
+  name              String?                                // Imię i nazwisko użytkownika (opcjonalne)
+  email             String              @unique             // Unikalny email użytkownika
+  emailVerified     DateTime?                              // Data weryfikacji emaila
+  password          String?                                // Hasło (przechowywane jako hash)
+  image             String?                                // URL do zdjęcia profilowego (opcjonalne)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  // Relacje
+  roles             UserRoleAssignment[]                   // Relacja wiele-do-wielu do ról
+  accounts          Account[]                              // Konta powiązane z użytkownikiem
+  sessions          Session[]                              // Sesje uwierzytelnienia użytkownika
+  purchases         Purchase[]                             // Zakupy dokonane przez użytkownika
+  completedLessons  Lesson[]  // Lekcje ukończone przez użytkownika
+
+  // Dodatkowe pola
+  address           String?                                // Adres użytkownika (opcjonalny)
+  phoneNumber       String?                                // Numer telefonu (opcjonalny)
+  newsletterOptIn   Boolean            @default(false)     // Czy użytkownik zgodził się na newsletter
+  isAdmin           Boolean            @default(false)     // Flaga administratora
+
+  // Automatyczne pola czasu
+  createdAt         DateTime           @default(now())     // Data utworzenia użytkownika
+  updatedAt         DateTime           @updatedAt          // Data ostatniej aktualizacji
+
+  // Indeksy
+  @@index([email])                                       // Indeks na email dla szybkiego wyszukiwania
 }
+
 
 model UserRoleAssignment {
   id     String       @id @default(uuid())
@@ -92,20 +104,22 @@ model PasswordResetToken {
 model Course {
   id          String  @id @default(uuid())
   ownerId     String?
+
   title       String  @db.Text
   slug        String?  @unique
   description String? @db.Text
   imageUrl    String? @db.Text
-  price       Float?
+  price       Int?
+  currency    String  @default("PLN")       // Waluta ceny kursu
   published   Boolean @default(false)
 
+  // Kategoria, poziom i przedmiot kursu
   category    Category?
   level       Level?
   subject     Subject?
 
   chapters    Chapter[]
   lessons     Lesson[]
-  users       User[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -197,12 +211,12 @@ enum LessonType {
 model Purchase {
   id                String             @id @default(uuid()) // Unikalny identyfikator zakupu
   stripeSessionId   String             @unique              // ID sesji Stripe
-  userId            String?                                // Powiązanie z użytkownikiem (jeśli istnieje)
-  user              User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
-  totalAmount       Int                                    // Całkowita kwota zakupu (w groszach)
+  userId            String            // Powiązanie z użytkownikiem (jeśli istnieje)
+  user              User               @relation(fields: [userId], references: [id])
+  totalAmount       Int                // Całkowita kwota zakupu (w groszach)
   currency          String             @default("PLN")     // Waluta (np. PLN, USD)
   status            PaymentStatus      @default(Pending)   // Status płatności (PENDING, PAID, FAILED, REFUNDED)
-  purchasedProducts PurchasedProducts[]                   // Powiązane produkty
+  purchasedProducts OrderItem[] // Powiązane produkty
 
   createdAt         DateTime           @default(now())     // Data utworzenia
   updatedAt         DateTime           @updatedAt          // Data ostatniej aktualizacji
@@ -211,24 +225,26 @@ model Purchase {
   @@index([userId])          // Indeks na userId dla szybszych zapytań
 }
 
-model PurchasedProducts {
-  id             String       @id @default(uuid()) // Unikalny identyfikator
-  purchaseId     String       // Powiązanie z transakcją
+model OrderItem {
+  id             String       @id @default(uuid())        // Unikalny identyfikator zakupu produktu
   productId      String       // Identyfikator produktu (kurs, sesja, itd.)
   productType    ProductType  // Typ produktu (np. COURSE, SESSION)
-  userId         String?      // Użytkownik przypisany do tej sesji/produktu (jeśli istnieje)
-  isGift         Boolean      @default(false)      // Czy to prezent?
-  recipientEmail String?      // Email odbiorcy prezentu (jeśli isGift = true)
-  status         ProductStatus @default(Active)    // Status produktu (ACTIVE, USED, RETURNED)
-  assignedAt     DateTime?    // Data przypisania do użytkownika
+  userId         String       // ID użytkownika przypisanego do tego produktu
+  ownerId        String       // ID właściciela zakupu (może być inny niż userId w przypadku prezentów)
+  price          Int          // Cena produktu w momencie zakupu (w groszach)
+  status         ProductStatus @default(Active)           // Status produktu (ACTIVE, USED, RETURNED)
+  assignedAt     DateTime?    // Data przypisania produktu użytkownikowi
   usedAt         DateTime?    // Data wykorzystania (np. sesji)
-  createdAt      DateTime     @default(now())      // Data utworzenia
-  updatedAt      DateTime     @updatedAt           // Data ostatniej aktualizacji
+  createdAt      DateTime     @default(now())             // Data utworzenia
+  updatedAt      DateTime     @updatedAt                  // Data ostatniej aktualizacji
 
-  purchase       Purchase     @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  // Relacja do zakupu
+  purchase       Purchase?     @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+  purchaseId     String?       // Pole powiązane z modelem Purchase
 
   @@index([purchaseId])
   @@index([userId])
+  @@index([ownerId]) // Indeksowanie właściciela dla szybszych zapytań
 }
 
 enum PaymentStatus {
@@ -238,7 +254,6 @@ enum PaymentStatus {
   Refunded   // Zwrócono pieniądze
 }
 
-
 model StripeCustomer {
   id               String @id @default(uuid())
   userId           String @unique
@@ -247,7 +262,6 @@ model StripeCustomer {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
 
 enum ProductType {
   Course

@@ -105,10 +105,16 @@ export const CartButton = () => {
             className="text-white"
             content={itemCount}
         >
-            <ShoppingCart
-                onClick={()=>{onOpen()}}
-                className="cursor-pointer"
-            />
+            <Button
+                variant="light"
+                size="sm"
+                radius="full"
+                color="primary"
+                isIconOnly
+                onPress={()=>{onOpen()}}
+            >
+                <ShoppingCart/>
+            </Button>
         </Badge>
     )
 }

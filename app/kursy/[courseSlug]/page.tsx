@@ -6,7 +6,6 @@ import { ImageOff, VideoOff } from "lucide-react";
 import { ImageNotFound } from "@/utils/Page-Placeholders";
 import { auth } from "@/auth";
 import { ProductStatus, ProductType } from "@prisma/client";
-import CourseAccessElement from "./course-access-element";
 import { AddToCartButton } from "@/components/cart/cart";
 
 const CourseSlugPage = async ({
@@ -42,9 +41,7 @@ const CourseSlugPage = async ({
                     </Card>
                 </div>
                 <div className="lg:col-span-3 justify-center gap-y-4">
-                    <CourseAccessElement
-                        course={course}
-                    />
+                   
                     <div className="my-4 justify-center w-full flex">
                         <AddToCartButton 
                             id={course.id}

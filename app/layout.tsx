@@ -15,7 +15,6 @@ import { HeroUIProvider } from "@heroui/system";
 import "react-image-crop/dist/ReactCrop.css";
 import { CartProvider } from "@/components/cart/cart";
 
-
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -41,9 +40,12 @@ export default async function RootLayout({
           >
             <CartProvider>
               <main className="w-full h-full flex flex-col">
-                <Header/>
                   <div className="flex-1 overflow-auto">
+                <Header/>
                     {children}
+                    <div className="mt-4 h-64 bg-gray-700">
+                      Stopka
+                    </div>
                     <Toaster/>
                   </div>
               </main>

@@ -29,6 +29,14 @@ export const RegisterSchema = z.object({
     email: emailTemplate,
 })
 
+export const RegisterWithTermsSchema = z.object({
+    name: nameTemplate,
+    email: emailTemplate,
+    terms: z.boolean().refine((value) => value === true, {
+        message: "Musisz zaakceptować regulamin",
+    }),
+});
+
 export const LoginSchema = z.object({
     email: emailTemplate,
     password: passwordTemplate

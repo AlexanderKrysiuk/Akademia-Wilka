@@ -43,6 +43,7 @@ const CourseSlugPage = async ({
                 <div className="lg:col-span-3 justify-center gap-y-4">
                    
                     <div className="my-4 justify-center w-full flex">
+                        
                         <AddToCartButton 
                             id={course.id}
                             type={ProductType.Course}
@@ -51,6 +52,7 @@ const CourseSlugPage = async ({
                             title={course.title}
                             price={course.price || 100}                
                         />
+                
                     </div>
                 </div>    
             </div>

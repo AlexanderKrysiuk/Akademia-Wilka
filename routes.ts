@@ -1,6 +1,9 @@
 export const publicRoutes = [
     "/",
     "/kursy",
+    "/zamowienie",
+    "/public",
+    "/polityka-prywatnosci"
 ];
 export const authRoutes = [
     "/auth/reset",

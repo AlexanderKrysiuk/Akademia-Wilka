@@ -27,7 +27,6 @@ model User {
   address           String?                                // Adres użytkownika (opcjonalny)
   phoneNumber       String?                                // Numer telefonu (opcjonalny)
   newsletterOptIn   Boolean            @default(false)     // Czy użytkownik zgodził się na newsletter
-  isAdmin           Boolean            @default(false)     // Flaga administratora
 
   // Automatyczne pola czasu
   createdAt         DateTime           @default(now())     // Data utworzenia użytkownika
@@ -211,7 +210,7 @@ enum LessonType {
 model Purchase {
   id                String             @id @default(uuid()) // Unikalny identyfikator zakupu
   stripeSessionId   String             @unique              // ID sesji Stripe
-  userId            String            // Powiązanie z użytkownikiem (jeśli istnieje)
+  userId            String             
   user              User               @relation(fields: [userId], references: [id])
   totalAmount       Int                // Całkowita kwota zakupu (w groszach)
   currency          String             @default("PLN")     // Waluta (np. PLN, USD)
@@ -229,7 +228,7 @@ model OrderItem {
   id             String       @id @default(uuid())        // Unikalny identyfikator zakupu produktu
   productId      String       // Identyfikator produktu (kurs, sesja, itd.)
   productType    ProductType  // Typ produktu (np. COURSE, SESSION)
-  userId         String       // ID użytkownika przypisanego do tego produktu
+  userId         String?       // ID użytkownika przypisanego do tego produktu
   ownerId        String       // ID właściciela zakupu (może być inny niż userId w przypadku prezentów)
   price          Int          // Cena produktu w momencie zakupu (w groszach)
   status         ProductStatus @default(Active)           // Status produktu (ACTIVE, USED, RETURNED)

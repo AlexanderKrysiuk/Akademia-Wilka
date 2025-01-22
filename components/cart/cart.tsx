@@ -6,6 +6,9 @@ import { ProductType } from "@prisma/client";
 import { Bird, Check, ImageOff, ShoppingCart, Trash } from "lucide-react";
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import Cookie from "js-cookie"; // importujemy bibliotekę do ciasteczek
+import { useRouter } from "next/navigation";
+
 
 interface CartItem {
     id: string,
@@ -22,6 +25,7 @@ const CartContext = createContext<{
     addToCart: (item: CartItem) => void;
     removeFromCart: (id: string, type: ProductType) => void;
     getCartItemCount: () => number;
+    calculateTotalPrice: () => number; // Nowa funkcja do obliczania ceny
     onOpen: () => void; // Otwórz koszyk
     onOpenChange: () => void; // Zamknij koszyk
 } | null>(null);
@@ -32,8 +36,8 @@ const CartContext = createContext<{
   
     // Załaduj koszyk z localStorage po załadowaniu komponentu
     useEffect(() => {
-      const savedCart = JSON.parse(localStorage.getItem("cart") || "[]") as CartItem[];
-      setCart(savedCart);
+        const savedCart = JSON.parse(Cookie.get("cart") || "[]") as CartItem[];
+        setCart(savedCart);
     }, []);
   
     const addToCart = (item: CartItem) => {
@@ -53,7 +57,7 @@ const CartContext = createContext<{
         }
 
         setCart(newCart);
-        localStorage.setItem("cart", JSON.stringify(newCart));
+        Cookie.set("cart", JSON.stringify(newCart), { expires: 7 }); // zapisujemy koszyk w ciasteczkach
     };
   
     const removeFromCart = (id: string, type: string) => {
@@ -61,11 +65,16 @@ const CartContext = createContext<{
         (cartItem) => cartItem.id !== id || cartItem.type !== type
       );
       setCart(newCart);
-      localStorage.setItem("cart", JSON.stringify(newCart));
+      Cookie.set("cart", JSON.stringify(newCart), { expires: 7 }); // zapisujemy po usunięciu elementu
     };
   
     const getCartItemCount = (): number => {
       return cart.reduce((total, item) => total + item.quantity, 0);
+    };
+
+    // Dodajemy funkcję obliczania łącznej ceny
+    const calculateTotalPrice = (): number => {
+        return cart.reduce((total, item) => total + item.price * item.quantity, 0);
     };
   
     return (
@@ -77,6 +86,7 @@ const CartContext = createContext<{
                 getCartItemCount,
                 onOpen,
                 onOpenChange,
+                calculateTotalPrice
             }}
         >
             {children}
@@ -145,6 +155,8 @@ export const AddToCartButton = (cartItem: CartItem) => {
 
 const CartDrawer = ({ isOpen, onOpenChange }: { isOpen: boolean; onOpenChange: () => void }) => {
     const { cart, removeFromCart } = useCart()
+    const router = useRouter()
+
     return (
         <>
             <Drawer
@@ -201,6 +213,10 @@ const CartDrawer = ({ isOpen, onOpenChange }: { isOpen: boolean; onOpenChange: (
                                     color="success"
                                     startContent={<ShoppingCart/>}
                                     className="text-white"
+                                    onPress={()=>{
+                                        router.push("/zamowienie")
+                                        onClose()
+                                    }}
                                 >
                                     Przejdź do kasy
                                 </Button>

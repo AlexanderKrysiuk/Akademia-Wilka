@@ -53,10 +53,15 @@ export async function CreatePaymentPage(data: CheckoutData) {
     if (!user) {
         user = await prisma.user.create({
             data: { 
-                email: email,
+                email: email.toLowerCase(),
                 name: name
             }
         })
+        const verificationToken = await generateVerificationToken(email)
+            await sendVerificationEmail(
+                verificationToken.email,
+            verificationToken.token
+        )
     }
 
     // Sprawdzamy, które kursy użytkownik już posiada
@@ -126,8 +131,8 @@ export async function CreatePaymentPage(data: CheckoutData) {
         customer: stripeCustomer.stripeCustomerId,
         line_items: lineItems,
         mode: "payment",
-        success_url: `${process.env.DOMAIN}/kursy/success`, // Możesz dostosować URL sukcesu
-        cancel_url: `${process.env.DOMAIN}/kursy/cancel`, // Możesz dostosować URL anulowania
+        success_url: `${process.env.DOMAIN}/kursy/`, // Możesz dostosować URL sukcesu
+        cancel_url: `${process.env.DOMAIN}/kursy/`, // Możesz dostosować URL anulowania
         metadata: {
             userId: user.id, // Identyfikator użytkownika
             courseIds: availableCourses.map(course => course.id).join(", "), // Identyfikatory kursów

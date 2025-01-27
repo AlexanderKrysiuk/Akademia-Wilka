@@ -32,10 +32,11 @@ export default function Header() {
                         <Image
                             //as={Link}
                             //href={"/"}
-                            height={100}
-                            src='/logo-banner-light.svg'
+                            height={90}
+                            src='/logo/Logo-Banner.svg'
                             alt='Akademia Wilka'
                         />
+                        
                     </Link>
                 </NavbarBrand>
             </NavbarContent>

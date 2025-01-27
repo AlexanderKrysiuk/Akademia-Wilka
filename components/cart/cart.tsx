@@ -144,6 +144,7 @@ export const AddToCartButton = (cartItem: CartItem) => {
                 isItemInCart ? onOpen() : addToCart(cartItem)
             }}    
             className="text-white"
+            fullWidth
             //onPress={() => {
             //    addToCart(cartItem);
             //}}        

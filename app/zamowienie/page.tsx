@@ -10,7 +10,7 @@ import { RegisterWithTermsSchema } from "@/schemas/user"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { SubmitHandler, useForm } from "react-hook-form"
-import { CheckoutData } from "@/actions/stripe/payment"
+import { CheckoutData, CreatePaymentPage } from "@/actions/stripe/payment"
 
 type FormFields = z.infer<typeof RegisterWithTermsSchema>
 
@@ -27,7 +27,7 @@ export default function CheckoutPage() {
     const { cart, removeFromCart, calculateTotalPrice } = useCart()
     const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
-    const onSubmit: SubmitHandler<FormFields> = async (data) => {
+    const onSubmit: SubmitHandler<FormFields> = async (data) => {        
         // Zbieranie ID i Type z koszyka
         const cartItems = cart.map(item => ({
             id: item.id,
@@ -41,8 +41,7 @@ export default function CheckoutPage() {
             cartItems
         };
 
-        // Teraz wysyłasz formData, które zawiera dane z formularza i koszyka
-        console.log(formData);    
+        await CreatePaymentPage(formData);  
     }
         
     return (
@@ -64,7 +63,7 @@ export default function CheckoutPage() {
                                     type="name"
                                     placeholder="Jack Sparrow"
                                     isClearable
-                                    isDisabled={!!user}
+                                    isDisabled={!!user || isSubmitting}
                                     isReadOnly={!!user}
                                     variant="bordered"
                                     radius="none"
@@ -81,7 +80,7 @@ export default function CheckoutPage() {
                                     placeholder="jack.sparrow@pirate.com"
                                     isRequired
                                     isClearable
-                                    isDisabled={!!user}
+                                    isDisabled={!!user || isSubmitting}
                                     isReadOnly={!!user}
                                     variant="bordered"
                                     radius="none"
@@ -111,6 +110,7 @@ export default function CheckoutPage() {
                                             <Button
                                                 isIconOnly
                                                 size="sm"
+                                                isDisabled={isSubmitting}
                                                 variant="light"
                                                 onPress={()=>{
                                                     removeFromCart(item.id, item.type)
@@ -136,6 +136,7 @@ export default function CheckoutPage() {
                                     color="success"
                                     defaultChecked
                                     isInvalid={!!errors.terms}
+                                    isDisabled={isSubmitting}
                                     className="max-w-full"
                                 >
                                     <span className="text-sm">Akceptuję politykę prywatności oraz regulamin Akademii Wilka</span>
@@ -157,9 +158,10 @@ export default function CheckoutPage() {
                                     color="success"
                                     type="submit"
                                     className="text-white"
-                                    isDisabled={!watch("email") || !!errors.email || !watch("terms") || (calculateTotalPrice() === 0)}
+                                    isLoading={isSubmitting}
+                                    isDisabled={!watch("email") || !!errors.email || !watch("terms") || (calculateTotalPrice() === 0) || isSubmitting}
                                 >
-                                    Przejdź do płatności
+                                    {isSubmitting ? "Przekierowanie..." : "Przejdź do płatności"}
                             </Button>
                             </CardFooter>
                         </Form>

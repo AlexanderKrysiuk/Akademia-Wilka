@@ -7,6 +7,7 @@ import { ImageNotFound } from "@/utils/Page-Placeholders";
 import { auth } from "@/auth";
 import { ProductStatus, ProductType } from "@prisma/client";
 import { AddToCartButton } from "@/components/cart/cart";
+import CourseAccessElement from "./course-access-element";
 
 const CourseSlugPage = async ({
     params
@@ -43,14 +44,8 @@ const CourseSlugPage = async ({
                 <div className="lg:col-span-3 justify-center gap-y-4">
                    
                     <div className="my-4 justify-center w-full flex">
-                        
-                        <AddToCartButton 
-                            id={course.id}
-                            type={ProductType.Course}
-                            quantity={1} 
-                            image={course.imageUrl!}
-                            title={course.title}
-                            price={course.price || 100}                
+                        <CourseAccessElement
+                            course={course}
                         />
                 
                     </div>

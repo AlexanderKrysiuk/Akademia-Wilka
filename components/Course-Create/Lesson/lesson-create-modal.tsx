@@ -57,12 +57,11 @@ const CreateLessonModal = ({
             <Modal
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
-                isDismissable={false}
                 placement="center"
                 size="xs"
                 backdrop="opaque"
                 classNames={{
-                    backdrop: "bg-gradient-to-t from-foreground/100 to-foreground/10 backdrop-opacity-20"
+                    backdrop: "bg-gradient-to-t from-foreground/100 to-foreground/10 backdrop-opacity-20",
                 }}
             >
                 <ModalContent>
@@ -95,24 +94,28 @@ const CreateLessonModal = ({
                                                 label="Typ lekcji"
                                                 labelPlacement="outside"
                                                 isRequired
+                                                items={Object.values(LessonType).map((type) => ({
+                                                    key: type,
+                                                    label: type,
+                                                  }))}
                                                 variant="bordered"
-                                                isInvalid={!!errors.lessonType}
-                                                errorMessage={errors.lessonType?.message}
                                                 placeholder="Wybierz typ lekcji"
                                             >
-                                                {Object.values(LessonType).map((lessonType)=>(
+                                                {(item) => <SelectItem key={item.key}>{item.label}</SelectItem>}
+                                                {/*Object.values(LessonType).map((lessonType)=>(
                                                     <SelectItem
                                                         key={lessonType}
                                                         value={lessonType}
                                                     >
                                                         {lessonType}
                                                     </SelectItem>
-                                                ))}
+                                                ))*/}
                                             </Select>
                                         )}
                                     />
                                 </ModalBody>
                                 <ModalFooter>
+                                  
                                     <Button
                                         color="danger"
                                         variant="light"

@@ -1,7 +1,8 @@
 "use client"
 import { auth, signOut } from '@/auth';
-import { Button } from '@/components/ui/button';
 import { useCurrentUser } from '@/hooks/user';
+import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Select, SelectItem, useDisclosure } from '@heroui/react';
+import { SquarePlus } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 
 
@@ -9,22 +10,11 @@ import { useSession } from 'next-auth/react';
 export default function Home() {
   const session = useSession()
   const user = useCurrentUser()
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
+
   return (
     <main>
-      {/* 
-      <div className='py-8 space-y-4'>
-        <div>
-
-        USER:
-        {JSON.stringify(user,null,2)}
-        </div>
-        <div>
-
-        SESSION:
-        {JSON.stringify(session,null,2)}
-        </div>
-      </div>
-      */}
+ 
     </main>
   );
 }

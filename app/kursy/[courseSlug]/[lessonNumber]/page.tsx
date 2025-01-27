@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import { Divider } from "@heroui/react"
 import LessonWrapper from "./LessonWrapper"
+import { ProductStatus, ProductType } from "@prisma/client"
 
 const LessonPage = async ({
     params
@@ -21,10 +22,24 @@ const LessonPage = async ({
         where: { slug: params.courseSlug }
     })
     if (!course) redirect("/kursy/")
+    // Sprawdzamy, czy użytkownik ma aktywny kurs
+    const userHasCourse = await prisma.orderItem.findFirst({
+        where: {
+            userId: user.id,
+            productId: course.id,
+            productType: ProductType.Course,
+            status: ProductStatus.Used // Aktywne lub zwrócone kursy
+        }
+    })
+
+    if (!userHasCourse) {
+        redirect(`/kursy/${course.slug}`) // Jeśli nie ma aktywnego kursu, przekierowujemy na stronę kursu
+    }
+
+    // Pobieramy postęp użytkownika
     const userProgress = await prisma.user.findFirst({
         where: { id: user.id },
         select: {
-            courses: { where: { id: course.id }},
             completedLessons: {
                 where: {
                     courseId: course.id,
@@ -37,8 +52,8 @@ const LessonPage = async ({
         }
     })
 
-    if (!userProgress?.courses.length) redirect(`/kursy/${course.slug}`)
-    const completedLessonsIds = userProgress.completedLessons.map(lesson => lesson.id)
+    const completedLessonsIds = userProgress?.completedLessons.map(lesson => lesson.id) || []
+    
     const lessons = await prisma.lesson.findMany({
         where: {
             courseId: course.id, 

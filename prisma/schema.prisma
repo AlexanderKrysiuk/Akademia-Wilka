@@ -200,10 +200,10 @@ model Attachment {
 }
 
 enum LessonType {
-//  Text
+  Text
   Video
-//  Audio
-//  Subchapter
+  Audio
+  Subchapter
 }
 
 

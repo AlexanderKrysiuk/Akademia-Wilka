@@ -1,7 +1,7 @@
 "use client"
 
-import { Card, CardBody, CardFooter, CardHeader, Divider } from "@heroui/react"
-import { Lesson } from "@prisma/client"
+import { Card, CardBody, CardFooter, CardHeader, Divider, Select, SelectItem } from "@heroui/react"
+import { Lesson, LessonType } from "@prisma/client"
 import CreateLessonModal from "../Lesson/lesson-create-modal"
 import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd"
 import { startTransition } from "react"

@@ -131,11 +131,17 @@ export async function CreatePaymentPage(data: CheckoutData) {
         customer: stripeCustomer.stripeCustomerId,
         line_items: lineItems,
         mode: "payment",
-        success_url: `${process.env.DOMAIN}/kursy/`, // Możesz dostosować URL sukcesu
-        cancel_url: `${process.env.DOMAIN}/kursy/`, // Możesz dostosować URL anulowania
+        success_url: `${process.env.NEXT_PUBLIC_APP_URL}/kursy/`, // Możesz dostosować URL sukcesu
+        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/kursy/`, // Możesz dostosować URL anulowania
         metadata: {
             userId: user.id, // Identyfikator użytkownika
-            courseIds: availableCourses.map(course => course.id).join(", "), // Identyfikatory kursów
+            products: JSON.stringify([
+                ...availableCourses.map((course) => ({
+                    id: course.id,
+                    type: ProductType.Course,
+                    price: Math.round(course.price! * 100),
+                })),
+            ]),
         },
     });
 

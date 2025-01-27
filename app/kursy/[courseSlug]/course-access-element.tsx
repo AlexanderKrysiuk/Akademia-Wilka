@@ -5,6 +5,8 @@ import LoginForm from "@/components/auth/login-form";
 import LoginPage from "@/app/auth/login/page";
 import StartPage from "@/app/auth/start/page";
 import { Button, Card, CardBody, CardFooter, CardHeader, Link, Progress } from "@heroui/react";
+import { AddToCartButton } from "@/components/cart/cart";
+import ActivateCourseButton from "@/components/Course-Landing-Page/activate-course-button";
 
 const activateCourse = async(courseId:string) => {
     const session = await auth()
@@ -12,32 +14,28 @@ const activateCourse = async(courseId:string) => {
 
     if (!user || !user.id) throw new Error("Niezalogowany");
 
-    const course = await prisma.course.findUnique({
+    const activeOrderItem = await prisma.orderItem.findFirst({
         where: {
-            id: courseId
-        }
-    })
+            userId: user.id,
+            productId: courseId,
+            productType: ProductType.Course,
+            status: ProductStatus.Active,
+        },
+    });
 
-    if (!course) throw new Error("Nie znaleziono kursu")
+    if (!activeOrderItem) {
+        throw new Error("Nie znaleziono aktywnego kursu do aktywacji.");
+    }
 
-    const hasCourse = await prisma.user.findFirst({
+    // Aktualizacja statusu na "Used"
+    await prisma.orderItem.update({
         where: {
-            id: user.id,
-            courses: {
-                some: {
-                    id: course.id
-                }
-            }
-        }
-    })
-
-    if (hasCourse) return new Error("Masz już dostęp do tego kursu")
-
-    const productToActivate = await prisma.purchasedProducts.findFirst({
-        where: {
-            
-        }
-    })
+            id: activeOrderItem.id,
+        },
+        data: {
+            status: ProductStatus.Used,
+        },
+    });
 }
 
 const CourseAccessElement = async ({
@@ -49,40 +47,79 @@ const CourseAccessElement = async ({
     const user = session?.user
 
     if (!user) return (
-        <Card>
-            <CardHeader
-                className="justify-center flex flex-col"
-            >
-                <span
-                    className="text-xl"
-                >
-                    Masz już kurs?
-                </span>
-                <span
-                    className="justify-center"
-                >
-                    Zaloguj się aby uzyskać dostęp
-                </span>
-            </CardHeader>
-            <CardBody>
-                <LoginForm/>
-            </CardBody>
-        </Card>
+        <main className="space-y-4">
+            <Card>
+                <CardHeader>
+                    Uzyskaj dostęp do kursu za {course.price} zł
+                </CardHeader>
+                <CardFooter>
+                    <AddToCartButton 
+                        id={course.id}
+                        type={ProductType.Course}
+                        quantity={1} 
+                        image={course.imageUrl!}
+                        title={course.title}
+                        price={course.price || 0}                
+                    />
+                </CardFooter>
+            </Card>
+            <Card>
+                <CardHeader>
+                    Masz już kurs? Zaloguj się
+                </CardHeader>
+                <CardBody>
+                    <LoginForm/>
+                </CardBody>
+            </Card>
+        </main>
     )
 
-    const hasCourse = await prisma.user.findFirst({
+    const CourseStatus = await prisma.orderItem.findFirst({
         where: {
-            id: user.id,
-            courses: {
-                some: {
-                    id: course.id
-                }
-            }
+            userId: user.id,
+            productId: course.id,
+            productType: ProductType.Course
         }
     })
 
-    if (hasCourse) {
-        // Pobierz wszystkie lekcje ukończone przez użytkownika z tego kursu
+    if (!CourseStatus) {
+        return (
+            <Card>
+                <CardHeader>
+                    Uzyskaj dostęp do kursu za {course.price} zł
+                </CardHeader>
+                <CardFooter>
+                    <AddToCartButton 
+                        id={course.id}
+                        type={ProductType.Course}
+                        quantity={1} 
+                        image={course.imageUrl!}
+                        title={course.title}
+                        price={course.price || 0}                
+                    />
+                </CardFooter>
+            </Card>
+        )
+    }
+
+    if (CourseStatus.status === ProductStatus.Active) {
+        return (
+            <Card
+                fullWidth
+            >
+                <CardHeader>
+                    Masz już ten kurs
+                </CardHeader>
+                <CardFooter>
+                    <ActivateCourseButton
+                        courseId={course.id}
+                    />
+                </CardFooter>
+            </Card>
+        )
+    }
+
+    if (CourseStatus.status === ProductStatus.Used) {
         const completedLessons = await prisma.lesson.findMany({
             where: {
                 completedByUsers: {
@@ -127,7 +164,9 @@ const CourseAccessElement = async ({
         }
 
         return (
-            <Card>
+            <Card
+                fullWidth
+            >
                 <CardHeader>
                     <span
                         className="text-xl justify-center w-full flex"
@@ -148,7 +187,7 @@ const CourseAccessElement = async ({
                         fullWidth
                         color="primary"
                         as={Link}
-                        href={`/kursy/${course.slug}/lekcja-${nextLesson.order}`}
+                        href={`/kursy/${course.slug}/lekcja-${nextLesson!.order}`}
                         className="text-white"
                     >
                         Przejdź do kursu
@@ -157,52 +196,6 @@ const CourseAccessElement = async ({
             </Card>
         )
     }
-
-    const hasCourseToActivate = await prisma.purchasedProducts.findFirst({
-        where: {
-            userId: user.id,
-            productId: course.id,
-            productType: ProductType.Course,
-            status: ProductStatus.Active
-        }
-    })
-
-    if (hasCourseToActivate) {
-        return (
-            <Card>
-                <CardHeader
-                    className="flex flex-col"
-                >
-                    <span 
-                        className="text-xl w-full justify-center flex"
-                    >
-                        Masz już kupiony kurs
-                    </span>
-                    <span
-                        className="w-full flex justify-center"
-                    >
-                        kliknij aby go aktywować
-                    </span>
-                </CardHeader>
-                <CardFooter>
-                    <Button
-                        fullWidth
-                        color="primary"
-                        className="text-white"
-
-                    >
-                        Aktywuj kurs
-                    </Button>
-                </CardFooter>
-            </Card>
-        )
-    }
-
-    return ( 
-        <main>
-            ZALOGOWANY
-        </main>
-     );
 }
  
 export default CourseAccessElement;

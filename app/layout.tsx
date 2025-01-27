@@ -39,15 +39,11 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <CartProvider>
-              <main className="w-full h-full flex flex-col">
-                  <div className="flex-1 overflow-auto">
+              <main className="w-full h-full">
                 <Header/>
-                    {children}
-                    <div className="mt-4 h-64 bg-gray-700">
-                      Stopka
-                    </div>
-                    <Toaster/>
-                  </div>
+                <Toaster/>
+                {children}
+                    
               </main>
             </CartProvider>
           </ThemeProvider>

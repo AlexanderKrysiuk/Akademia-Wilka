@@ -1,7 +1,7 @@
 "use client"
 import UserButton from '@/components/navbar/user-button';
 import { ThemeSwitcher } from '@/components/theme/theme-switcher';
-import { Image, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Link, Badge, Avatar, Divider, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, DropdownSection} from "@heroui/react";
+import { Image, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Link, Badge, Avatar, Divider, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, DropdownSection, link} from "@heroui/react";
 import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation'; // Importujemy hook do pobierania aktualnej ścieżki
 import { useCurrentUser } from '@/hooks/user';
@@ -80,7 +80,7 @@ export default function Header() {
                                     className='transition-all hover:cursor-pointer hover:ring-2 hover:ring-primary duration-500'
                                 />
                             </DropdownTrigger>
-                            <DropdownMenu variant='light'>
+                            <DropdownMenu variant='light' aria-label="Link Actions">
                                 <DropdownSection 
                                     title="Nauczyciel"
                                     hidden={!user.role.includes(UserRole.Teacher || UserRole.Admin)}
@@ -92,6 +92,7 @@ export default function Header() {
                                             key={item.label}
                                             href={item.href}
                                             startContent={<item.icon size={16}/>}
+                                            onPress={()=>{router.push(item.href)}}
                                         >
                                             {item.label}
                                         </DropdownItem>

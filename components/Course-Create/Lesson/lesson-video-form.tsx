@@ -55,7 +55,7 @@ const LessonVideoCard = ({
             formData.append("lessonId", lesson.id)
             formData.append("fileName", fileName)
             formData.append("duration", videoElement.duration.toString())
-
+            console.log(formData)
             try {
                 await uploadLessonVideo(formData)
                 toast.success("Film przesłano pomyślnie")

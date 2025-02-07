@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/header";
 import RootWrapper from "@/components/root-wrapper";
-import { ToastContainer } from "react-toastify"
 import Toaster from "@/components/toaster";
 
 //const geistSans = Geist({

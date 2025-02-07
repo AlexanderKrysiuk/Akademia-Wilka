@@ -18,6 +18,7 @@ export default function Header() {
         >
           <Image
             src="/akademia-wilka-logo-banner.svg"
+            alt="Akademia Wilka"
             height={90}
           />
         </Link>

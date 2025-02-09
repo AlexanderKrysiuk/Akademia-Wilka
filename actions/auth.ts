@@ -56,11 +56,3 @@ export async function generateVerificationToken (email: string){
         data: { email, expires }
     })
 }
-
-export async function getVerificationTokenByEmail (email: string){
-    try {
-
-    } catch(error) {
-        console.error("[getVerificationTokenByEmail]:", error)
-    }
-}

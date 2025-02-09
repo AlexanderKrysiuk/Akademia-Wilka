@@ -97,7 +97,7 @@ export const NewPasswordCard = (token: VerificationToken) => {
                             placeholder="********"
                             autoComplete="new-password"
                             isRequired
-                            isInvalid={!!errors.newPassword}
+                            isInvalid={!!errors.newPassword || !!errors.root}
                             errorMessage={errors.newPassword?.message}
                         />
                         <Input {...register("confirmPassword")}
@@ -121,7 +121,7 @@ export const NewPasswordCard = (token: VerificationToken) => {
                             placeholder="********"
                             autoComplete="new-password"
                             isRequired
-                            isInvalid={!!errors.confirmPassword}
+                            isInvalid={!!errors.confirmPassword || !!errors.root}
                             errorMessage={errors.confirmPassword?.message}
                         /> 
                         {errors.root &&
@@ -140,7 +140,7 @@ export const NewPasswordCard = (token: VerificationToken) => {
                         <Button 
                             type={verificationCompleted ? "button" : "submit"} 
                             color="primary" fullWidth 
-                            disabled={isSubmitting || !watch("newPassword") || !watch("confirmPassword")} 
+                            isDisabled={isSubmitting || !watch("newPassword") || !watch("confirmPassword")} 
                             isLoading={isSubmitting}
                             className="text-white"
                         >

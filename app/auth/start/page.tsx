@@ -1,5 +1,6 @@
 "use client"
 
+import LoginForm from "@/components/auth/login-form";
 import RegisterForm from "@/components/auth/register-form";
 import { Card, CardBody, Tab, Tabs } from "@heroui/react";
 
@@ -17,7 +18,7 @@ const StartPage = () => {
                 fullWidth
             >
                 <Tab title="Logowanie">
-
+                    <LoginForm/>
                 </Tab>
                 <Tab title="Rejestracja">
                     <RegisterForm/>

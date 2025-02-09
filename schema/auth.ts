@@ -1,9 +1,14 @@
 import { z } from "zod";
-import { confirmPassword, email, name, newPassword } from "./templates";
+import { confirmPassword, email, name, newPassword, password } from "./templates";
 
 export const RegisterSchema = z.object({
     name,
     email
+})
+
+export const LoginSchema = z.object({
+    email,
+    password
 })
 
 export const NewPasswordSchema = z.object({

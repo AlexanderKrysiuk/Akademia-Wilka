@@ -18,3 +18,7 @@ export const NewPasswordSchema = z.object({
     path: ["confirmPassword"],
     message: "Hasła muszą być takie same",
 })
+
+export const ResetPasswordSchema = z.object({
+    email
+})

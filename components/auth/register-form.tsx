@@ -57,7 +57,7 @@ const RegisterForm = () => {
             />
             {errors.root && (
                 <Alert 
-                    title="Wystąpił nieznany błąd"
+                    title={errors.root.message}
                     variant="bordered"
                     color="danger"    
                 />

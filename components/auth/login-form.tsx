@@ -40,7 +40,7 @@ const LoginForm = () => {
             <div className="w-full">
                 <Link
                     className="absolute right-4 text-xs"
-                    href="#"
+                    href="/auth/password-reset"
                 >
                     Nie pamiętasz hasła?
                 </Link>

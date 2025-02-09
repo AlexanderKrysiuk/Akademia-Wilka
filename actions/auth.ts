@@ -1,8 +1,8 @@
 "use server"
-import { NewPasswordSchema, RegisterSchema } from "@/schema/auth"
+import { NewPasswordSchema, RegisterSchema, ResetPasswordSchema } from "@/schema/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
-import { sendVerificationEmail } from "@/lib/nodemailer"
+import { sendPasswordResetEmail, sendVerificationEmail } from "@/lib/nodemailer"
 import { VerificationToken } from "@prisma/client"
 import bcrypt from "bcryptjs"
 
@@ -46,6 +46,27 @@ export const setNewPassword = async (data: z.infer<typeof NewPasswordSchema>, to
         return {}
     } catch (error) {
         console.error("[setNewPassword]:", error)
+        return { error: { message: "Wystąpił nieznany błąd", field: "root" }}
+    }
+}
+
+export const ResetPassword = async (data: z.infer<typeof ResetPasswordSchema>) => {
+    try {
+        const existingUser = await prisma.user.findUnique({
+            where: { email: data.email }
+        })
+
+        if (!existingUser) return { success: "Jeśli konto istnieje, wysłaliśmy e-mail z linkiem resetującym." };
+
+        await prisma.verificationToken.deleteMany({
+            where: {email: data.email}
+        })
+
+        const verificationToken = await generateVerificationToken(data.email)
+        await sendPasswordResetEmail(verificationToken)
+        return { success: "Jeśli konto istnieje, wysłaliśmy e-mail z linkiem resetującym." }; 
+    } catch (error) {
+        console.error("[ResetPassword]:", error)
         return { error: { message: "Wystąpił nieznany błąd", field: "root" }}
     }
 }

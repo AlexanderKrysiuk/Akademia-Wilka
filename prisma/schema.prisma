@@ -18,6 +18,7 @@ model User {
   name          String?
   email         String          @unique
   emailVerified DateTime?
+  password      String?
   image         String?
   accounts      Account[]
   sessions      Session[]
@@ -60,11 +61,11 @@ model Session {
 }
  
 model VerificationToken {
-  identifier String
-  token      String
+  id         String @id @default(uuid()) @unique
+  email      String @unique
   expires    DateTime
  
-  @@id([identifier, token])
+  @@unique([id,email])
 }
  
 // Optional for WebAuthn support

@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@heroui/button";
 import { registerNewUser } from "@/actions/auth";
-import { Alert } from "@heroui/react";
+import { Alert, Link } from "@heroui/react";
 import { toast } from "react-toastify";
 
 type FormFields = z.infer<typeof RegisterSchema>
@@ -72,6 +72,17 @@ const RegisterForm = () => {
             >
                 {isSubmitting ? "Przetwarzanie..." : "Załóż konto"}
             </Button>
+            <div
+                className="text-xs"
+            >
+                {`Zakładając konto, akceptujesz `} 
+                <Link
+                    href="/polityka-prywatnosci"
+                    className="text-xs inline"
+                >
+                    Regulamin i Politykę Prywatności.
+                </Link>
+            </div>
         </Form>
      );
 }

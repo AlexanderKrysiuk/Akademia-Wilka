@@ -10,7 +10,7 @@ const StartPage = () => {
     >
 
     <Card    
-        className="m-4"
+        className="m-4 w-full max-w-xs"
     >
         <CardBody>
             <Tabs

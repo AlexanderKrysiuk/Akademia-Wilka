@@ -4,8 +4,10 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Alert, Button, Form, Input, Link } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { z } from "zod";
 
 type FormFields = z.infer<typeof LoginSchema>
@@ -18,8 +20,16 @@ const LoginForm = () => {
         resolver: zodResolver(LoginSchema)
     })
 
-    const submit: SubmitHandler<FormFields> = async (data) => {
-        console.log(data)
+    const submit: SubmitHandler<FormFields> = async (data) => {        
+        const result = await signIn("credentials", { ...data, redirect:false });
+        if (result?.error) {
+            setError("root", { 
+                message: result?.error === "CredentialsSignin" && result?.code === "credentials"
+                ? "Nieprawidłowe dane logowania. Sprawdź swój email lub hasło."
+                : "Wystąpił nieznany błąd. Spróbuj ponownie później."})
+        } else {
+            toast.success("Pomyślnie zalogowano")
+        }
     }
     
     return (

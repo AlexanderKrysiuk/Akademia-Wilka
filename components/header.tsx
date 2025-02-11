@@ -1,16 +1,15 @@
 "use client";
 
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/navbar";
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle } from "@heroui/navbar";
 //import { Button } from "@heroui/button"
-import Link from "next/link";
 import { ThemeSwitcher } from "./theme-switcher";
 import { Image } from "@heroui/image";
 import { useCurrentUser } from "@/hooks/user";
 import { Button } from "@heroui/button";
 import { signOut } from "next-auth/react";
-import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/react";
+import { Avatar, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Link } from "@heroui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightFromBracket, faArrowRightToBracket } from "@fortawesome/free-solid-svg-icons";
 
 export default function Header() {
   const user = useCurrentUser()
@@ -19,10 +18,12 @@ export default function Header() {
       isBordered
       isBlurred
     >
+      <NavbarContent>
+
       <NavbarBrand>
         <Link
           href={"/"}
-        >
+          >
           <Image
             src="/akademia-wilka-logo-banner.svg"
             alt="Akademia Wilka"
@@ -30,7 +31,10 @@ export default function Header() {
           />
         </Link>
       </NavbarBrand>
-      <NavbarContent>
+      </NavbarContent>
+      <NavbarContent
+        className="hidden lg:block"
+      >
         {/*
         <NavbarItem>
           <Link href="/about">O nas</Link>
@@ -44,7 +48,9 @@ export default function Header() {
         <NavbarItem>
           <ThemeSwitcher/>     
         </NavbarItem>
-        <NavbarItem>
+        <NavbarItem
+          className="hidden lg:block"
+        >
           {user ?
             <Dropdown 
               placement="bottom-end"
@@ -54,6 +60,7 @@ export default function Header() {
                 <Avatar
                   showFallback
                   src={user.image!}
+                  className="cursor-pointer hover:ring-2 hover:ring-primary transition-all duration-300"
                 />
               </DropdownTrigger>
               <DropdownMenu>
@@ -64,6 +71,7 @@ export default function Header() {
                   startContent={<FontAwesomeIcon icon={faArrowRightFromBracket} />}
                   onPress={()=>{signOut()}}
                   className="rounded-none"
+                  
                 >
                   Wyloguj
                 </DropdownItem>
@@ -85,21 +93,43 @@ export default function Header() {
             </Button>
           }
         </NavbarItem>
+        <NavbarMenuToggle 
+          className="lg:hidden"
+        />
         
-        {/*
-        <NavbarItem>
-          <Button
-            size="sm"
-            variant="bordered"
-            as={Link} 
-            href="/login" 
-            color="primary"
-          >
-            Zaloguj się
-          </Button>
-        </NavbarItem>
-*/}
       </NavbarContent>
+      <NavbarMenu>
+        {user && (
+          <NavbarMenuItem>
+            <div className="flex justify-between items-center mb-1">
+              Witaj {user.name}
+              <Avatar
+                size="sm"
+                showFallback
+                src={user.image!}
+              />
+            </div>
+            <Divider/>
+          </NavbarMenuItem>
+        )}
+        <NavbarMenuItem>
+          {user ?
+            <Link
+              onPress={()=>{signOut()}}
+              color="danger"
+              className="cursor-pointer"
+            >
+              <FontAwesomeIcon icon={faArrowRightFromBracket} className="mr-2"/>Wyloguj
+            </Link>
+          :
+            <Link
+              href="/auth/start"
+            >
+              <FontAwesomeIcon icon={faArrowRightToBracket} className="mr-2"/>Start
+            </Link>
+          }
+        </NavbarMenuItem>
+      </NavbarMenu>
     </Navbar>
   );
 }

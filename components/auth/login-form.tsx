@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Alert, Button, Form, Input, Link } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -13,6 +14,7 @@ import { z } from "zod";
 type FormFields = z.infer<typeof LoginSchema>
 
 const LoginForm = () => {
+    const router = useRouter()
     const [visible, setVisible] = useState(false)
     const toggleVisibility = () => setVisible(!visible)
 
@@ -29,6 +31,7 @@ const LoginForm = () => {
                 : "Wystąpił nieznany błąd. Spróbuj ponownie później."})
         } else {
             toast.success("Pomyślnie zalogowano")
+            router.refresh()
         }
     }
     

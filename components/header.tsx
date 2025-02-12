@@ -7,9 +7,10 @@ import { Image } from "@heroui/image";
 import { useCurrentUser } from "@/hooks/user";
 import { Button } from "@heroui/button";
 import { signOut } from "next-auth/react";
-import { Avatar, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Link } from "@heroui/react";
+import { Avatar, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Link } from "@heroui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRightFromBracket, faArrowRightToBracket } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightFromBracket, faArrowRightToBracket, faChalkboardTeacher } from "@fortawesome/free-solid-svg-icons";
+import { Role } from "@prisma/client";
 
 export default function Header() {
   const user = useCurrentUser()
@@ -64,6 +65,22 @@ export default function Header() {
                 />
               </DropdownTrigger>
               <DropdownMenu>
+                {user.role === Role.Admin ? (
+                  <DropdownSection 
+                    title="Nauczyciel"
+                    showDivider
+                  >
+                    <DropdownItem 
+                      key="teacher-panel" 
+                      href="/nauczyciel/moje-kursy"
+                      variant="light"
+                      color="primary"
+                      startContent={<FontAwesomeIcon icon={faChalkboardTeacher}/>}
+                    >
+                      Moje kursy
+                    </DropdownItem>
+                  </DropdownSection>
+                ) : null}
                 <DropdownItem 
                   key="logout"
                   color="danger"
@@ -71,7 +88,6 @@ export default function Header() {
                   startContent={<FontAwesomeIcon icon={faArrowRightFromBracket} />}
                   onPress={()=>{signOut()}}
                   className="rounded-none"
-                  
                 >
                   Wyloguj
                 </DropdownItem>
@@ -112,6 +128,24 @@ export default function Header() {
             <Divider/>
           </NavbarMenuItem>
         )}
+        {user?.role === Role.Admin && 
+          <div>
+          <span
+            className="text-sm text-foreground-500"
+          >
+            Nauczyciel
+          </span>
+          <NavbarMenuItem>
+            <Link
+              href="/nauczyciel/moje-kursy"
+              color="foreground"
+              >
+              <FontAwesomeIcon icon={faChalkboardTeacher} className="mr-2"/> Moje kursy
+            </Link>
+            <Divider/>
+          </NavbarMenuItem>
+          </div>
+        }  
         <NavbarMenuItem>
           {user ?
             <Link

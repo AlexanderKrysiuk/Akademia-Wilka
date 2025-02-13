@@ -1,10 +1,9 @@
-"use server"
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import { prisma } from "./lib/prisma"
-import bcrypt from "bcryptjs"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { Role } from "@prisma/client"
+import { verifyPassword } from "./actions/auth"
  
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -15,9 +14,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       authorize: async (credentials) => {
           const { email, password } = credentials as { email:string, password: string} 
           const user = await prisma.user.findUnique({ where: { email } });
-          if (!user || !user.password || !user.emailVerified || !await bcrypt.compare(password, user.password)) {
+          if (!user || !user.password || !user.emailVerified) {
             return null
           }
+          const valid = await verifyPassword(password, user.password)
+          console.log(valid)
           return { id: user.id, email: user.email , name: user.name, image: user.image, role: user.role ?? undefined}  // Dodajemy rolę
       }
     })

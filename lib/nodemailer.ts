@@ -64,7 +64,7 @@ export async function sendVerificationEmail(token:VerificationToken) {
       </head>
       <body>
         <div class="container">
-          <img src="https://www.akademiawilka.pl/logo/Logo-Banner.svg" alt="Akademia Wilka"/>
+          <img src="https://www.akademiawilka.pl/akademia-wilka-logo-banner.svg" alt="Akademia Wilka"/>
           <h1>Witaj w Akademii Wilka!</h1>
           <p>Jesteśmy podekscytowani, że dołączyłeś do naszej społeczności. Aby zakończyć proces rejestracji i rozpocząć korzystanie z kursów, kliknij przycisk poniżej, aby zweryfikować swoje konto i ustawić hasło:</p>
           <a href="${domain}/auth/verification?token=${token.id}" class="button">Zweryfikuj Konto</a>
@@ -134,7 +134,7 @@ export async function sendPasswordResetEmail(token: VerificationToken) {
       </head>
       <body>
         <div class="container">
-          <img src="https://www.akademiawilka.pl/logo/Logo-Banner.svg" alt="Akademia Wilka"/>
+          <img src="https://www.akademiawilka.pl/akademia-wilka-logo-banner.svg" alt="Akademia Wilka"/>
           <h1>Resetowanie hasła</h1>
           <p>Otrzymaliśmy prośbę o zresetowanie Twojego hasła. Jeśli to Ty wysłałeś/aś tę prośbę, kliknij poniższy przycisk, aby ustawić nowe hasło:</p>
           <a href="${domain}/auth/verification?token=${token.id}" class="button">Zresetuj hasło</a>

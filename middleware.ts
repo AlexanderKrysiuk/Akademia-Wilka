@@ -11,6 +11,14 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(new URL("/", req.url)); // Przekierowanie na stronę główną
     }
 
+    // Sprawdzamy, czy użytkownik próbuje uzyskać dostęp do strony /nauczyciel
+    if (req.url.startsWith("/nauczyciel")) {
+      // Sprawdzamy, czy użytkownik jest zalogowany i ma odpowiednią rolę
+      if (!session || session.user.role !== "Admin") {
+          return NextResponse.redirect(new URL("/auth/start", req.url)); // Przekierowanie na stronę logowania
+      }
+    }
+
     return NextResponse.next();
 }
 

@@ -34,7 +34,7 @@ export const setNewPassword = async (data: z.infer<typeof NewPasswordSchema>, to
 
         if (!deletedToken) return { error: { message: "Podano nieprawidłowy token", field: "root" } }
 
-        const hashedPassword = await bcrypt.hash(data.newPassword, process.env.BCRYPT_SALT_ROUNDS!)
+        const hashedPassword = await bcrypt.hash(data.newPassword, parseInt(process.env.BCRYPT_SALT_ROUNDS!))
 
         await prisma.user.update({
             where: { email: token.email },

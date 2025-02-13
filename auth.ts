@@ -4,6 +4,7 @@ import { prisma } from "./lib/prisma"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { Role } from "@prisma/client"
 import { verifyPassword } from "./actions/auth"
+import bcrypt from "bcryptjs"
  
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -17,7 +18,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           if (!user || !user.password || !user.emailVerified) {
             return null
           }
-          const valid = await verifyPassword(password, user.password)
+          const valid = await bcrypt.compare(password, user.password)
           console.log(valid)
           return { id: user.id, email: user.email , name: user.name, image: user.image, role: user.role ?? undefined}  // Dodajemy rolę
       }

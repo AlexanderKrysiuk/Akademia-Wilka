@@ -6,7 +6,7 @@ const ResetPasswordPage = () => {
     return (
         <main className="absolute inset-0 flex items-center justify-center">
             <Card
-                className="w-full max-w-xs"
+                className="m-4 w-full max-w-xs"
             >
                 <CardHeader
                     className="justify-center"

@@ -18,7 +18,7 @@ export const TokenNotFound = () => {
                 color="danger"
                 title="Nie znaleziono tokenu."
                 description="Upewnij się, że link jest poprawny."
-                className="max-w-xs"
+                className="m-4 max-w-xs"
             />
         </main>
     )
@@ -31,7 +31,7 @@ export const TokenExpired = () => {
                 color="warning"
                 title="Token stracił ważność."
                 description="Wysłano nowy link weryfikacyjny."
-                className="max-w-xs"
+                className="m-4 max-w-xs"
             />
         </main>
     )

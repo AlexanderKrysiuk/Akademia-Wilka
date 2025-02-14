@@ -6,6 +6,7 @@ import RootWrapper from "@/components/root-wrapper";
 import Toaster from "@/components/toaster";
 import { auth } from "@/auth";
 import { SessionProvider } from "next-auth/react";
+import Footer from "@/components/footer";
 
 //const geistSans = Geist({
 //  variable: "--font-geist-sans",
@@ -35,12 +36,13 @@ export default async function RootLayout({
     <SessionProvider session={session}>
       <html lang="en">
         <RootWrapper>
-          <body>
-            <main>
+          <body className="flex flex-col min-h-screen">
+            <main className="flex-grow">
               <Header/>
               {children}
-              <Toaster/>
-            </main>
+            </main>  
+            <Footer/>
+            <Toaster/>
           </body>
         </RootWrapper>
       </html>

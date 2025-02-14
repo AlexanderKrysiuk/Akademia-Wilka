@@ -9,11 +9,15 @@ import { Button } from "@heroui/button";
 import { signOut } from "next-auth/react";
 import { Avatar, Divider, Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger, Link } from "@heroui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRightFromBracket, faArrowRightToBracket, faChalkboardTeacher } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightFromBracket, faArrowRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import { Role } from "@prisma/client";
+import { TeacherItems } from "./user-menu/user-menu";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
   const user = useCurrentUser()
+  const pathname = usePathname()
+
   return (
     <Navbar
       isBordered
@@ -69,16 +73,19 @@ export default function Header() {
                   <DropdownSection 
                     title="Nauczyciel"
                     showDivider
+                    items={TeacherItems}
                   >
-                    <DropdownItem 
-                      key="teacher-panel" 
-                      href="/nauczyciel/moje-kursy"
-                      variant="light"
-                      color="primary"
-                      startContent={<FontAwesomeIcon icon={faChalkboardTeacher}/>}
-                    >
-                      Moje kursy
-                    </DropdownItem>
+                    {(item)=>(
+                      <DropdownItem
+                        key={item.title}
+                        href={item.href}
+                        title={item.title}
+                        variant="light"
+                        color="primary"
+                        startContent={item.icon}
+                        className={`${pathname.startsWith(item.href) && "text-primary"}`}
+                      />
+                    )}
                   </DropdownSection>
                 ) : null}
                 <DropdownItem 
@@ -130,20 +137,25 @@ export default function Header() {
         )}
         {user?.role === Role.Admin && 
           <div>
-          <span
-            className="text-sm text-foreground-500"
-          >
-            Nauczyciel
-          </span>
-          <NavbarMenuItem>
-            <Link
-              href="/nauczyciel/moje-kursy"
-              color="foreground"
+            <span
+              className="text-sm text-foreground-500"
+            >
+              Nauczyciel
+            </span>
+            {TeacherItems.map((item) => (
+              <NavbarMenuItem
+                key={item.title}
               >
-              <FontAwesomeIcon icon={faChalkboardTeacher} className="mr-2"/> Moje kursy
-            </Link>
+                <Link
+                  href={item.href}
+                  color={pathname.startsWith(item.href) ? "primary" : "foreground"}
+                  className="flex gap-2 hover:primary transition-colors duration-400"
+                >
+                  {item.icon} {item.title}
+                </Link>
+              </NavbarMenuItem>
+            ))}
             <Divider/>
-          </NavbarMenuItem>
           </div>
         }  
         <NavbarMenuItem>
@@ -163,7 +175,7 @@ export default function Header() {
             </Link>
           }
         </NavbarMenuItem>
-      </NavbarMenu>
+        </NavbarMenu>
     </Navbar>
   );
 }

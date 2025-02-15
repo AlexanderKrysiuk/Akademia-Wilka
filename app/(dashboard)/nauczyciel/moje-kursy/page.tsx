@@ -1,8 +1,8 @@
+import MyCoursesWrapper from "./my-courses-wrapper";
+
 const MyCoursesPage = () => {
     return ( 
-        <div>
-            Moje Kursy
-        </div>
+        <MyCoursesWrapper/>
      );
 }
  

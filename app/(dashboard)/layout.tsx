@@ -6,12 +6,16 @@ import { Listbox, ListboxItem, ListboxSection } from "@heroui/react";
 import { Role } from "@prisma/client";
 import { usePathname } from "next/navigation";
 
-const DashboardLayout = () => {
+const DashboardLayout = ({ 
+    children 
+} : { 
+    children: React.ReactNode 
+}) => {
     const user = useCurrentUser()
     const pathname = usePathname()
     return ( 
-        <main className="h-full grid grid-cols-5">
-            <div className="col-span-1 border-r">
+        <main className="h-full lg:grid lg:grid-cols-5">
+            <div className="hidden lg:block lg:col-span-1 border-r">
                 <Listbox
                     className="pr-0"
                     aria-label="Dashboard Menu"
@@ -36,8 +40,8 @@ const DashboardLayout = () => {
                     ) : null}
                 </Listbox>            
             </div>
-            <div className="col-span-4">
-                Tu będzie strona
+            <div className="lg:col-span-4">
+                {children}
             </div>
         </main>
      );

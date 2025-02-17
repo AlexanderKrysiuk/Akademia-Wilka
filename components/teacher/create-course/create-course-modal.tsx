@@ -1,25 +1,34 @@
 "use client"
 
+import { CourseCreate } from "@/actions/course-teacher";
 import { CourseSchema } from "@/schema/course";
 import { faSquarePlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Alert, Button, Form, Input, Modal, ModalBody, ModalContent, ModalHeader, useDisclosure } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 
 type FormFields = z.infer<typeof CourseSchema>
 
 const CreateCourseModal = () => {
-    const {isOpen, onOpen, onOpenChange} = useDisclosure()
+    const router = useRouter()
+    const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
     
-    const { register, handleSubmit, setError, watch, formState: { errors, isSubmitting } } = useForm<FormFields>({
+    const { register, handleSubmit, setError, watch, reset, formState: { errors, isSubmitting } } = useForm<FormFields>({
         resolver: zodResolver(CourseSchema)
     })
 
     const submit: SubmitHandler<FormFields> = async (data) => {
-        console.log(data)
-        setError("root", { message: "lint qurwa"})
+        try {
+            await CourseCreate(data)
+            router.refresh()
+            onClose()
+            reset()
+        } catch (error) {
+            setError("root", { message: error instanceof Error ? error.message : "Wystąpił nieznany błąd" })
+        }
     }
     
     return (

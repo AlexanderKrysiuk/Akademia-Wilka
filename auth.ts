@@ -35,7 +35,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token
     },
     async session({ session, token }) {
-      
+      if (token.sub) session.user.id = token.sub
       if (token?.role) {
         // Przypisujemy rolę z tokenu do sesji
         session.user.role = token.role as Role; // Przypisanie roli do sesji

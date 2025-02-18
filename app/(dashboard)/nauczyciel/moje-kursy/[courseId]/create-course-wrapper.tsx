@@ -1,5 +1,6 @@
 "use client"
 import { PublishCourse } from "@/actions/course-teacher";
+import EdictCourseTitleForm from "@/components/teacher/create-course/edit-course-title-form";
 import { faGear } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Card, CardBody, CardHeader, Progress } from "@heroui/react";
@@ -60,6 +61,7 @@ const CreateCourseWrapper = ({
                 <CardBody>
                     <Progress
                         value={completedFields.length / requiredFields.length * 100}
+                        label={`${completedFields.length / requiredFields.length * 100}%`}
                         valueLabel={`(${completedFields.length}/${requiredFields.length})`}
                         showValueLabel
                         color={completedFields.length < requiredFields.length ? "warning" : "success"}
@@ -68,13 +70,24 @@ const CreateCourseWrapper = ({
             </Card>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div>
-                    kolumna 1
+                    <Card>
+                        <CardBody>
+                            <EdictCourseTitleForm
+                                courseId={course.id}
+                                title={course.title}
+                            />
+                        </CardBody>
+                    </Card>
                 </div>
                 <div>
-                    kolumna 2
+                    <Card>
+                        <CardHeader>
+                            Lekcje
+                        </CardHeader>
+                    </Card>
                 </div>
             </div>
-            {JSON.stringify(course,null,2)}
+            {/*JSON.stringify(course,null,2)*/}
         </main>
      );
 }

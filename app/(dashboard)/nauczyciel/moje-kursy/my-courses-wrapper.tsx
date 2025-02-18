@@ -33,7 +33,7 @@ const MyCoursesWrapper = ({
                     Brak kursów do wyświetlenia
                 </p>
             )}
-            {JSON.stringify(courses,null,2)}     
+            {/*JSON.stringify(courses,null,2)*/}     
         </main>
     );
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import { CourseCreate } from "@/actions/course-teacher";
-import { CourseSchema } from "@/schema/course";
+import { CreateCourseSchema } from "@/schema/course";
 import { faSquarePlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Alert, Button, Form, Input, Modal, ModalBody, ModalContent, ModalHeader, useDisclosure } from "@heroui/react";
@@ -10,14 +10,14 @@ import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 
-type FormFields = z.infer<typeof CourseSchema>
+type FormFields = z.infer<typeof CreateCourseSchema>
 
 const CreateCourseModal = () => {
     const router = useRouter()
     const {isOpen, onOpen, onOpenChange, onClose} = useDisclosure()
     
     const { register, handleSubmit, setError, watch, reset, formState: { errors, isSubmitting } } = useForm<FormFields>({
-        resolver: zodResolver(CourseSchema)
+        resolver: zodResolver(CreateCourseSchema)
     })
 
     const submit: SubmitHandler<FormFields> = async (data) => {

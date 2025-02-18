@@ -12,13 +12,20 @@ export async function CourseCreate(data: z.infer<typeof CreateCourseSchema>) {
     const user = session?.user;
     
     if (!user) redirect("/auth/start")
-    if (user.role !== Role.Admin && user.role !== Role.Teacher) throw new Error("Brak autoryzacji")
+
+    const existingUser = await prisma.user.findUnique({
+        where: { id: user.id}
+    })
+    
+    if (!existingUser) redirect("/auth/start")
+    
+    if (existingUser.role !== Role.Admin && existingUser.role !== Role.Teacher) throw new Error("Brak autoryzacji")
     
     try {
         await prisma.course.create({
             data: {
                 title: data.title,
-                ownerId: user.id,
+                ownerId: existingUser.id,
             },
         });
     } catch (error) {
@@ -32,6 +39,12 @@ export async function PublishCourse(courseId: string) {
 
     if (!user) redirect("/auth/start")
 
+    const existingUser = await prisma.user.findUnique({
+        where: { id: user.id}
+    })
+
+    if (!existingUser) redirect("/auth/start")
+
     // Pobieramy kurs
     const course = await prisma.course.findUnique({
         where: { id: courseId }
@@ -40,13 +53,13 @@ export async function PublishCourse(courseId: string) {
     if (!course) throw new Error("Kurs nie istnieje");
 
     // Sprawdzamy, czy użytkownik to właściciel lub admin
-    if (course.ownerId !== user.id && user.role !== Role.Admin) throw new Error("Brak autoryzacji");
+    if (course.ownerId !== existingUser.id && existingUser.role !== Role.Admin) throw new Error("Brak autoryzacji");
     
 
     try {
         // Przełączamy status publikacji
         await prisma.course.update({
-            where: { id: courseId },
+            where: { id: course.id },
             data: { public: !course.public }
         });
     } catch(error) {
@@ -60,6 +73,12 @@ export async function EditCourseTitle (data: z.infer<typeof EditCourseTitleSchem
     
     if (!user) redirect("/auth/start")
 
+    const existingUser = await prisma.user.findUnique({
+        where: { id: user.id}
+    })
+    
+    if (!existingUser) redirect("/auth/start")
+    
     // Pobieramy kurs
     const course = await prisma.course.findUnique({
         where: { id: data.courseId }
@@ -68,7 +87,7 @@ export async function EditCourseTitle (data: z.infer<typeof EditCourseTitleSchem
     if (!course) throw new Error("Kurs nie istnieje");
 
     // Sprawdzamy, czy użytkownik to właściciel lub admin
-    if (course.ownerId !== user.id && user.role !== Role.Admin) throw new Error("Brak autoryzacji");
+    if (course.ownerId !== existingUser.id && existingUser.role !== Role.Admin) throw new Error("Brak autoryzacji");
         
     try {
         await prisma.course.update({

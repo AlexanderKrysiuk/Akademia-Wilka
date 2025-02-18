@@ -4,18 +4,16 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { CourseSchema } from "@/schema/course";
 import { Role } from "@prisma/client";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 export async function CourseCreate(data: z.infer<typeof CourseSchema>) {
     const session = await auth();
     const user = session?.user;
     
-    if (!user || user.role !== Role.Admin) {
-        throw new Error("Brak autoryzacji");
-    }
+    if (!user) redirect("/auth/start")
+    if (user.role !== Role.Admin && user.role !== Role.Teacher) throw new Error("Brak autoryzacji")
     
-    console.log(user)
-
     try {
         await prisma.course.create({
             data: {
@@ -24,7 +22,34 @@ export async function CourseCreate(data: z.infer<typeof CourseSchema>) {
             },
         });
     } catch (error) {
-        console.error("Błąd tworzenia kursu:", error);
         throw new Error("Utworzenie kursu nieudane");
+    }
+}
+
+export async function PublishCourse(courseId: string) {
+    const session = await auth()
+    const user = session?.user
+
+    if (!user) redirect("/auth/start")
+
+    // Pobieramy kurs
+    const course = await prisma.course.findUnique({
+        where: { id: courseId }
+    });
+
+    if (!course) throw new Error("Kurs nie istnieje");
+
+    // Sprawdzamy, czy użytkownik to właściciel lub admin
+    if (course.ownerId !== user.id && user.role !== Role.Admin) throw new Error("Brak autoryzacji");
+    
+
+    try {
+        // Przełączamy status publikacji
+        await prisma.course.update({
+            where: { id: courseId },
+            data: { public: !course.public }
+        });
+    } catch(error) {
+        throw new Error("Snychronizacja bazy danych nieudana")
     }
 }

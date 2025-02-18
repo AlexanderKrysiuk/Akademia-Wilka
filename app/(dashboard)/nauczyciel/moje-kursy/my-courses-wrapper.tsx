@@ -1,6 +1,6 @@
 "use client"
 import CreateCourseModal from "@/components/teacher/create-course/create-course-modal";
-import { Button, Card, CardFooter, CardHeader } from "@heroui/react";
+import { Button, Card, CardFooter, CardHeader, Link } from "@heroui/react";
 import { Course } from "@prisma/client";
 const MyCoursesWrapper = ({
     courses
@@ -20,7 +20,8 @@ const MyCoursesWrapper = ({
                             <Button
                                 color="primary"
                                 className="text-white"
-                                href={`/nauczyciel/my-courses/${course.id}`}
+                                as={Link}
+                                href={`/nauczyciel/moje-kursy/${course.id}`}
                             >
                                 Edytuj
                             </Button>

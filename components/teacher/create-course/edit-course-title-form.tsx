@@ -10,7 +10,7 @@ import { z } from "zod";
 
 type FormFields = z.infer<typeof EditCourseTitleSchema>
 
-const EdictCourseTitleForm = ({
+const EditCourseTitleForm = ({
     courseId,
     title
 } : {
@@ -47,15 +47,9 @@ const EdictCourseTitleForm = ({
             isClearable
             isDisabled={isSubmitting}
             isInvalid={!!errors.title || !!errors.root}
-            errorMessage={errors.title?.message}
+            errorMessage={errors.title?.message || errors.root?.message}
             fullWidth
         />
-        {errors.root && 
-            <Alert
-                color="danger"
-                title={errors.root.message}
-            />
-        }
         <Button
             type="submit"
             color="primary"
@@ -68,4 +62,4 @@ const EdictCourseTitleForm = ({
     </Form>;
 }
  
-export default EdictCourseTitleForm;
+export default EditCourseTitleForm;

@@ -95,6 +95,7 @@ model Course {
   title String
   ownerId String
   public Boolean @default(false)
+  slug  String? @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

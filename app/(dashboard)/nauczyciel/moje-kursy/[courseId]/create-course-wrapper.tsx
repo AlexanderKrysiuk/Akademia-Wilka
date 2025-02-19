@@ -1,6 +1,7 @@
 "use client"
 import { PublishCourse } from "@/actions/course-teacher";
-import EdictCourseTitleForm from "@/components/teacher/create-course/edit-course-title-form";
+import EditCourseSlugForm from "@/components/teacher/create-course/edit-course-slug-formt";
+import EditCourseTitleForm from "@/components/teacher/create-course/edit-course-title-form";
 import { faGear } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Card, CardBody, CardHeader, Progress } from "@heroui/react";
@@ -15,8 +16,8 @@ const CreateCourseWrapper = ({
     requiredFields,
 } : {
     course: Course
-    completedFields: string[]
-    requiredFields: string[]
+    completedFields: (string | null)[]
+    requiredFields: (string | null)[]
 }) => {
     const [pending, startTransition] = useTransition()
     const router = useRouter()
@@ -69,12 +70,20 @@ const CreateCourseWrapper = ({
                 </CardBody>
             </Card>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <div>
+                <div className="space-y-4">
                     <Card>
                         <CardBody>
-                            <EdictCourseTitleForm
+                            <EditCourseTitleForm
                                 courseId={course.id}
                                 title={course.title}
+                            />
+                        </CardBody>
+                    </Card>
+                    <Card>
+                        <CardBody>
+                            <EditCourseSlugForm
+                                courseId={course.id}
+                                slug={course.slug || undefined}
                             />
                         </CardBody>
                     </Card>

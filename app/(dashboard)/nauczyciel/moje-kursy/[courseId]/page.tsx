@@ -17,7 +17,8 @@ const CreateCoursePage = async (props: { params: Promise<{ courseId: string }> }
     if (!course || course.ownerId !== user.id && user.role !== Role.Admin) redirect("/nauczyciel/moje-kursy")
 
     const requiredFields = [
-        course.title
+        course.title,
+        course.slug
     ]
 
     const completedFields = requiredFields.filter(Boolean)

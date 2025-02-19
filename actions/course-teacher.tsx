@@ -2,7 +2,7 @@
 
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { CreateCourseSchema, EditCourseTitleSchema } from "@/schema/course";
+import { CreateCourseSchema, EditCourseSlugSchema, EditCourseTitleSchema } from "@/schema/course";
 import { Role } from "@prisma/client";
 import { redirect } from "next/navigation";
 import { TypeOf, z } from "zod";
@@ -95,6 +95,36 @@ export async function EditCourseTitle (data: z.infer<typeof EditCourseTitleSchem
             data: { title: data.title },
         });
     } catch (error) {
+        throw new Error("Snychronizacja bazy danych nieudana")
+    }
+}
+
+export async function EditCourseSlug (data: z.infer<typeof EditCourseSlugSchema>) {
+    const session = await auth();
+    const user = session?.user;
+
+    if (!user) redirect("/auth/start")
+
+    const existingUser = await prisma.user.findUnique({
+        where: {id: user.id}
+    })
+
+    if (!existingUser) redirect("/auth/start")
+
+    const course = await prisma.course.findUnique({
+        where: {id: data.courseId}
+    })
+
+    if (!course) throw new Error("Kurs nie istnieje")
+
+    if (course.ownerId !== existingUser.id && existingUser.role !== Role.Admin) throw new Error("Brak autoryzacji")
+
+    try {
+        await prisma.course.update({
+            where: {id: course.id},
+            data: {slug: data.slug}
+        })
+    } catch(error) {
         throw new Error("Snychronizacja bazy danych nieudana")
     }
 }

@@ -1,6 +1,6 @@
 "use client"
 import { PublishCourse } from "@/actions/course-teacher";
-import EditCourseSlugForm from "@/components/teacher/create-course/edit-course-slug-formt";
+import EditCourseSlugForm from "@/components/teacher/create-course/edit-course-slug-form";
 import EditCourseTitleForm from "@/components/teacher/create-course/edit-course-title-form";
 import { faGear } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

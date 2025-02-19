@@ -1,7 +1,7 @@
 "use client"
 import { EditCourseTitle } from "@/actions/course-teacher";
 import { EditCourseTitleSchema } from "@/schema/course";
-import { Alert, Button, Form, Input } from "@heroui/react";
+import { Button, Form, Input } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
